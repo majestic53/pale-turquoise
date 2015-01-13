@@ -1,0 +1,31 @@
+CHESS NETWORK BNF
+---
+
+packet ::= <command> ':' <board>
+
+---
+
+board ::= <piece>{64}
+
+command ::= checkmate | continue | draw | resign | save
+
+color ::= [0-1]							; white, black
+
+flag ::= [0-1]							; unmoved, moved
+
+piece ::= [<piece_0> | <piece_1>] ' '
+
+piece_0 ::= <position>{2} <piece_type_0> <color>
+
+piece_1 ::= <position>{2} <piece_type_1> <color> <flag>
+
+piece_type_0 ::= [0 | 2 | 4 | 5]				; empty, queen, bishop, knight
+
+piece_type_1 ::= [1 | 3 | 6]					; king, rook, pawn
+
+position ::= [0-7]						; a-g/1-8
+
+---
+
+NOTES
+*) Board is verically sliced upward (ie. order is asseending from bottom-left to top-right)
