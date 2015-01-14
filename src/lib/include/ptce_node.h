@@ -103,11 +103,11 @@ namespace PTCE_NS {
 				static _ptce_node_factory *acquire(void);
 
 				bool contains(
-					__in const ptce_uid &uid
+					__in const ptce_node &node
 					);
 
 				size_t decrement_reference(
-					__in const ptce_uid &uid
+					__in const ptce_node &node
 					);
 
 				void destroy(void);
@@ -119,7 +119,7 @@ namespace PTCE_NS {
 					);
 
 				size_t increment_reference(
-					__in const ptce_uid &uid
+					__in const ptce_node &node
 					);
 
 				void initialize(void);
@@ -129,7 +129,7 @@ namespace PTCE_NS {
 				bool is_initialized(void);
 
 				size_t reference_count(
-					__in const ptce_uid &uid
+					__in const ptce_node &node
 					);
 
 				size_t size(void);

@@ -12,6 +12,12 @@ Table of Contents
 Changelog
 =========
 
+###Version 0.1.1503
+*Updated: 1/13/2015*
+
+* Added chess piece class
+# Added node factory unit tests
+
 ###Version 0.1.1502
 *Updated: 1/12/2015*
 

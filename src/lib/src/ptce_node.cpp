@@ -164,8 +164,11 @@ namespace PTCE_NS {
 					<< ", Parent: " << ptce_uid::id_as_string(node.m_parent) << ", Children: " 
 					<< node.m_children.size();
 
-			for(child_iter = node.m_children.begin(); child_iter != node.m_children.end(); ++child_iter) {
-				result << std::endl << " --- " << ptce_uid::id_as_string(*child_iter);
+			if(verbose) {
+
+				for(child_iter = node.m_children.begin(); child_iter != node.m_children.end(); ++child_iter) {
+					result << std::endl << " --- " << ptce_uid::id_as_string(*child_iter);
+				}
 			}
 
 			TRACE_EXIT("Return Value: 0x%x", 0);
@@ -200,25 +203,10 @@ namespace PTCE_NS {
 			__in_opt bool verbose
 			)
 		{
-			std::stringstream result;
-			std::vector<ptce_uid>::iterator child_iter;
-
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
-
-			result << ptce_uid_base::to_string() << ": " << "Entry: " << m_entry.to_string() 
-					<< ", Parent: " << m_parent.to_string() << ", Children: " << m_children.size();
-
-			if(verbose) {
-
-				for(child_iter = m_children.begin(); child_iter != m_children.end(); 
-						++child_iter) {
-					result << std::endl << " ------ " << child_iter->to_string();
-				}
-			}
-
 			TRACE_EXIT("Return Value: 0x%x", 0);
-			return result.str();
+			return node_as_string(*this);
 		}
 
 		ptce_node_factory_ptr ptce_node_factory::m_instance = NULL;
@@ -280,7 +268,7 @@ namespace PTCE_NS {
 
 		bool 
 		_ptce_node_factory::contains(
-			__in const ptce_uid &uid
+			__in const ptce_node &node
 			)
 		{
 			bool result;
@@ -292,7 +280,7 @@ namespace PTCE_NS {
 				THROW_PTCE_NODE_EXCEPTION(PTCE_NODE_EXCEPTION_UNINITIAILIZED);
 			}
 
-			result = (m_node_map.find(uid) != m_node_map.end());
+			result = (m_node_map.find(node.m_uid) != m_node_map.end());
 
 			TRACE_EXIT("Return Value: 0x%x", result);
 			return result;
@@ -300,7 +288,7 @@ namespace PTCE_NS {
 
 		size_t 
 		_ptce_node_factory::decrement_reference(
-			__in const ptce_uid &uid
+			__in const ptce_node &node
 			)
 		{
 			size_t result = 0;
@@ -313,7 +301,7 @@ namespace PTCE_NS {
 				THROW_PTCE_NODE_EXCEPTION(PTCE_NODE_EXCEPTION_UNINITIAILIZED);
 			}
 
-			node_iter = find_node(uid);
+			node_iter = find_node(node.m_uid);
 
 			if(node_iter->second.second == PTCE_INIT_REF_DEF) {
 				m_node_map.erase(node_iter);
@@ -396,7 +384,7 @@ namespace PTCE_NS {
 
 		size_t 
 		_ptce_node_factory::increment_reference(
-			__in const ptce_uid &uid
+			__in const ptce_node &node
 			)
 		{
 			size_t result;
@@ -408,7 +396,7 @@ namespace PTCE_NS {
 				THROW_PTCE_NODE_EXCEPTION(PTCE_NODE_EXCEPTION_UNINITIAILIZED);
 			}
 
-			result = ++find_node(uid)->second.second;
+			result = ++find_node(node.m_uid)->second.second;
 
 			TRACE_EXIT("Return Value: %lu", result);
 			return result;
@@ -454,7 +442,7 @@ namespace PTCE_NS {
 
 		size_t 
 		_ptce_node_factory::reference_count(
-			__in const ptce_uid &uid
+			__in const ptce_node &node
 			)
 		{
 			size_t result;
@@ -466,7 +454,7 @@ namespace PTCE_NS {
 				THROW_PTCE_NODE_EXCEPTION(PTCE_NODE_EXCEPTION_UNINITIAILIZED);
 			}
 
-			result = find_node(uid)->second.second;
+			result = find_node(node.m_uid)->second.second;
 
 			TRACE_EXIT("Return Value: %lu", result);
 			return result;

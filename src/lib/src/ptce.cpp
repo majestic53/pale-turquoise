@@ -53,6 +53,9 @@ namespace PTCE_NS {
 	{
 		TRACE_ENTRY();
 		
+		ptce_node_factory_destroy();
+		ptce_uid_factory_destroy();
+
 		if(m_initialized) {
 			destroy();
 		}
@@ -119,8 +122,13 @@ namespace PTCE_NS {
 			THROW_PTCE_EXCEPTION(PTCE_EXCEPTION_UNINITIALIZED);
 		}
 		
-		m_factory_node->destroy();
-		m_factory_uid->destroy();
+		if(m_factory_node->is_initialized()) {
+			m_factory_node->destroy();
+		}
+
+		if(m_factory_uid->is_initialized()) {
+			m_factory_uid->destroy();
+		}
 
 		// TODO: destroy factories, etc.
 		
@@ -139,8 +147,13 @@ namespace PTCE_NS {
 			THROW_PTCE_EXCEPTION(PTCE_EXCEPTION_INITIALIZED);
 		}
 
-		m_factory_uid->initialize();
-		m_factory_node->initialize();
+		if(!m_factory_uid->is_initialized()) {
+			m_factory_uid->initialize();
+		}
+
+		if(!m_factory_node->is_initialized()) {
+			m_factory_node->initialize();
+		}
 
 		// TODO: initialize factories, etc.
 		

@@ -20,6 +20,7 @@
 #include "../lib/include/ptce.h"
 #include "./include/ptce_test.h"
 #include "./include/ptce_test_node.h"
+#include "./include/ptce_test_piece.h"
 #include "./include/ptce_test_singleton.h"
 #include "./include/ptce_test_uid.h"
 

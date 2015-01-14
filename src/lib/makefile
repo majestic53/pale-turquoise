@@ -28,11 +28,11 @@ all: build archive
 archive:
 	@echo ""
 	@echo "--- BUILDING PTCE LIBRARY ------------------"
-	ar rcs $(OUT_BUILD)$(LIB) $(OUT_BUILD)ptce.o $(OUT_BUILD)ptce_defines.o $(OUT_BUILD)ptce_node.o $(OUT_BUILD)ptce_uid.o
+	ar rcs $(OUT_BUILD)$(LIB) $(OUT_BUILD)ptce.o $(OUT_BUILD)ptce_defines.o $(OUT_BUILD)ptce_node.o $(OUT_BUILD)ptce_piece.o $(OUT_BUILD)ptce_uid.o
 	@echo "--- DONE -----------------------------------"
 	@echo ""
 
-build: ptce.o ptce_defines.o ptce_node.o ptce_uid.o
+build: ptce.o ptce_defines.o ptce_node.o ptce_piece.o ptce_uid.o
 
 ptce.o: $(SRC)ptce.cpp $(INC)ptce.h
 	$(CC) $(FLAGS) -c $(SRC)ptce.cpp -o $(OUT_BUILD)ptce.o
@@ -42,6 +42,9 @@ ptce_defines.o: $(SRC)ptce_defines.cpp $(INC)ptce_defines.h
 
 ptce_node.o: $(SRC)ptce_node.cpp $(INC)ptce_node.h
 	$(CC) $(FLAGS) -c $(SRC)ptce_node.cpp -o $(OUT_BUILD)ptce_node.o
+
+ptce_piece.o: $(SRC)ptce_piece.cpp $(INC)ptce_piece.h
+	$(CC) $(FLAGS) -c $(SRC)ptce_piece.cpp -o $(OUT_BUILD)ptce_piece.o
 
 ptce_uid.o: $(SRC)ptce_uid.cpp $(INC)ptce_uid.h
 	$(CC) $(FLAGS) -c $(SRC)ptce_uid.cpp -o $(OUT_BUILD)ptce_uid.o

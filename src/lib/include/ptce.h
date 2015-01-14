@@ -37,6 +37,7 @@
 
 #include "ptce_uid.h"
 #include "ptce_node.h"
+#include "ptce_piece.h"
 
 using namespace PTCE_NS;
 using namespace PTCE_NS::PTCE_COMP_NS;

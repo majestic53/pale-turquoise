@@ -158,7 +158,7 @@ namespace PTCE_NS {
 				result << PTCE_UID_TRACE_HEADER << " ";
 			}
 
-			result << "{" << VALUE_AS_HEX(uint64_t, m_uid) << "}";
+			result << id_as_string(*this);
 
 			TRACE_EXIT("Return Value: 0x%x", 0);
 			return result.str();
@@ -564,10 +564,10 @@ namespace PTCE_NS {
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			inst = ptce::acquire();
-			if(inst->is_initialized()) {
+			if(inst && inst->is_initialized()) {
 
 				fact_inst = inst->acquire_uid_factory();
-				if(fact_inst->contains(m_uid)) {
+				if(fact_inst && fact_inst->contains(m_uid)) {
 					result = fact_inst->decrement_reference(m_uid);
 				}
 			}
@@ -588,7 +588,7 @@ namespace PTCE_NS {
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			inst = ptce::acquire();
-			if(inst->is_initialized()) {
+			if(inst && inst->is_initialized()) {
 				result = inst->acquire_uid_factory()->generate(unique);
 			}
 
@@ -616,10 +616,10 @@ namespace PTCE_NS {
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			inst = ptce::acquire();
-			if(inst->is_initialized()) {
+			if(inst && inst->is_initialized()) {
 
 				fact_inst = inst->acquire_uid_factory();
-				if(fact_inst->contains(m_uid)) {
+				if(fact_inst && fact_inst->contains(m_uid)) {
 					result = fact_inst->increment_reference(m_uid);
 				} else {
 					result = fact_inst->add(m_uid);
@@ -641,10 +641,10 @@ namespace PTCE_NS {
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			inst = ptce::acquire();
-			if(inst->is_initialized()) {
+			if(inst && inst->is_initialized()) {
 
 				fact_inst = inst->acquire_uid_factory();
-				if(fact_inst->contains(m_uid)) {
+				if(fact_inst && fact_inst->contains(m_uid)) {
 					result = fact_inst->reference_count(m_uid);
 				}
 			}
