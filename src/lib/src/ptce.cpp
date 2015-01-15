@@ -54,6 +54,7 @@ namespace PTCE_NS {
 	{
 		TRACE_ENTRY();
 		
+		release_piece_factory();
 		release_node_factory();
 		release_uid_factory();
 
