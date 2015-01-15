@@ -35,7 +35,7 @@ namespace PTCE_NS {
 	#define __out_opt
 	#define __inout
 	#define __inout_opt
-	
+
 	#define EMPTY "(EMPTY)"
 	#define ERROR "(ERROR)"
 	#define UNKNOWN "(UNKNOWN)"

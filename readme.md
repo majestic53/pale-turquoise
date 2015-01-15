@@ -13,6 +13,11 @@ Changelog
 =========
 
 ###Version 0.1.1503
+*Updated: 1/14/2015*
+
+* Added chess piece factory
+* Bug fixes
+
 *Updated: 1/13/2015*
 
 * Added chess piece class

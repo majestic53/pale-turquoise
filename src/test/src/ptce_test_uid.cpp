@@ -763,7 +763,7 @@ exit:
 						goto exit;
 					}
 
-					ptce_uid_factory_destroy();
+					ptce::release_uid_factory();
 
 					try {
 

@@ -659,20 +659,16 @@ exit:
 		ptce_test_t 
 		ptce_test_node_factory_is_allocated(void)
 		{
-			ptce_ptr inst = NULL;
-			ptce_node_factory_ptr fact_inst = NULL;
+			ptce_node_factory_ptr inst = NULL;
 			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
 
 			TRACE_ENTRY();
 
 			try {
-				inst = ptce::acquire();
-				inst->initialize();
-
 				try {
 
-					fact_inst = inst->acquire_node_factory();
-					if(!fact_inst) {
+					inst = ptce_node_factory::acquire();
+					if(!inst) {
 						result = PTCE_TEST_INCONCLUSIVE;
 						goto exit;
 					}
@@ -691,7 +687,7 @@ exit:
 						goto exit;
 					}
 
-					/*ptce_node_factory_destroy();
+					ptce::release_node_factory();
 
 					try {
 
@@ -705,15 +701,13 @@ exit:
 								<< exc.what() << std::endl;
 						result = PTCE_TEST_FAILURE;
 						goto exit;
-					}*/
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_node_factory_is_allocated exception(0): " 
 							<< exc.what() << std::endl;
 					result = PTCE_TEST_FAILURE;
 					goto exit;
 				}
-
-				inst->destroy();
 			} catch(...) {
 				result = PTCE_TEST_INCONCLUSIVE;
 				goto exit;
@@ -740,6 +734,7 @@ exit:
 				inst = ptce::acquire();
 				inst->initialize();
 				fact_inst = inst->acquire_node_factory();
+				fact_inst->initialize();
 
 				try {
 

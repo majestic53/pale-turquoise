@@ -28,12 +28,16 @@ namespace PTCE_NS {
 
 		enum {
 			PTCE_TEST_SINGLETON_ACQUIRE = 0,
-			PTCE_TEST_SIGNLETON_ACQUIRE_NODE_FACTORY,
-			PTCE_TEST_SIGNLETON_ACQUIRE_UID_FACTORY,
+			PTCE_TEST_SINGLETON_ACQUIRE_NODE_FACTORY,
+			PTCE_TEST_SINGLETON_ACQUIRE_PIECE_FACTORY,
+			PTCE_TEST_SINGLETON_ACQUIRE_UID_FACTORY,
 			PTCE_TEST_SINGLETON_DESTROY,
 			PTCE_TEST_SINGLETON_INITIALIZE,
 			PTCE_TEST_SINGLETON_IS_ALLOCATED,
 			PTCE_TEST_SINGLETON_IS_INITIALIZED,
+			PTCE_TEST_SINGLETON_RELEASE_NODE_FACTORY,
+			PTCE_TEST_SINGLETON_RELEASE_PIECE_FACTORY,
+			PTCE_TEST_SINGLETON_RELEASE_UID_FACTORY,
 			PTCE_TEST_SINGLETON_VERSION,
 		};
 
@@ -41,12 +45,16 @@ namespace PTCE_NS {
 
 		static const std::string PTCE_TEST_SINGLETON_STR[] = {
 			"PTCE_TEST_SINGLETON_ACQUIRE",
-			"PTCE_TEST_SIGNLETON_ACQUIRE_NODE_FACTORY,",
-			"PTCE_TEST_SIGNLETON_ACQUIRE_UID_FACTORY",
+			"PTCE_TEST_SINGLETON_ACQUIRE_NODE_FACTORY",
+			"PTCE_TEST_SINGLETON_ACQUIRE_PIECE_FACTORY",
+			"PTCE_TEST_SINGLETON_ACQUIRE_UID_FACTORY",
 			"PTCE_TEST_SINGLETON_DESTROY",
 			"PTCE_TEST_SINGLETON_INITIALIZE",
 			"PTCE_TEST_SINGLETON_IS_ALLOCATED",
 			"PTCE_TEST_SINGLETON_IS_INITIALIZED",
+			"PTCE_TEST_SINGLETON_RELEASE_NODE_FACTORY",
+			"PTCE_TEST_SINGLETON_RELEASE_PIECE_FACTORY",
+			"PTCE_TEST_SINGLETON_RELEASE_UID_FACTORY",
 			"PTCE_TEST_SINGLETON_VERSION",
 			};
 
@@ -58,6 +66,8 @@ namespace PTCE_NS {
 
 		extern ptce_test_t ptce_test_singleton_acquire_node_factory(void);
 
+		extern ptce_test_t ptce_test_singleton_acquire_piece_factory(void);
+
 		extern ptce_test_t ptce_test_singleton_acquire_uid_factory(void);
 
 		extern ptce_test_t ptce_test_singleton_destroy(void);
@@ -68,16 +78,26 @@ namespace PTCE_NS {
 
 		extern ptce_test_t ptce_test_singleton_is_initialized(void);
 
+		extern ptce_test_t ptce_test_singleton_release_node_factory(void);
+
+		extern ptce_test_t ptce_test_singleton_release_piece_factory(void);
+
+		extern ptce_test_t ptce_test_singleton_release_uid_factory(void);
+
 		extern ptce_test_t ptce_test_singleton_version(void);
 
 		static const ptce_test_set_cb PTCE_TEST_SINGLETON_CB[] = {
 			ptce_test_singleton_acquire,
 			ptce_test_singleton_acquire_node_factory,
+			ptce_test_singleton_acquire_piece_factory,
 			ptce_test_singleton_acquire_uid_factory,
 			ptce_test_singleton_destroy,
 			ptce_test_singleton_initialize,
 			ptce_test_singleton_is_allocated,
 			ptce_test_singleton_is_initialized,
+			ptce_test_singleton_release_node_factory,
+			ptce_test_singleton_release_piece_factory,
+			ptce_test_singleton_release_uid_factory,
 			ptce_test_singleton_version,
 			};
 

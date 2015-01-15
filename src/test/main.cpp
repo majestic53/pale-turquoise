@@ -27,23 +27,6 @@
 #define RUN_TESTS
 
 ptce_test_set 
-create_test_set_ptce_singleton(void)
-{
-	size_t test_iter = 0;
-	ptce_test_set result(PTCE_TEST_SINGLETON_TRACE_HEADER);
-
-	TRACE_ENTRY();
-
-	for(; test_iter <= PTCE_TEST_SINGLETON_MAX; ++test_iter) {
-		result.add(PTCE_TEST_SINGLETON_STRING(test_iter), 
-				PTCE_TEST_SINGLETON_CALLBACK(test_iter));
-	}
-
-	TRACE_EXIT("Return Value: 0x%x", 0);
-	return result;
-}
-
-ptce_test_set 
 create_test_set_ptce_node(void)
 {
 	size_t test_iter = 0;
@@ -58,6 +41,40 @@ create_test_set_ptce_node(void)
 
 	TRACE_EXIT("Return Value: 0x%x", 0);
 	return result;	
+}
+
+ptce_test_set 
+create_test_set_ptce_piece(void)
+{
+	size_t test_iter = 0;
+	ptce_test_set result(PTCE_TEST_PIECE_TRACE_HEADER);
+
+	TRACE_ENTRY();
+
+	for(; test_iter <= PTCE_TEST_PIECE_MAX; ++test_iter) {
+		result.add(PTCE_TEST_PIECE_STRING(test_iter), 
+				PTCE_TEST_PIECE_CALLBACK(test_iter));
+	}
+
+	TRACE_EXIT("Return Value: 0x%x", 0);
+	return result;	
+}
+
+ptce_test_set 
+create_test_set_ptce_singleton(void)
+{
+	size_t test_iter = 0;
+	ptce_test_set result(PTCE_TEST_SINGLETON_TRACE_HEADER);
+
+	TRACE_ENTRY();
+
+	for(; test_iter <= PTCE_TEST_SINGLETON_MAX; ++test_iter) {
+		result.add(PTCE_TEST_SINGLETON_STRING(test_iter), 
+				PTCE_TEST_SINGLETON_CALLBACK(test_iter));
+	}
+
+	TRACE_EXIT("Return Value: 0x%x", 0);
+	return result;
 }
 
 ptce_test_set 
@@ -88,6 +105,7 @@ initialize_test_suite(void)
 	inst->add(PTCE_TEST_SINGLETON_TRACE_HEADER, create_test_set_ptce_singleton());
 	inst->add(PTCE_TEST_UID_TRACE_HEADER, create_test_set_ptce_uid());
 	inst->add(PTCE_TEST_NODE_TRACE_HEADER, create_test_set_ptce_node());
+	inst->add(PTCE_TEST_PIECE_TRACE_HEADER, create_test_set_ptce_piece());
 
 	TRACE_EXIT("Return Value: 0x%x", 0);
 }

@@ -56,6 +56,8 @@ namespace PTCE_NS {
 
 			ptce_node_factory_ptr acquire_node_factory(void);
 			
+			ptce_piece_factory_ptr acquire_piece_factory(void);
+
 			ptce_uid_factory_ptr acquire_uid_factory(void);
 
 			void destroy(void);
@@ -66,6 +68,12 @@ namespace PTCE_NS {
 		
 			bool is_initialized(void);
 		
+			static void release_node_factory(void);
+
+			static void release_piece_factory(void);
+
+			static void release_uid_factory(void);
+
 			std::string to_string(
 				__in_opt bool verbose = false
 				);
@@ -75,7 +83,7 @@ namespace PTCE_NS {
 				);
 		
 		protected:
-		
+
 			friend void ptce_destroy(void);
 		
 			_ptce(void);
@@ -87,12 +95,14 @@ namespace PTCE_NS {
 			_ptce &operator=(
 				__in const _ptce &other
 				);
-				
+
 			bool m_initialized;
 				
 			static _ptce *m_instance;
 		
 			ptce_node_factory_ptr m_factory_node;
+
+			ptce_piece_factory_ptr m_factory_piece;
 
 			ptce_uid_factory_ptr m_factory_uid;
 

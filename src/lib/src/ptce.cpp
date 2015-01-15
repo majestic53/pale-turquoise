@@ -40,6 +40,7 @@ namespace PTCE_NS {
 	_ptce::_ptce(void) :
 		m_initialized(false),
 		m_factory_node(ptce_node_factory::acquire()),
+		m_factory_piece(ptce_piece_factory::acquire()),
 		m_factory_uid(ptce_uid_factory::acquire())
 	{
 		TRACE_ENTRY();
@@ -53,8 +54,8 @@ namespace PTCE_NS {
 	{
 		TRACE_ENTRY();
 		
-		ptce_node_factory_destroy();
-		ptce_uid_factory_destroy();
+		release_node_factory();
+		release_uid_factory();
 
 		if(m_initialized) {
 			destroy();
@@ -94,8 +95,26 @@ namespace PTCE_NS {
 			THROW_PTCE_EXCEPTION(PTCE_EXCEPTION_UNINITIALIZED);
 		}
 
+		m_factory_node = ptce_node_factory::acquire();
+
 		TRACE_EXIT("Return Value: 0x%p", m_factory_node);
 		return m_factory_node;
+	}
+
+	ptce_piece_factory_ptr 
+	_ptce::acquire_piece_factory(void)
+	{
+		TRACE_ENTRY();
+		SERIALIZE_CALL_RECUR(m_lock);
+
+		if(!m_initialized) {
+			THROW_PTCE_EXCEPTION(PTCE_EXCEPTION_UNINITIALIZED);
+		}
+
+		m_factory_piece = ptce_piece_factory::acquire();
+
+		TRACE_EXIT("Return Value: 0x%p", m_factory_piece);
+		return m_factory_piece;
 	}
 
 	ptce_uid_factory_ptr 
@@ -107,6 +126,8 @@ namespace PTCE_NS {
 		if(!m_initialized) {
 			THROW_PTCE_EXCEPTION(PTCE_EXCEPTION_UNINITIALIZED);
 		}
+
+		m_factory_uid = ptce_uid_factory::acquire();
 
 		TRACE_EXIT("Return Value: 0x%p", m_factory_uid);
 		return m_factory_uid;
@@ -122,11 +143,15 @@ namespace PTCE_NS {
 			THROW_PTCE_EXCEPTION(PTCE_EXCEPTION_UNINITIALIZED);
 		}
 		
-		if(m_factory_node->is_initialized()) {
+		if(m_factory_piece && m_factory_piece->is_initialized()) {
+			m_factory_piece->destroy();
+		}
+
+		if(m_factory_node && m_factory_node->is_initialized()) {
 			m_factory_node->destroy();
 		}
 
-		if(m_factory_uid->is_initialized()) {
+		if(m_factory_uid && m_factory_uid->is_initialized()) {
 			m_factory_uid->destroy();
 		}
 
@@ -147,12 +172,16 @@ namespace PTCE_NS {
 			THROW_PTCE_EXCEPTION(PTCE_EXCEPTION_INITIALIZED);
 		}
 
-		if(!m_factory_uid->is_initialized()) {
+		if(m_factory_uid && !m_factory_uid->is_initialized()) {
 			m_factory_uid->initialize();
 		}
 
-		if(!m_factory_node->is_initialized()) {
+		if(m_factory_node && !m_factory_node->is_initialized()) {
 			m_factory_node->initialize();
+		}
+
+		if(m_factory_piece && !m_factory_piece->is_initialized()) {
+			m_factory_piece->initialize();
 		}
 
 		// TODO: initialize factories, etc.
@@ -184,6 +213,45 @@ namespace PTCE_NS {
 		return m_initialized;
 	}
 
+	void 
+	_ptce::release_node_factory(void)
+	{
+		TRACE_ENTRY();
+
+		if(ptce::is_allocated()) {
+			ptce::acquire()->m_factory_node = NULL;
+			ptce_node_factory_destroy();
+		}
+
+		TRACE_EXIT("Return Value: 0x%x", 0);
+	}
+
+	void 
+	_ptce::release_piece_factory(void)
+	{
+		TRACE_ENTRY();
+
+		if(ptce::is_allocated()) {
+			ptce::acquire()->m_factory_piece = NULL;
+			ptce_piece_factory_destroy();
+		}
+
+		TRACE_EXIT("Return Value: 0x%x", 0);
+	}
+
+	void 
+	_ptce::release_uid_factory(void)
+	{
+		TRACE_ENTRY();
+
+		if(ptce::is_allocated()) {
+			ptce::acquire()->m_factory_uid = NULL;
+			ptce_uid_factory_destroy();
+		}
+
+		TRACE_EXIT("Return Value: 0x%x", 0);
+	}
+
 	std::string 
 	_ptce::to_string(
 		__in_opt bool verbose
@@ -199,8 +267,17 @@ namespace PTCE_NS {
 					<< ", Initialized=" << m_initialized;
 		}
 
-		result << std::endl << m_factory_uid->to_string(verbose)
-			<< std::endl << m_factory_node->to_string(verbose);
+		if(m_factory_uid) {
+			result << std::endl << m_factory_uid->to_string(verbose);
+		}
+
+		if(m_factory_node) {
+			result << std::endl << m_factory_node->to_string(verbose);
+		}
+
+		if(m_factory_piece) {
+			result << std::endl << m_factory_piece->to_string(verbose);
+		}
 
 		// TODO: retreive factory strings, etc. (pass verbose)
 		

@@ -65,8 +65,8 @@ namespace PTCE_NS {
 			public:
 
 				_ptce_piece(
-					__in ptce_piece_t type,
-					__in ptce_piece_col_t color
+					__in_opt ptce_piece_t type = PIECE_EMPTY,
+					__in_opt ptce_piece_col_t color = PIECE_WHITE
 					);
 
 				_ptce_piece(
@@ -106,6 +106,8 @@ namespace PTCE_NS {
 
 			protected:
 
+				friend class _ptce_piece_factory;
+
 				ptce_piece_col_t m_color;
 
 				ptce_piece_t m_type;
@@ -116,7 +118,80 @@ namespace PTCE_NS {
 
 		} ptce_piece, *ptce_piece_ptr;
 
-		// TODO: implement factory
+		void ptce_piece_factory_destroy(void);
+
+		typedef class _ptce_piece_factory {
+
+			public:
+
+				~_ptce_piece_factory(void);
+
+				static _ptce_piece_factory *acquire(void);
+
+				bool contains(
+					__in const ptce_piece &piece
+					);
+
+				size_t decrement_reference(
+					__in const ptce_piece &piece
+					);
+
+				void destroy(void);
+
+				ptce_piece &generate(
+					__in ptce_piece_t type,
+					__in ptce_piece_col_t color
+					);
+
+				size_t increment_reference(
+					__in const ptce_piece &piece
+					);
+
+				void initialize(void);
+
+				static bool is_allocated(void);
+
+				bool is_initialized(void);
+
+				size_t reference_count(
+					__in const ptce_piece &piece
+					);
+
+				size_t size(void);
+
+				std::string to_string(
+					__in_opt bool verbose = false
+					);
+
+			protected:
+
+				friend void ptce_piece_factory_destroy(void);
+
+				_ptce_piece_factory(void);
+
+				_ptce_piece_factory(
+					__in const _ptce_piece_factory &other
+					);
+
+				_ptce_piece_factory &operator=(
+					__in const _ptce_piece_factory &other
+					);
+
+				std::map<ptce_uid, std::pair<ptce_piece, size_t>>::iterator find_piece(
+					__in const ptce_uid &uid
+					);
+
+				bool m_initialized;
+
+				static _ptce_piece_factory *m_instance;
+
+				std::map<ptce_uid, std::pair<ptce_piece, size_t>> m_piece_map;
+
+			private:
+
+				std::recursive_mutex m_lock;
+
+		} ptce_piece_factory, *ptce_piece_factory_ptr;
 	}
 }
 
