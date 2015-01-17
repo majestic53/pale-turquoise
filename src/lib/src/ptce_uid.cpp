@@ -357,6 +357,10 @@ namespace PTCE_NS {
 				result.id() = ((uint64_t) m_distribution(m_generator) << 0x20) 
 							| m_distribution(m_generator);
 
+				if(!result.id()) {
+					continue;
+				}
+
 				if(!unique) {
 					break;
 				}
@@ -405,6 +409,7 @@ namespace PTCE_NS {
 
 			m_uid_map.clear();
 			m_initialized = true;
+			add(UID_NULL);
 
 			TRACE_EXIT("Return Value: 0%x", 0);
 		}

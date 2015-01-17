@@ -89,6 +89,8 @@ namespace PTCE_NS {
 			__in const _ptce_uid &right
 			);
 
+		#define UID_NULL ptce_uid(UINT64_MAX)
+
 		void ptce_uid_factory_destroy(void);
 
 		typedef class _ptce_uid_factory {

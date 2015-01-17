@@ -268,7 +268,7 @@ namespace PTCE_NS {
 
 		bool 
 		_ptce_node_factory::contains(
-			__in const ptce_node &node
+			__in const ptce_uid &uid
 			)
 		{
 			bool result;
@@ -280,15 +280,23 @@ namespace PTCE_NS {
 				THROW_PTCE_NODE_EXCEPTION(PTCE_NODE_EXCEPTION_UNINITIAILIZED);
 			}
 
-			result = (m_node_map.find(node.m_uid) != m_node_map.end());
+			result = (m_node_map.find(uid) != m_node_map.end());
 
 			TRACE_EXIT("Return Value: 0x%x", result);
 			return result;
 		}
 
+		bool 
+		_ptce_node_factory::contains(
+			__in const ptce_node &node
+			)
+		{
+			return contains(node.m_uid);
+		}
+
 		size_t 
 		_ptce_node_factory::decrement_reference(
-			__in const ptce_node &node
+			__in const ptce_uid &uid
 			)
 		{
 			size_t result = 0;
@@ -301,7 +309,7 @@ namespace PTCE_NS {
 				THROW_PTCE_NODE_EXCEPTION(PTCE_NODE_EXCEPTION_UNINITIAILIZED);
 			}
 
-			node_iter = find_node(node.m_uid);
+			node_iter = find_node(uid);
 
 			if(node_iter->second.second == PTCE_INIT_REF_DEF) {
 				m_node_map.erase(node_iter);
@@ -311,6 +319,14 @@ namespace PTCE_NS {
 
 			TRACE_EXIT("Return Value: %lu", result);
 			return result;
+		}
+
+		size_t 
+		_ptce_node_factory::decrement_reference(
+			__in const ptce_node &node
+			)
+		{
+			return decrement_reference(node.m_uid);
 		}
 
 		void 
@@ -384,7 +400,7 @@ namespace PTCE_NS {
 
 		size_t 
 		_ptce_node_factory::increment_reference(
-			__in const ptce_node &node
+			__in const ptce_uid &uid
 			)
 		{
 			size_t result;
@@ -396,10 +412,18 @@ namespace PTCE_NS {
 				THROW_PTCE_NODE_EXCEPTION(PTCE_NODE_EXCEPTION_UNINITIAILIZED);
 			}
 
-			result = ++find_node(node.m_uid)->second.second;
+			result = ++find_node(uid)->second.second;
 
 			TRACE_EXIT("Return Value: %lu", result);
 			return result;
+		}
+
+		size_t 
+		_ptce_node_factory::increment_reference(
+			__in const ptce_node &node
+			)
+		{
+			return increment_reference(node.m_uid);
 		}
 
 		void 
@@ -442,7 +466,7 @@ namespace PTCE_NS {
 
 		size_t 
 		_ptce_node_factory::reference_count(
-			__in const ptce_node &node
+			__in const ptce_uid &uid
 			)
 		{
 			size_t result;
@@ -454,10 +478,18 @@ namespace PTCE_NS {
 				THROW_PTCE_NODE_EXCEPTION(PTCE_NODE_EXCEPTION_UNINITIAILIZED);
 			}
 
-			result = find_node(node.m_uid)->second.second;
+			result = find_node(uid)->second.second;
 
 			TRACE_EXIT("Return Value: %lu", result);
 			return result;
+		}
+
+		size_t 
+		_ptce_node_factory::reference_count(
+			__in const ptce_node &node
+			)
+		{
+			return reference_count(node.m_uid);
 		}
 
 		size_t 

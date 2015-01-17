@@ -136,7 +136,7 @@ namespace PTCE_NS {
 			TRACE_ENTRY();
 
 			result << ptce_uid::id_as_string(piece.m_uid) << " Type=" << PIECE_TYPE_STRING(piece.m_type) 
-					<< " (0x" << VALUE_AS_HEX(ptce_piece_t, piece.m_type) << " ), Color=" 
+					<< " (0x" << VALUE_AS_HEX(ptce_piece_t, piece.m_type) << "), Color=" 
 					<< PIECE_COLOR_STRING(piece.m_color) << " (0x" 
 					<< VALUE_AS_HEX(ptce_piece_col_t, piece.m_color) << ")";
 
@@ -237,7 +237,7 @@ namespace PTCE_NS {
 
 		bool 
 		_ptce_piece_factory::contains(
-			__in const ptce_piece &piece
+			__in const ptce_uid &uid
 			)
 		{
 			bool result;
@@ -249,15 +249,23 @@ namespace PTCE_NS {
 				THROW_PTCE_PIECE_EXCEPTION(PTCE_PIECE_EXCEPTION_UNINITIALIZED);
 			}
 
-			result = (m_piece_map.find(piece.m_uid) != m_piece_map.end());
+			result = (m_piece_map.find(uid) != m_piece_map.end());
 
 			TRACE_EXIT("Return Value: 0x%x", result);
 			return result;
 		}
 
+		bool
+		_ptce_piece_factory::contains(
+			__in const ptce_piece &piece
+			)
+		{
+			return contains(piece.m_uid);
+		}
+
 		size_t 
 		_ptce_piece_factory::decrement_reference(
-			__in const ptce_piece &piece
+			__in const ptce_uid &uid
 			)
 		{
 			size_t result = 0;
@@ -270,7 +278,7 @@ namespace PTCE_NS {
 				THROW_PTCE_PIECE_EXCEPTION(PTCE_PIECE_EXCEPTION_UNINITIALIZED);
 			}
 
-			piece_iter = find_piece(piece.m_uid);
+			piece_iter = find_piece(uid);
 
 			if(piece_iter->second.second == PTCE_INIT_REF_DEF) {
 				m_piece_map.erase(piece_iter);
@@ -280,6 +288,14 @@ namespace PTCE_NS {
 
 			TRACE_EXIT("Return Value: %lu", result);
 			return result;
+		}
+
+		size_t 
+		_ptce_piece_factory::decrement_reference(
+			__in const ptce_piece &piece
+			)
+		{
+			return decrement_reference(piece.m_uid);
 		}
 
 		void 
@@ -352,8 +368,9 @@ namespace PTCE_NS {
 					"%s", piece.id().to_string().c_str());
 			}
 
+			piece = ptce_piece(type, color);
 			m_piece_map.insert(std::pair<ptce_uid, std::pair<ptce_piece, size_t>>(piece.id(), 
-					std::pair<ptce_piece, size_t>(ptce_piece(type, color), PTCE_INIT_REF_DEF)));
+					std::pair<ptce_piece, size_t>(piece, PTCE_INIT_REF_DEF)));
 
 			TRACE_EXIT("Return Value: 0x%x", 0);
 			return find_piece(piece.id())->second.first;
@@ -361,7 +378,7 @@ namespace PTCE_NS {
 
 		size_t 
 		_ptce_piece_factory::increment_reference(
-			__in const ptce_piece &piece
+			__in const ptce_uid &uid
 			)
 		{
 			size_t result;
@@ -373,10 +390,18 @@ namespace PTCE_NS {
 				THROW_PTCE_PIECE_EXCEPTION(PTCE_PIECE_EXCEPTION_UNINITIALIZED);
 			}
 
-			result = ++find_piece(piece.m_uid)->second.second;
+			result = ++find_piece(uid)->second.second;
 
 			TRACE_EXIT("Return Value: %lu", result);
 			return result;
+		}
+
+		size_t 
+		_ptce_piece_factory::increment_reference(
+			__in const ptce_piece &piece
+			)
+		{
+			return increment_reference(piece.m_uid);
 		}
 
 		void 
@@ -419,7 +444,7 @@ namespace PTCE_NS {
 
 		size_t 
 		_ptce_piece_factory::reference_count(
-			__in const ptce_piece &piece
+			__in const ptce_uid &uid
 			)
 		{
 			size_t result;
@@ -431,10 +456,18 @@ namespace PTCE_NS {
 				THROW_PTCE_PIECE_EXCEPTION(PTCE_PIECE_EXCEPTION_UNINITIALIZED);
 			}
 
-			result = find_piece(piece.m_uid)->second.second;
+			result = find_piece(uid)->second.second;
 
 			TRACE_EXIT("Return Value: %lu", result);
 			return result;
+		}
+
+		size_t 
+		_ptce_piece_factory::reference_count(
+			__in const ptce_piece &piece
+			)
+		{
+			return reference_count(piece.m_uid);
 		}
 
 		size_t 

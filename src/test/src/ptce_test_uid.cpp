@@ -83,7 +83,7 @@ exit:
 						ptce_uid_base base1;
 
 						fact_inst = inst->acquire_uid_factory();
-						if(fact_inst->size() != 2) {
+						if(fact_inst->size() != 3) {
 							std::cerr << "----!ptce_test_uid_base_assignment failure(0)" << std::endl;
 							result = PTCE_TEST_FAILURE;
 							goto exit;
@@ -97,7 +97,7 @@ exit:
 							goto exit;
 						}
 
-						if((fact_inst->size() != 1)
+						if((fact_inst->size() != 2)
 								|| (fact_inst->reference_count(base0.id()) != 2)) {
 							std::cerr << "----!ptce_test_uid_base_assignment failure(2)" << std::endl;
 							result = PTCE_TEST_FAILURE;
@@ -105,7 +105,7 @@ exit:
 						}
 					}
 
-					if((fact_inst->size() != 1)
+					if((fact_inst->size() != 2)
 							|| (fact_inst->reference_count(base0.id()) != 1)) {
 						std::cerr << "----!ptce_test_uid_base_assignment failure(3)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -148,7 +148,7 @@ exit:
 				try {
 					ptce_uid_base base0;
 
-					if((fact_inst->size() != 1)
+					if((fact_inst->size() != 2)
 							|| (fact_inst->reference_count(base0.id()) != 1)) {
 						std::cerr << "----!ptce_test_uid_base_constructor failure(0)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -157,7 +157,7 @@ exit:
 
 					ptce_uid_base base1(base0);
 
-					if((fact_inst->size() != 1)
+					if((fact_inst->size() != 2)
 							|| (fact_inst->reference_count(base0.id()) != 2)) {
 						std::cerr << "----!ptce_test_uid_base_constructor failure(1)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -166,7 +166,7 @@ exit:
 
 					ptce_uid_base base2(base0.id());
 
-					if((fact_inst->size() != 1)
+					if((fact_inst->size() != 2)
 							|| (fact_inst->reference_count(base0.id()) != 3)) {
 						std::cerr << "----!ptce_test_uid_base_constructor failure(2)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -706,8 +706,15 @@ exit:
 				try {
 					inst->initialize();
 
-					if(!inst->is_initialized() || inst->size()) {
+					if(!inst->is_initialized() || (inst->size() != 1)) {
 						std::cerr << "----!ptce_test_uid_factory_initializ failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					if(!inst->contains(UID_NULL)
+							|| (inst->reference_count(UID_NULL) != 1)) {
+						std::cerr << "----!ptce_test_uid_factory_initializ failure(1)" << std::endl;
 						result = PTCE_TEST_FAILURE;
 						goto exit;
 					}
@@ -932,7 +939,7 @@ exit:
 
 				try {
 
-					if(inst->size()) {
+					if(inst->size() != 1) {
 						std::cerr << "----!ptce_test_uid_factory_size failure(0)" << std::endl;
 						result = PTCE_TEST_FAILURE;
 						goto exit;
@@ -940,7 +947,7 @@ exit:
 
 					uid0 = inst->generate(true);
 
-					if(inst->size() != 1) {
+					if(inst->size() != 2) {
 						std::cerr << "----!ptce_test_uid_factory_size failure(1)" << std::endl;
 						result = PTCE_TEST_FAILURE;
 						goto exit;
@@ -948,7 +955,7 @@ exit:
 
 					uid1 = inst->generate(true);
 
-					if(inst->size() != 2) {
+					if(inst->size() != 3) {
 						std::cerr << "----!ptce_test_uid_factory_size failure(2)" << std::endl;
 						result = PTCE_TEST_FAILURE;
 						goto exit;
@@ -957,7 +964,7 @@ exit:
 					inst->decrement_reference(uid0);
 					inst->decrement_reference(uid1);
 
-					if(inst->size()) {
+					if(inst->size() != 1) {
 						std::cerr << "----!ptce_test_uid_factory_size failure(3)" << std::endl;
 						result = PTCE_TEST_FAILURE;
 						goto exit;
