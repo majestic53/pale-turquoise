@@ -24,7 +24,9 @@ namespace PTCE_NS {
 
 	namespace PTCE_COMP_NS {
 
-		_ptce_node::_ptce_node(void)
+		_ptce_node::_ptce_node(void) :
+			m_entry(UID_NULL),
+			m_parent(UID_NULL)
 		{
 			TRACE_ENTRY();
 			TRACE_EXIT("Return Value: 0x%x", 0);
@@ -60,6 +62,9 @@ namespace PTCE_NS {
 		_ptce_node::~_ptce_node(void)
 		{
 			TRACE_ENTRY();
+
+			decrement_reference();
+
 			TRACE_EXIT("Return Value: 0x%x", 0);
 		}
 

@@ -25,9 +25,9 @@ namespace PTCE_NS {
 	namespace PTCE_COMP_NS {
 
 		static const std::string PIECE_SYMBOL_STR[] = {
-			" ", "♔", "♕", "♖", "♗", "♘", "♙",
-			// ---
 			" ", "♚", "♛", "♜", "♝", "♞", "♟",
+			// ---
+			" ", "♔", "♕", "♖", "♗", "♘", "♙",
 			};
 
 		#define PIECE_SYMBOL_STRING(_TYPE_, _COLOR_) \
@@ -59,6 +59,9 @@ namespace PTCE_NS {
 		_ptce_piece::~_ptce_piece(void)
 		{
 			TRACE_ENTRY();
+
+			decrement_reference();
+
 			TRACE_EXIT("Return Value: 0x%x", 0);
 		}
 

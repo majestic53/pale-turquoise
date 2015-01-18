@@ -106,6 +106,8 @@ namespace PTCE_NS {
 
 			protected:
 
+				friend class _ptce_board;
+
 				friend class _ptce_piece_factory;
 
 				ptce_piece_col_t m_color;

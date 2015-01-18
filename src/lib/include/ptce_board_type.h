@@ -34,8 +34,11 @@ namespace PTCE_NS {
 
 		enum {
 			PTCE_BOARD_EXCEPTION_ACQUIRE_FAILED = 0,
+			PTCE_BOARD_EXCEPTION_ACQUIRE_PIECE_FACTORY_FAILED,
 			PTCE_BOARD_EXCEPTION_ALREADY_EXISTS,
 			PTCE_BOARD_EXCEPTION_INITIALIZED,
+			PTCE_BOARD_EXCEPTION_INVALID_POSITION,
+			PTCE_BOARD_EXCEPTION_INVALID_STATE,
 			PTCE_BOARD_EXCEPTION_UNINITIALIZED,
 			PTCE_BOARD_EXCEPTION_UNKNOWN_BOARD,
 		};
@@ -43,11 +46,14 @@ namespace PTCE_NS {
 		#define PTCE_BOARD_EXCEPTION_MAX PTCE_BOARD_EXCEPTION_UNKNOWN_BOARD
 
 		static const std::string PTCE_BOARD_EXCEPTION_STR[] = {
-			PTCE_BOARD_HEADER "Failed to acquire board factory",
-			PTCE_BOARD_HEADER "Board already exists",
-			PTCE_BOARD_HEADER "Board factory is already initalized",
-			PTCE_BOARD_HEADER "Board factory is uninitialized",
-			PTCE_BOARD_HEADER "Board does not exist",
+			PTCE_BOARD_HEADER " Failed to acquire board factory",
+			PTCE_BOARD_HEADER " Failed to acquire piece factory",
+			PTCE_BOARD_HEADER " Board already exists",
+			PTCE_BOARD_HEADER " Board factory is already initalized",
+			PTCE_BOARD_HEADER " Invalid piece position",
+			PTCE_BOARD_HEADER " Invalid board state",
+			PTCE_BOARD_HEADER " Board factory is uninitialized",
+			PTCE_BOARD_HEADER " Board does not exist",
 			};
 
 		#define PTCE_BOARD_EXCEPTION_STRING(_EXCEPT_) \

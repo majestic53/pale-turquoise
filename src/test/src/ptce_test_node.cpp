@@ -92,8 +92,8 @@ exit:
 
 					ptce_node node0;
 
-					if((node0.entry() != ptce_uid(0))
-							|| (node0.parent() != ptce_uid(0))
+					if((node0.entry() != UID_NULL)
+							|| (node0.parent() != UID_NULL)
 							|| node0.size()) {
 						std::cerr << "----!ptce_test_node_constructor failure(0)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -108,8 +108,8 @@ exit:
 
 					ptce_node node1(ptce_uid(TEST_UID));
 
-					if((node1.entry() != ptce_uid(0))
-							|| (node1.parent() != ptce_uid(0))
+					if((node1.entry() != UID_NULL)
+							|| (node1.parent() != UID_NULL)
 							|| node1.size()) {
 						std::cerr << "----!ptce_test_node_constructor failure(2)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -124,8 +124,8 @@ exit:
 
 					ptce_node node2(node0);
 
-					if((node2.entry() != ptce_uid(0))
-							|| (node2.parent() != ptce_uid(0))
+					if((node2.entry() != UID_NULL)
+							|| (node2.parent() != UID_NULL)
 							|| node2.size()) {
 						std::cerr << "----!ptce_test_node_constructor failure(4)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -229,7 +229,7 @@ exit:
 
 				try {
 
-					if(node.entry() != ptce_uid(0)) {
+					if(node.entry() != UID_NULL) {
 						std::cerr << "----!ptce_test_node_entry failure(0)" << std::endl;
 						result = PTCE_TEST_FAILURE;
 						goto exit;
@@ -951,7 +951,7 @@ exit:
 
 				try {
 
-					if(node.parent() != ptce_uid(0)) {
+					if(node.parent() != UID_NULL) {
 						std::cerr << "----!ptce_test_node_parent failure(0)" << std::endl;
 						result = PTCE_TEST_FAILURE;
 						goto exit;

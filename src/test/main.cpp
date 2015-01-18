@@ -19,12 +19,30 @@
 
 #include "../lib/include/ptce.h"
 #include "./include/ptce_test.h"
+#include "./include/ptce_test_board.h"
 #include "./include/ptce_test_node.h"
 #include "./include/ptce_test_piece.h"
 #include "./include/ptce_test_singleton.h"
 #include "./include/ptce_test_uid.h"
 
 #define RUN_TESTS
+
+ptce_test_set 
+create_test_set_ptce_board(void)
+{
+	size_t test_iter = 0;
+	ptce_test_set result(PTCE_TEST_BOARD_TRACE_HEADER);
+
+	TRACE_ENTRY();
+
+	for(; test_iter <= PTCE_TEST_BOARD_MAX; ++test_iter) {
+		result.add(PTCE_TEST_BOARD_STRING(test_iter), 
+				PTCE_TEST_BOARD_CALLBACK(test_iter));
+	}
+
+	TRACE_EXIT("Return Value: 0x%x", 0);
+	return result;	
+}
 
 ptce_test_set 
 create_test_set_ptce_node(void)
@@ -106,6 +124,7 @@ initialize_test_suite(void)
 	inst->add(PTCE_TEST_UID_TRACE_HEADER, create_test_set_ptce_uid());
 	inst->add(PTCE_TEST_NODE_TRACE_HEADER, create_test_set_ptce_node());
 	inst->add(PTCE_TEST_PIECE_TRACE_HEADER, create_test_set_ptce_piece());
+	inst->add(PTCE_TEST_BOARD_TRACE_HEADER, create_test_set_ptce_board());
 
 	TRACE_EXIT("Return Value: 0x%x", 0);
 }

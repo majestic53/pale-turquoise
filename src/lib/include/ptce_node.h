@@ -36,8 +36,8 @@ namespace PTCE_NS {
 
 				_ptce_node(
 					__in const ptce_uid &uid,
-					__in_opt const ptce_uid &entry = ptce_uid(),
-					__in_opt const ptce_uid &parent = ptce_uid(),
+					__in_opt const ptce_uid &entry = UID_NULL,
+					__in_opt const ptce_uid &parent = UID_NULL,
 					__in_opt const std::vector<ptce_uid> &children = std::vector<ptce_uid>()
 					);
 
@@ -122,7 +122,7 @@ namespace PTCE_NS {
 
 				ptce_node &generate(
 					__in const ptce_uid &entry,
-					__in_opt const ptce_uid &parent = ptce_uid(),
+					__in_opt const ptce_uid &parent = UID_NULL,
 					__in_opt const std::vector<ptce_uid> &children = std::vector<ptce_uid>()
 					);
 
