@@ -95,7 +95,11 @@ namespace PTCE_NS {
 					__out size_t &black
 					);
 
+				std::vector<ptce_piece> &piece_list(void);
+
 				ptce_piece &piece_moved(void);
+
+				ptce_pos_t &piece_moved_coordinate(void);
 
 				size_t size(void);
 
@@ -135,6 +139,8 @@ namespace PTCE_NS {
 				std::recursive_mutex m_lock;
 
 		} ptce_board, *ptce_board_ptr;
+
+		// TODO: board factory class
 	}
 }
 

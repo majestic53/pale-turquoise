@@ -100,7 +100,7 @@ namespace PTCE_NS {
 			bool m_initialized;
 				
 			static _ptce *m_instance;
-		
+
 			ptce_node_factory_ptr m_factory_node;
 
 			ptce_piece_factory_ptr m_factory_piece;

@@ -24,10 +24,14 @@ namespace PTCE_NS {
 
 	namespace PTCE_TEST_NS {
 
+		#define BOARD_PIECE_LEN 32
+		#define BOARD_PIECE_COLOR_LEN (BOARD_PIECE_LEN / 2)
+
 		ptce_test_t 
 		ptce_test_board_assignment(void)
 		{
 			ptce_ptr inst = NULL;
+			size_t piece_iter = 0;
 			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
 
 			TRACE_ENTRY();
@@ -35,11 +39,29 @@ namespace PTCE_NS {
 			try {
 				inst = ptce::acquire();
 				inst->initialize();
+				ptce_board board0, board1;
+				board1.move(ptce_pos_t(3, 1), ptce_pos_t(3, 3));
 
 				try {
+					board0 = board1;
 
-					// TODO
+					if((board0.piece_captured() != board1.piece_captured())
+							|| (board0.piece_moved() != board1.piece_moved())
+							|| (board0.state() != board1.state())
+							|| (board0.piece_list().size() != board1.piece_list().size())) {
+						std::cerr << "----!ptce_test_board_assignment failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 
+					for(; piece_iter < board1.piece_list().size(); ++piece_iter) {
+
+						if(board0.piece_list().at(piece_iter) != board1.piece_list().at(piece_iter)) {
+							std::cerr << "----!ptce_test_board_assignment failure(1)" << std::endl;
+							result = PTCE_TEST_FAILURE;
+							goto exit;
+						}
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_assignment exception(0): " 
 							<< exc.what() << std::endl;
@@ -74,8 +96,48 @@ exit:
 
 				try {
 
-					// TODO
+					// default constructor
+					{
+						ptce_board board;
 
+						try {
+							board.piece_moved();
+							std::cerr << "----!ptce_test_board_constructor failure(0)" << std::endl;
+							result = PTCE_TEST_FAILURE;
+							goto exit;
+						} catch(...) { }
+
+						if(board.piece_captured()
+								|| (board.state() != BOARD_INACTIVE)
+								|| (board.piece_list().size() != BOARD_LEN)) {
+							std::cerr << "----!ptce_test_board_constructor failure(1)" << std::endl;
+							result = PTCE_TEST_FAILURE;
+							goto exit;
+						}
+					}
+
+					// constructor w/ parameter
+					{
+						ptce_board board0;
+						board0.move(ptce_pos_t(3, 1), ptce_pos_t(3, 3));
+						ptce_board board1(board0);
+
+						if(board1.piece_captured()
+								|| (board1.state() != BOARD_ACTIVE)
+								|| (board1.piece_list().size() != BOARD_LEN)) {
+							std::cerr << "----!ptce_test_board_constructor failure(2)" << std::endl;
+							result = PTCE_TEST_FAILURE;
+							goto exit;
+						}
+
+						if((board1.piece_moved().type() != PIECE_PAWN)
+								|| (board1.piece(ptce_pos_t(3, 1)).type() != PIECE_EMPTY) 
+								|| (board1.piece(ptce_pos_t(3, 3)).type() != PIECE_PAWN)) {
+							std::cerr << "----!ptce_test_board_constructor failure(3)" << std::endl;
+							result = PTCE_TEST_FAILURE;
+							goto exit;
+						}
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_constructor exception(0): " 
 							<< exc.what() << std::endl;
@@ -107,11 +169,28 @@ exit:
 			try {
 				inst = ptce::acquire();
 				inst->initialize();
+				ptce_board board;
 
 				try {
 
-					// TODO
+					try {
+						board.contains(ptce_pos_t(8, 8));
+						std::cerr << "----!ptce_test_board_contains failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;					
+					} catch(...) { }
 
+					if(board.contains(ptce_pos_t(3, 3))) {
+						std::cerr << "----!ptce_test_board_contains failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					if(!board.contains(ptce_pos_t(3, 1))) {
+						std::cerr << "----!ptce_test_board_contains failure(2)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_contains exception(0): " 
 							<< exc.what() << std::endl;
@@ -143,11 +222,23 @@ exit:
 			try {
 				inst = ptce::acquire();
 				inst->initialize();
+				ptce_board board0, board1;
+				board1.move(ptce_pos_t(3, 1), ptce_pos_t(3, 3));
 
 				try {
 
-					// TODO
+					if(board0 == board1) {
+						std::cerr << "----!ptce_test_board_equals failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 
+					board0 = board1;
+					if(!(board0 == board1)) {
+						std::cerr << "----!ptce_test_board_equals failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_equals exception(0): " 
 							<< exc.what() << std::endl;
@@ -171,6 +262,7 @@ exit:
 		ptce_test_t 
 		ptce_test_board_move(void)
 		{
+			size_t black, white;
 			ptce_ptr inst = NULL;
 			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
 
@@ -179,11 +271,42 @@ exit:
 			try {
 				inst = ptce::acquire();
 				inst->initialize();
+				ptce_board board;
 
 				try {
 
-					// TODO
+					try {
+						board.move(ptce_pos_t(8, 8), ptce_pos_t(8, 8));
+						std::cerr << "----!ptce_test_board_move failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					} catch(...) { }
 
+					board.move(ptce_pos_t(3, 1), ptce_pos_t(3, 3));
+
+					if(board.piece_captured()
+							|| (board.state() != BOARD_ACTIVE)
+							|| (board.piece_moved().type() != PIECE_PAWN)
+							|| (board.piece_count(white, black) != BOARD_PIECE_LEN)
+							|| (white != BOARD_PIECE_COLOR_LEN)
+							|| (black != BOARD_PIECE_COLOR_LEN)) {
+						std::cerr << "----!ptce_test_board_move failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.move(ptce_pos_t(2, 1), ptce_pos_t(3, 3));
+
+					if(!board.piece_captured()
+							|| (board.state() != BOARD_ACTIVE)
+							|| (board.piece_moved().type() != PIECE_PAWN)
+							|| (board.piece_count(white, black) != (BOARD_PIECE_LEN - 1))
+							|| (white != (BOARD_PIECE_COLOR_LEN - 1))
+							|| (black != BOARD_PIECE_COLOR_LEN)) {
+						std::cerr << "----!ptce_test_board_move failure(2)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_move exception(0): " 
 							<< exc.what() << std::endl;
@@ -215,11 +338,23 @@ exit:
 			try {
 				inst = ptce::acquire();
 				inst->initialize();
+				ptce_board board0, board1;
+				board1.move(ptce_pos_t(3, 1), ptce_pos_t(3, 3));
 
 				try {
 
-					// TODO
+					if(!(board0 != board1)) {
+						std::cerr << "----!ptce_test_board_not_equals failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 
+					board0 = board1;
+					if(board0 != board1) {
+						std::cerr << "----!ptce_test_board_not_equals failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_not_equals exception(0): " 
 							<< exc.what() << std::endl;
@@ -243,6 +378,7 @@ exit:
 		ptce_test_t 
 		ptce_test_board_piece(void)
 		{
+			ptce_piece piece;
 			ptce_ptr inst = NULL;
 			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
 
@@ -251,11 +387,25 @@ exit:
 			try {
 				inst = ptce::acquire();
 				inst->initialize();
+				ptce_board board;
 
 				try {
 
-					// TODO
+					piece = board.piece(ptce_pos_t(3, 1));
+					if((piece.type() != PIECE_PAWN)
+							|| (piece.color() != PIECE_WHITE)) {
+						std::cerr << "----!ptce_test_board_piece failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 
+					piece = board.piece(ptce_pos_t(3, 3));
+					if((piece.type() != PIECE_EMPTY)
+							|| (piece.color() != PIECE_WHITE)) {
+						std::cerr << "----!ptce_test_board_piece failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_piece exception(0): " 
 							<< exc.what() << std::endl;
@@ -287,11 +437,24 @@ exit:
 			try {
 				inst = ptce::acquire();
 				inst->initialize();
+				ptce_board board;
 
 				try {
 
-					// TODO
+					if(board.piece_captured()) {
+						std::cerr << "----!ptce_test_board_piece_captured failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 
+					board.move(ptce_pos_t(3, 1), ptce_pos_t(3, 3));
+					board.move(ptce_pos_t(2, 1), ptce_pos_t(3, 3));
+
+					if(!board.piece_captured()) {
+						std::cerr << "----!ptce_test_board_piece_captured failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_piece_captured exception(0): " 
 							<< exc.what() << std::endl;
@@ -316,6 +479,7 @@ exit:
 		ptce_test_board_piece_count(void)
 		{
 			ptce_ptr inst = NULL;
+			size_t black, total, white;
 			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
 
 			TRACE_ENTRY();
@@ -323,11 +487,30 @@ exit:
 			try {
 				inst = ptce::acquire();
 				inst->initialize();
+				ptce_board board;
 
 				try {
 
-					// TODO
+					total = board.piece_count(white, black);
+					if((total != BOARD_PIECE_LEN)
+							|| (white != BOARD_PIECE_COLOR_LEN)
+							|| (black != BOARD_PIECE_COLOR_LEN)) {
+						std::cerr << "----!ptce_test_board_piece_count failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 
+					board.move(ptce_pos_t(3, 1), ptce_pos_t(3, 3));
+					board.move(ptce_pos_t(2, 1), ptce_pos_t(3, 3));
+
+					total = board.piece_count(white, black);
+					if((total != (BOARD_PIECE_LEN - 1))
+							|| (white != (BOARD_PIECE_COLOR_LEN - 1))
+							|| (black != BOARD_PIECE_COLOR_LEN)) {
+						std::cerr << "----!ptce_test_board_piece_count failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_piece_count exception(0): " 
 							<< exc.what() << std::endl;
@@ -349,7 +532,7 @@ exit:
 		}
 
 		ptce_test_t 
-		ptce_test_board_piece_moved(void)
+		ptce_test_board_piece_list(void)
 		{
 			ptce_ptr inst = NULL;
 			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
@@ -359,13 +542,101 @@ exit:
 			try {
 				inst = ptce::acquire();
 				inst->initialize();
+				ptce_board board;
 
 				try {
 
-					// TODO
+					if(board.piece_list().size() != BOARD_LEN) {
+						std::cerr << "----!ptce_test_board_piece_list failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_piece_list exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
 
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_board_piece_moved(void)
+		{
+			ptce_uid uid;
+			ptce_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_board board;
+				uid = board.piece(ptce_pos_t(3, 1)).id();
+				board.move(ptce_pos_t(3, 1), ptce_pos_t(3, 3));
+
+				try {
+
+					if(board.piece_moved().id() != uid) {
+						std::cerr << "----!ptce_test_board_piece_moved failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_piece_moved exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_board_piece_moved_coordinate(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_board board;
+				board.move(ptce_pos_t(3, 1), ptce_pos_t(3, 3));
+
+				try {
+
+					if(board.piece_moved_coordinate() != ptce_pos_t(3, 3)) {
+						std::cerr << "----!ptce_test_board_piece_moved_coordinate failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_piece_moved_coordinate exception(0): " 
 							<< exc.what() << std::endl;
 					result = PTCE_TEST_FAILURE;
 					goto exit;
@@ -395,11 +666,15 @@ exit:
 			try {
 				inst = ptce::acquire();
 				inst->initialize();
+				ptce_board board;
 
 				try {
 
-					// TODO
-
+					if(board.size() != BOARD_LEN) {
+						std::cerr << "----!ptce_test_board_size failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_size exception(0): " 
 							<< exc.what() << std::endl;
@@ -431,11 +706,23 @@ exit:
 			try {
 				inst = ptce::acquire();
 				inst->initialize();
+				ptce_board board;
 
 				try {
 
-					// TODO
+					if(board.state() != BOARD_INACTIVE) {
+						std::cerr << "----!ptce_test_board_state failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 
+					board.move(ptce_pos_t(3, 1), ptce_pos_t(3, 3));
+
+					if(board.state() != BOARD_ACTIVE) {
+						std::cerr << "----!ptce_test_board_state failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_state exception(0): " 
 							<< exc.what() << std::endl;

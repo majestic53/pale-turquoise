@@ -270,7 +270,7 @@ namespace PTCE_NS {
 			if((position.first > BOARD_POS_MAX)
 					|| (position.second > BOARD_POS_MAX)) {
 				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_POSITION,
-					"{%lu, %lu} (must be at most {%lu, %lu})", position.first,
+					"{%i, %i} (must be at most {%i, %i})", position.first,
 					position.second, BOARD_POS_MAX, BOARD_POS_MAX);
 			}
 
@@ -411,14 +411,14 @@ namespace PTCE_NS {
 			if((old_position.first > BOARD_POS_MAX)
 					|| (old_position.second > BOARD_POS_MAX)) {
 				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_POSITION,
-					"{%lu, %lu} (must be at most {%lu, %lu})", old_position.first,
+					"{%i, %i} (must be at most {%i, %i})", old_position.first,
 					old_position.second, BOARD_POS_MAX, BOARD_POS_MAX);
 			}
 
 			if((new_position.first > BOARD_POS_MAX)
 					|| (new_position.second > BOARD_POS_MAX)) {
 				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_POSITION,
-					"{%lu, %lu} (must be at most {%lu, %lu})", new_position.first,
+					"{%i, %i} (must be at most {%i, %i})", new_position.first,
 					new_position.second, BOARD_POS_MAX, BOARD_POS_MAX);
 			}
 
@@ -446,7 +446,7 @@ namespace PTCE_NS {
 			if((position.first > BOARD_POS_MAX)
 					|| (position.second > BOARD_POS_MAX)) {
 				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_POSITION,
-					"{%lu, %lu} (must be at most {%lu, %lu})", position.first,
+					"{%i, %i} (must be at most {%i, %i})", position.first,
 					position.second, BOARD_POS_MAX, BOARD_POS_MAX);
 			}
 
@@ -496,6 +496,15 @@ namespace PTCE_NS {
 			return result;
 		}
 
+		std::vector<ptce_piece> &
+		_ptce_board::piece_list(void) 
+		{
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+			TRACE_EXIT("Return Value: 0x%x", 0);
+			return m_piece_list;
+		}
+
 		ptce_piece &
 		_ptce_board::piece_moved(void)
 		{
@@ -510,6 +519,15 @@ namespace PTCE_NS {
 
 			TRACE_EXIT("Return Value: 0x%x", 0);
 			return piece(m_piece_moved);
+		}
+
+		ptce_pos_t &
+		_ptce_board::piece_moved_coordinate(void)
+		{
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+			TRACE_EXIT("Return Value: 0x%x", 0);
+			return m_piece_moved;
 		}
 
 		size_t 

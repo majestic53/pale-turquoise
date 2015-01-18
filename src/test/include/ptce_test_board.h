@@ -36,7 +36,9 @@ namespace PTCE_NS {
 			PTCE_TEST_BOARD_PIECE,
 			PTCE_TEST_BOARD_PIECE_CAPTURED,
 			PTCE_TEST_BOARD_PIECE_COUNT,
+			PTCE_TEST_BOARD_PIECE_LIST,
 			PTCE_TEST_BOARD_PIECE_MOVED,
+			PTCE_TEST_BOARD_PIECE_MOVED_COORDINATE,
 			PTCE_TEST_BOARD_SIZE,
 			PTCE_TEST_BOARD_STATE,
 		};
@@ -53,7 +55,9 @@ namespace PTCE_NS {
 			"PTCE_TEST_BOARD_PIECE",
 			"PTCE_TEST_BOARD_PIECE_CAPTURED",
 			"PTCE_TEST_BOARD_PIECE_COUNT",
+			"PTCE_TEST_BOARD_PIECE_LIST",
 			"PTCE_TEST_BOARD_PIECE_MOVED",
+			"PTCE_TEST_BOARD_PIECE_MOVED_COORDINATE",
 			"PTCE_TEST_BOARD_SIZE",
 			"PTCE_TEST_BOARD_STATE",
 			};
@@ -80,7 +84,11 @@ namespace PTCE_NS {
 
 		extern ptce_test_t ptce_test_board_piece_count(void);
 
+		extern ptce_test_t ptce_test_board_piece_list(void);
+
 		extern ptce_test_t ptce_test_board_piece_moved(void);
+
+		extern ptce_test_t ptce_test_board_piece_moved_coordinate(void);
 
 		extern ptce_test_t ptce_test_board_size(void);
 
@@ -96,7 +104,9 @@ namespace PTCE_NS {
 			ptce_test_board_piece,
 			ptce_test_board_piece_captured,
 			ptce_test_board_piece_count,
+			ptce_test_board_piece_list,
 			ptce_test_board_piece_moved,
+			ptce_test_board_piece_moved_coordinate,
 			ptce_test_board_size,
 			ptce_test_board_state,
 			};
