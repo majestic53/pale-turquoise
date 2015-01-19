@@ -16,6 +16,7 @@ Changelog
 *Updated: 1/18/2015*
 
 * Added chess board tests
+* Added chess board factory class/tests
 
 *Updated: 1/17/2015*
 
