@@ -390,7 +390,7 @@ namespace PTCE_NS {
 				THROW_PTCE_NODE_EXCEPTION(PTCE_NODE_EXCEPTION_UNINITIAILIZED);
 			}
 
-			if(m_node_map.find(node.id()) != m_node_map.end()) {
+			if(contains(node.id())) {
 				THROW_PTCE_NODE_EXCEPTION_MESSAGE(PTCE_NODE_EXCEPTION_ALREADY_EXISTS,
 					"%s", node.id().to_string().c_str());
 			}

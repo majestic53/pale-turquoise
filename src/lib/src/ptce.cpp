@@ -39,6 +39,7 @@ namespace PTCE_NS {
 	
 	_ptce::_ptce(void) :
 		m_initialized(false),
+		m_factory_board(ptce_board_factory::acquire()),
 		m_factory_node(ptce_node_factory::acquire()),
 		m_factory_piece(ptce_piece_factory::acquire()),
 		m_factory_uid(ptce_uid_factory::acquire())
@@ -52,8 +53,9 @@ namespace PTCE_NS {
 	
 	_ptce::~_ptce(void)
 	{
-		TRACE_ENTRY();
-		
+		TRACE_ENTRY();		
+
+		release_board_factory();
 		release_piece_factory();
 		release_node_factory();
 		release_uid_factory();
@@ -86,6 +88,22 @@ namespace PTCE_NS {
 		return result;
 	}
 	
+	ptce_board_factory_ptr 
+	_ptce::acquire_board_factory(void)
+	{
+		TRACE_ENTRY();
+		SERIALIZE_CALL_RECUR(m_lock);
+
+		if(!m_initialized) {
+			THROW_PTCE_EXCEPTION(PTCE_EXCEPTION_UNINITIALIZED);
+		}
+
+		m_factory_board = ptce_board_factory::acquire();
+
+		TRACE_EXIT("Return Value: 0x%p", m_factory_board);
+		return m_factory_board;
+	}
+
 	ptce_node_factory_ptr 
 	_ptce::acquire_node_factory(void)
 	{
@@ -144,6 +162,10 @@ namespace PTCE_NS {
 			THROW_PTCE_EXCEPTION(PTCE_EXCEPTION_UNINITIALIZED);
 		}
 		
+		if(m_factory_board && m_factory_board->is_initialized()) {
+			m_factory_board->destroy();
+		}
+
 		if(m_factory_piece && m_factory_piece->is_initialized()) {
 			m_factory_piece->destroy();
 		}
@@ -156,8 +178,6 @@ namespace PTCE_NS {
 			m_factory_uid->destroy();
 		}
 
-		// TODO: destroy factories, etc.
-		
 		m_initialized = false;
 		
 		TRACE_EXIT("Return Value: 0x%x", 0);
@@ -185,8 +205,10 @@ namespace PTCE_NS {
 			m_factory_piece->initialize();
 		}
 
-		// TODO: initialize factories, etc.
-		
+		if(m_factory_board && !m_factory_board->is_initialized()) {
+			m_factory_board->initialize();
+		}
+
 		m_initialized = true;
 		
 		TRACE_EXIT("Return Value: 0x%x", 0);
@@ -212,6 +234,19 @@ namespace PTCE_NS {
 		SERIALIZE_CALL_RECUR(m_lock);
 		TRACE_EXIT("Return Value: 0x%x", m_initialized);
 		return m_initialized;
+	}
+
+	void 
+	_ptce::release_board_factory(void)
+	{
+		TRACE_ENTRY();
+
+		if(ptce::is_allocated()) {
+			ptce::acquire()->m_factory_board = NULL;
+			ptce_board_factory_destroy();
+		}
+
+		TRACE_EXIT("Return Value: 0x%x", 0);
 	}
 
 	void 
@@ -280,7 +315,9 @@ namespace PTCE_NS {
 			result << std::endl << m_factory_piece->to_string(verbose);
 		}
 
-		// TODO: retreive factory strings, etc. (pass verbose)
+		if(m_factory_board) {
+			result << std::endl << m_factory_board->to_string(verbose);
+		}
 		
 		TRACE_EXIT("Return Value: 0x%x", 0);
 		return result.str();

@@ -54,6 +54,7 @@ namespace PTCE_NS {
 		_ptce_board::_ptce_board(
 			__in const _ptce_board &other
 			) :
+				ptce_uid_base(other),
 				m_piece_captured(other.m_piece_captured),
 				m_piece_list(other.m_piece_list),
 				m_piece_moved(other.m_piece_moved),
@@ -104,6 +105,7 @@ namespace PTCE_NS {
 					decrement_piece_reference(*piece_iter);
 				}
 
+				ptce_uid_base::operator=(other);
 				m_piece_captured = other.m_piece_captured;
 				m_piece_list = other.m_piece_list;
 				m_piece_moved = other.m_piece_moved;
@@ -562,6 +564,328 @@ namespace PTCE_NS {
 			SERIALIZE_CALL_RECUR(m_lock);
 			TRACE_EXIT("Return Value: 0x%x", 0);
 			return board_as_string(*this, verbose);
+		}
+
+		ptce_board_factory_ptr ptce_board_factory::m_instance = NULL;
+
+		void 
+		ptce_board_factory_destroy(void)
+		{
+			TRACE_ENTRY();
+
+			if(ptce_board_factory::m_instance) {
+				delete ptce_board_factory::m_instance;
+				ptce_board_factory::m_instance = NULL;
+			}
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+		}
+
+		_ptce_board_factory::_ptce_board_factory(void) :
+			m_initialized(false)
+		{
+			TRACE_ENTRY();
+
+			std::atexit(ptce_board_factory_destroy);
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+		}
+
+		_ptce_board_factory::~_ptce_board_factory(void)
+		{
+			TRACE_ENTRY();
+
+			if(m_initialized) {
+				destroy();
+			}
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+		}
+
+		ptce_board_factory_ptr 
+		_ptce_board_factory::acquire(void)
+		{
+			ptce_board_factory_ptr result = NULL;
+
+			TRACE_ENTRY();
+
+			if(!m_instance) {
+
+				m_instance = new ptce_board_factory();
+				if(!m_instance) {
+					THROW_PTCE_BOARD_EXCEPTION(PTCE_BOARD_EXCEPTION_ACQUIRE_FAILED);
+				}
+			}
+
+			result = m_instance;
+
+			TRACE_EXIT("Return Value: 0x%p", result);
+			return result;
+		}
+
+		bool 
+		_ptce_board_factory::contains(
+			__in const ptce_uid &uid
+			)
+		{
+			bool result;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_PTCE_BOARD_EXCEPTION(PTCE_BOARD_EXCEPTION_UNINITIALIZED);
+			}
+
+			result = (m_board_map.find(uid) != m_board_map.end());
+
+			TRACE_EXIT("Return Value: 0x%x", result);
+			return result;
+		}
+
+		bool 
+		_ptce_board_factory::contains(
+			__in const ptce_board &board
+			)
+		{
+			return contains(board.m_uid);
+		}
+
+		size_t 
+		_ptce_board_factory::decrement_reference(
+			__in const ptce_uid &uid
+			)
+		{
+			size_t result = 0;
+			std::map<ptce_uid, std::pair<ptce_board, size_t>>::iterator board_iter;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_PTCE_BOARD_EXCEPTION(PTCE_BOARD_EXCEPTION_UNINITIALIZED);
+			}
+
+			board_iter = find_board(uid);
+
+			if(board_iter->second.second == PTCE_INIT_REF_DEF) {
+				m_board_map.erase(board_iter);
+			} else {
+				result = --board_iter->second.second;
+			}
+
+			TRACE_EXIT("Return Value: %lu", result);
+			return result;
+		}
+
+		size_t 
+		_ptce_board_factory::decrement_reference(
+			__in const ptce_board &board
+			)
+		{
+			return decrement_reference(board.m_uid);
+		}
+
+		void 
+		_ptce_board_factory::destroy(void)
+		{
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_PTCE_BOARD_EXCEPTION(PTCE_BOARD_EXCEPTION_UNINITIALIZED);
+			}
+
+			m_board_map.clear();
+			m_initialized = false;
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+		}
+
+		std::map<ptce_uid, std::pair<ptce_board, size_t>>::iterator 
+		_ptce_board_factory::find_board(
+			__in const ptce_uid &uid
+			)
+		{
+			std::map<ptce_uid, std::pair<ptce_board, size_t>>::iterator result;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_PTCE_BOARD_EXCEPTION(PTCE_BOARD_EXCEPTION_UNINITIALIZED);
+			}
+
+			result = m_board_map.find(uid);
+			if(result == m_board_map.end()) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_UNKNOWN_BOARD,
+					"%s", ptce_uid::id_as_string(uid).c_str());
+			}
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+			return result;
+		}
+
+		ptce_board &
+		_ptce_board_factory::generate(void)
+		{
+			ptce_board board;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_PTCE_BOARD_EXCEPTION(PTCE_BOARD_EXCEPTION_UNINITIALIZED);
+			}
+
+			if(contains(board)) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_ALREADY_EXISTS,
+					"%s", board.id().to_string().c_str());
+			}
+
+			m_board_map.insert(std::pair<ptce_uid, std::pair<ptce_board, size_t>>(board.id(), 
+					std::pair<ptce_board, size_t>(board, PTCE_INIT_REF_DEF)));
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+			return find_board(board.id())->second.first;			
+		}
+
+		size_t 
+		_ptce_board_factory::increment_reference(
+			__in const ptce_uid &uid
+			)
+		{
+			size_t result;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_PTCE_BOARD_EXCEPTION(PTCE_BOARD_EXCEPTION_UNINITIALIZED);
+			}
+
+			result = ++find_board(uid)->second.second;
+
+			TRACE_EXIT("Return Value: %lu", result);
+			return result;
+		}
+
+		size_t 
+		_ptce_board_factory::increment_reference(
+			__in const ptce_board &board
+			)
+		{
+			return increment_reference(board.m_uid);
+		}
+
+		void 
+		_ptce_board_factory::initialize(void)
+		{
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(m_initialized) {
+				THROW_PTCE_BOARD_EXCEPTION(PTCE_BOARD_EXCEPTION_INITIALIZED);
+			}
+
+			m_board_map.clear();
+			m_initialized = true;
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+		}
+
+		bool 
+		_ptce_board_factory::is_allocated(void)
+		{
+			bool result;
+
+			TRACE_ENTRY();
+
+			result = (m_instance != NULL);
+
+			TRACE_EXIT("Return Value: 0x%x", result);
+			return result;
+		}
+
+		bool 
+		_ptce_board_factory::is_initialized(void)
+		{
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+			TRACE_EXIT("Return Value: 0x%x", m_initialized);
+			return m_initialized;
+		}
+
+		size_t 
+		_ptce_board_factory::reference_count(
+			__in const ptce_uid &uid
+			)
+		{
+			size_t result;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_PTCE_BOARD_EXCEPTION(PTCE_BOARD_EXCEPTION_UNINITIALIZED);
+			}
+
+			result = find_board(uid)->second.second;
+
+			TRACE_EXIT("Return Value: %lu", result);
+			return result;
+		}
+
+		size_t 
+		_ptce_board_factory::reference_count(
+			__in const ptce_board &board
+			)
+		{
+			return reference_count(board.m_uid);
+		}
+
+		size_t 
+		_ptce_board_factory::size(void)
+		{
+			size_t result;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_PTCE_BOARD_EXCEPTION(PTCE_BOARD_EXCEPTION_UNINITIALIZED);
+			}
+
+			result = m_board_map.size();
+
+			TRACE_EXIT("Return Value: %lu", result);
+			return result;
+		}
+
+		std::string 
+		_ptce_board_factory::to_string(
+			__in_opt bool verbose
+			)
+		{
+			std::stringstream result;
+			std::map<ptce_uid, std::pair<ptce_board, size_t>>::iterator board_iter;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			result << PTCE_BOARD_TRACE_HEADER << " Instance=0x" << VALUE_AS_HEX(uintptr_t, m_instance) 
+					<< ", Initialized=" << m_initialized << ", Count=" << m_board_map.size();
+
+			if(verbose) {
+
+				for(board_iter = m_board_map.begin(); board_iter != m_board_map.end(); ++board_iter) {
+					result << std::endl << " --- (" << board_iter->second.second << ") " 
+							<< ptce_board::board_as_string(board_iter->second.first, verbose);
+				}
+			}
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+			return result.str();
 		}
 	}
 }

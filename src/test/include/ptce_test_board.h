@@ -31,6 +31,17 @@ namespace PTCE_NS {
 			PTCE_TEST_BOARD_CONSTRUCTOR,
 			PTCE_TEST_BOARD_CONTAINS,
 			PTCE_TEST_BOARD_EQUALS,
+			PTCE_TEST_BOARD_FACTORY_ACQUIRE,
+			PTCE_TEST_BOARD_FACTORY_CONTAINS,
+			PTCE_TEST_BOARD_FACTORY_DECREMENT_REFERENCE,
+			PTCE_TEST_BOARD_FACTORY_DESTROY,
+			PTCE_TEST_BOARD_FACTORY_GENERATE,
+			PTCE_TEST_BOARD_FACTORY_INCREMENT_REFERENCE,
+			PTCE_TEST_BOARD_FACTORY_INITIALIZE,
+			PTCE_TEST_BOARD_FACTORY_IS_ALLOCATED,
+			PTCE_TEST_BOARD_FACTORY_IS_INITIALIZED,
+			PTCE_TEST_BOARD_FACTORY_REFERENCE_COUNT,
+			PTCE_TEST_BOARD_FACTORY_SIZE,
 			PTCE_TEST_BOARD_MOVE,
 			PTCE_TEST_BOARD_NOT_EQUALS,
 			PTCE_TEST_BOARD_PIECE,
@@ -50,6 +61,17 @@ namespace PTCE_NS {
 			"PTCE_TEST_BOARD_CONSTRUCTOR",
 			"PTCE_TEST_BOARD_CONTAINS",
 			"PTCE_TEST_BOARD_EQUALS",
+			"PTCE_TEST_BOARD_FACTORY_ACQUIRE",
+			"PTCE_TEST_BOARD_FACTORY_CONTAINS",
+			"PTCE_TEST_BOARD_FACTORY_DECREMENT_REFERENCE",
+			"PTCE_TEST_BOARD_FACTORY_DESTROY",
+			"PTCE_TEST_BOARD_FACTORY_GENERATE",
+			"PTCE_TEST_BOARD_FACTORY_INCREMENT_REFERENCE",
+			"PTCE_TEST_BOARD_FACTORY_INITIALIZE",
+			"PTCE_TEST_BOARD_FACTORY_IS_ALLOCATED",
+			"PTCE_TEST_BOARD_FACTORY_IS_INITIALIZED",
+			"PTCE_TEST_BOARD_FACTORY_REFERENCE_COUNT",
+			"PTCE_TEST_BOARD_FACTORY_SIZE",
 			"PTCE_TEST_BOARD_MOVE",
 			"PTCE_TEST_BOARD_NOT_EQUALS",
 			"PTCE_TEST_BOARD_PIECE",
@@ -73,6 +95,28 @@ namespace PTCE_NS {
 		extern ptce_test_t ptce_test_board_contains(void);
 
 		extern ptce_test_t ptce_test_board_equals(void);
+
+		extern ptce_test_t ptce_test_board_factory_acquire(void);
+
+		extern ptce_test_t ptce_test_board_factory_contains(void);
+
+		extern ptce_test_t ptce_test_board_factory_decrement_reference(void);
+
+		extern ptce_test_t ptce_test_board_factory_destroy(void);
+
+		extern ptce_test_t ptce_test_board_factory_generate(void);
+
+		extern ptce_test_t ptce_test_board_factory_increment_reference(void);
+
+		extern ptce_test_t ptce_test_board_factory_initialize(void);
+
+		extern ptce_test_t ptce_test_board_factory_is_allocated(void);
+
+		extern ptce_test_t ptce_test_board_factory_is_initialized(void);
+
+		extern ptce_test_t ptce_test_board_factory_reference_count(void);
+
+		extern ptce_test_t ptce_test_board_factory_size(void);
 
 		extern ptce_test_t ptce_test_board_move(void);
 
@@ -99,6 +143,17 @@ namespace PTCE_NS {
 			ptce_test_board_constructor,
 			ptce_test_board_contains,
 			ptce_test_board_equals,
+			ptce_test_board_factory_acquire,
+			ptce_test_board_factory_contains,
+			ptce_test_board_factory_decrement_reference,
+			ptce_test_board_factory_destroy,
+			ptce_test_board_factory_generate,
+			ptce_test_board_factory_increment_reference,
+			ptce_test_board_factory_initialize,
+			ptce_test_board_factory_is_allocated,
+			ptce_test_board_factory_is_initialized,
+			ptce_test_board_factory_reference_count,
+			ptce_test_board_factory_size,
 			ptce_test_board_move,
 			ptce_test_board_not_equals,
 			ptce_test_board_piece,

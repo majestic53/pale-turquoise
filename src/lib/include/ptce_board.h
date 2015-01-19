@@ -111,6 +111,8 @@ namespace PTCE_NS {
 
 			protected:
 
+				friend class _ptce_board_factory;
+
 				size_t decrement_piece_reference(
 					__in const ptce_piece &piece
 					);
@@ -140,7 +142,93 @@ namespace PTCE_NS {
 
 		} ptce_board, *ptce_board_ptr;
 
-		// TODO: board factory class
+		void ptce_board_factory_destroy(void);
+
+		typedef class _ptce_board_factory {
+
+			public:
+
+				~_ptce_board_factory(void);
+
+				static _ptce_board_factory *acquire(void);
+
+				bool contains(
+					__in const ptce_uid &uid
+					);
+
+				bool contains(
+					__in const ptce_board &board
+					);
+
+				size_t decrement_reference(
+					__in const ptce_uid &uid
+					);
+
+				size_t decrement_reference(
+					__in const ptce_board &board
+					);
+
+				void destroy(void);
+
+				ptce_board &generate(void);
+
+				size_t increment_reference(
+					__in const ptce_uid &uid
+					);
+
+				size_t increment_reference(
+					__in const ptce_board &board
+					);
+
+				void initialize(void);
+
+				static bool is_allocated(void);
+
+				bool is_initialized(void);
+
+				size_t reference_count(
+					__in const ptce_uid &uid
+					);
+
+				size_t reference_count(
+					__in const ptce_board &board
+					);
+
+				size_t size(void);
+
+				std::string to_string(
+					__in_opt bool verbose = false
+					);
+
+			protected:
+
+				friend void ptce_board_factory_destroy(void);
+
+				_ptce_board_factory(void);
+
+				_ptce_board_factory(
+					__in const _ptce_board_factory &other
+					);
+
+				_ptce_board_factory &operator=(
+					__in const _ptce_board_factory &other
+					);
+
+				std::map<ptce_uid, std::pair<ptce_board, size_t>>::iterator find_board(
+					__in const ptce_uid &uid
+					);
+
+				std::map<ptce_uid, std::pair<ptce_board, size_t>> m_board_map;
+
+				bool m_initialized;
+
+				static _ptce_board_factory *m_instance;
+
+			private:
+
+				std::recursive_mutex m_lock;
+
+		} ptce_board_factory, *ptce_board_factory_ptr;
 	}
 }
 

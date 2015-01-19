@@ -260,6 +260,593 @@ exit:
 		}
 
 		ptce_test_t 
+		ptce_test_board_factory_acquire(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_board_factory_ptr fact_inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+
+				try {
+
+					fact_inst = ptce_board_factory::acquire();
+					if(!fact_inst) {
+						std::cerr << "----!ptce_test_board_factory_acquire failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					if(!fact_inst->is_allocated()) {
+						std::cerr << "----!ptce_test_board_factory_acquire failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_factory_acquire exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;	
+		}
+
+		ptce_test_t 
+		ptce_test_board_factory_contains(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_board_factory_ptr fact_inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				fact_inst = inst->acquire_board_factory();
+				ptce_board board;
+
+				try {
+
+					if(fact_inst->contains(board)) {
+						std::cerr << "----!ptce_test_board_factory_contains failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board = fact_inst->generate();
+
+					if(!fact_inst->contains(board)) {
+						std::cerr << "----!ptce_test_board_factory_contains failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					fact_inst->decrement_reference(board);
+
+					if(fact_inst->contains(board)) {
+						std::cerr << "----!ptce_test_board_factory_contains failure(2)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_factory_contains exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;	
+		}
+
+		ptce_test_t 
+		ptce_test_board_factory_decrement_reference(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_board_factory_ptr fact_inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				fact_inst = inst->acquire_board_factory();
+				ptce_board board = fact_inst->generate();
+				fact_inst->increment_reference(board);
+
+				try {
+					fact_inst->decrement_reference(board);
+
+					if(fact_inst->reference_count(board) != PTCE_INIT_REF_DEF) {
+						std::cerr << "----!ptce_test_board_factory_decrement_reference failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					fact_inst->decrement_reference(board);
+
+					if(fact_inst->contains(board)) {
+						std::cerr << "----!ptce_test_board_factory_decrement_reference failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_factory_decrement_reference exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;	
+		}
+
+		ptce_test_t 
+		ptce_test_board_factory_destroy(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_board_factory_ptr fact_inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				fact_inst = inst->acquire_board_factory();
+
+				try {
+
+					if(fact_inst->is_initialized()) {
+						fact_inst->destroy();
+					}
+
+					if(fact_inst->is_initialized()) {
+						std::cerr << "----!ptce_test_board_factory_destroy failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_factory_destroy exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;	
+		}
+
+		ptce_test_t 
+		ptce_test_board_factory_generate(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_board_factory_ptr fact_inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				fact_inst = inst->acquire_board_factory();
+				ptce_board board;
+
+				try {
+					board = fact_inst->generate();
+
+					if(fact_inst->size() != 1) {
+						std::cerr << "----!ptce_test_board_factory_generate failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					if(!fact_inst->contains(board)
+							|| (fact_inst->reference_count(board) != PTCE_INIT_REF_DEF)) {
+						std::cerr << "----!ptce_test_board_factory_generate failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_factory_generate exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;	
+		}
+
+		ptce_test_t 
+		ptce_test_board_factory_increment_reference(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_board_factory_ptr fact_inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				fact_inst = inst->acquire_board_factory();
+				ptce_board board = fact_inst->generate();
+
+				try {
+					fact_inst->increment_reference(board);
+
+					if(fact_inst->reference_count(board) != (PTCE_INIT_REF_DEF + 1)) {
+						std::cerr << "----!ptce_test_board_factory_increment_reference failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_factory_increment_reference exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;	
+		}
+
+		ptce_test_t 
+		ptce_test_board_factory_initialize(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_board_factory_ptr fact_inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				fact_inst = inst->acquire_board_factory();
+
+				try {
+
+					if(fact_inst->is_initialized()) {
+						fact_inst->destroy();
+					}
+
+					fact_inst->initialize();
+
+					if(!fact_inst->is_initialized()
+							|| fact_inst->size()) {
+						std::cerr << "----!ptce_test_board_factory_initialize failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_factory_initialize exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;	
+		}
+
+		ptce_test_t 
+		ptce_test_board_factory_is_allocated(void)
+		{
+			ptce_board_factory_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+
+				try {
+
+					inst = ptce_board_factory::acquire();
+					if(!inst) {
+						result = PTCE_TEST_INCONCLUSIVE;
+						goto exit;
+					}
+
+					try {
+
+						if(!ptce_board_factory::is_allocated()) {
+							std::cerr << "----!ptce_test_board_factory_is_allocated failure(0)" << std::endl;
+							result = PTCE_TEST_FAILURE;
+							goto exit;
+						}
+					} catch(std::runtime_error &exc) {
+						std::cerr << "----!ptce_test_board_factory_is_allocated exception(0): " 
+								<< exc.what() << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					ptce::release_board_factory();
+
+					try {
+
+						if(ptce_board_factory::is_allocated()) {
+							std::cerr << "----!ptce_test_board_factory_is_allocated failure(1)" << std::endl;
+							result = PTCE_TEST_FAILURE;
+							goto exit;
+						}
+					} catch(std::runtime_error &exc) {
+						std::cerr << "----!ptce_test_board_factory_is_allocated exception(1): " 
+								<< exc.what() << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_factory_is_allocated exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;	
+		}
+
+		ptce_test_t 
+		ptce_test_board_factory_is_initialized(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_board_factory_ptr fact_inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				fact_inst = inst->acquire_board_factory();
+
+				try {
+
+					if(fact_inst->is_initialized()) {
+						fact_inst->destroy();
+					}
+
+					if(fact_inst->is_initialized()) {
+						std::cerr << "----!ptce_test_board_factory_is_initialized failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					fact_inst->initialize();
+
+					if(!fact_inst->is_initialized()) {
+						std::cerr << "----!ptce_test_board_factory_is_initialized failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_factory_is_initialized exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;	
+		}
+
+		ptce_test_t 
+		ptce_test_board_factory_reference_count(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_board_factory_ptr fact_inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				fact_inst = inst->acquire_board_factory();
+				ptce_board board;
+
+				try {
+					board = fact_inst->generate();
+
+					if(fact_inst->reference_count(board) != PTCE_INIT_REF_DEF) {
+						std::cerr << "----!ptce_test_board_factory_reference_count failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					fact_inst->increment_reference(board);
+
+					if(fact_inst->reference_count(board) != (PTCE_INIT_REF_DEF + 1)) {
+						std::cerr << "----!ptce_test_board_factory_reference_count failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					fact_inst->decrement_reference(board);
+
+					if(fact_inst->reference_count(board) != PTCE_INIT_REF_DEF) {
+						std::cerr << "----!ptce_test_board_factory_reference_count failure(2)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					fact_inst->decrement_reference(board);
+
+					try {
+						fact_inst->reference_count(board);
+						std::cerr << "----!ptce_test_board_factory_reference_count failure(3)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					} catch(...) { }
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_factory_reference_count exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;	
+		}
+
+		ptce_test_t 
+		ptce_test_board_factory_size(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_board_factory_ptr fact_inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				fact_inst = inst->acquire_board_factory();
+				ptce_board board;
+
+				try {
+
+					if(fact_inst->size()) {
+						std::cerr << "----!ptce_test_board_factory_size failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board = fact_inst->generate();
+
+					if(fact_inst->size() != 1) {
+						std::cerr << "----!ptce_test_board_factory_size failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					fact_inst->decrement_reference(board);
+
+					if(fact_inst->size()) {
+						std::cerr << "----!ptce_test_board_factory_size failure(2)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_factory_size exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;	
+		}
+
+		ptce_test_t 
 		ptce_test_board_move(void)
 		{
 			size_t black, white;

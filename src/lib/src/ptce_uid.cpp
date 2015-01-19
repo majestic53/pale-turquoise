@@ -590,7 +590,7 @@ namespace PTCE_NS {
 			ptce_ptr inst = NULL;
 
 			TRACE_ENTRY();
-			//SERIALIZE_CALL_RECUR(m_lock);
+			SERIALIZE_CALL_RECUR(m_lock);
 
 			inst = ptce::acquire();
 			if(inst && inst->is_initialized()) {

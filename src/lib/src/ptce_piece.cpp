@@ -366,7 +366,7 @@ namespace PTCE_NS {
 					"%lu (must be at most %lu)", color, PIECE_COLOR_MAX);
 			}
 
-			if(m_piece_map.find(piece.id()) != m_piece_map.end()) {
+			if(contains(piece.id())) {
 				THROW_PTCE_PIECE_EXCEPTION_MESSAGE(PTCE_PIECE_EXCEPTION_ALREADY_EXISTS,
 					"%s", piece.id().to_string().c_str());
 			}

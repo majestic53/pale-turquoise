@@ -27,7 +27,6 @@ namespace PTCE_NS {
 
 	namespace PTCE_COMP_NS {
 
-		#define PTCE_INIT_REF_DEF 1
 		#define PTCE_UID_DEF 0
 
 		typedef class _ptce_uid {

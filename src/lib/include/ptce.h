@@ -35,6 +35,8 @@
 #define PTCE_COMP_NS ptce_comp_ns
 #endif // PTCE_COMP_NS
 
+#define PTCE_INIT_REF_DEF 1
+
 #include "ptce_uid.h"
 #include "ptce_node.h"
 #include "ptce_piece.h"
@@ -55,6 +57,8 @@ namespace PTCE_NS {
 		
 			static _ptce *acquire(void);
 
+			ptce_board_factory_ptr acquire_board_factory(void);
+
 			ptce_node_factory_ptr acquire_node_factory(void);
 			
 			ptce_piece_factory_ptr acquire_piece_factory(void);
@@ -69,6 +73,8 @@ namespace PTCE_NS {
 		
 			bool is_initialized(void);
 		
+			static void release_board_factory(void);
+
 			static void release_node_factory(void);
 
 			static void release_piece_factory(void);
@@ -100,6 +106,8 @@ namespace PTCE_NS {
 			bool m_initialized;
 				
 			static _ptce *m_instance;
+
+			ptce_board_factory_ptr m_factory_board;
 
 			ptce_node_factory_ptr m_factory_node;
 
