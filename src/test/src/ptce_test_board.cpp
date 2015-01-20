@@ -1243,6 +1243,146 @@ exit:
 		}
 
 		ptce_test_t 
+		ptce_test_board_serialize(void)
+		{
+			ptce_piece_t type;
+			ptce_ptr inst = NULL;
+			ptce_piece_col_t color;
+			std::string serial, token;
+			size_t x = 0, y, ch_iter = 0, cmd_iter = 0;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_board board;
+
+				try {
+
+					serial = board.serialize(BOARD_CONTINUE);
+					if(serial.empty()) {
+						std::cerr << "----!ptce_test_board_serialize failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					for(; ch_iter < serial.size(); ++ch_iter) {
+
+						if(serial.at(ch_iter) == COMMAND_TOKEN_DELIM) {
+							break;
+						}
+
+						token += serial.at(ch_iter);
+					}
+
+					std::transform(token.begin(), token.end(), token.begin(), ::tolower);
+
+					for(; cmd_iter <= BOARD_MOVE_MAX; ++cmd_iter) {
+
+						if(token == BOARD_MOVE_STRING(cmd_iter)) {
+							break;
+						}
+					}
+
+					if(cmd_iter > BOARD_MOVE_MAX) {
+						std::cerr << "----!ptce_test_board_serialize failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					if((ch_iter++ == serial.size()) || (ch_iter == serial.size())) {
+						std::cerr << "----!ptce_test_board_serialize failure(2)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					for(; x < BOARD_WID; ++x) {
+
+						for(y = 0; y < BOARD_WID; ++y) {
+
+							if((ch_iter + PIECE_TOKEN_LEN_MIN) >= serial.size()) {
+								std::cerr << "----!ptce_test_board_serialize failure(3)" << std::endl;
+								result = PTCE_TEST_FAILURE;
+								goto exit;
+							}
+
+							token = std::string(1, serial.at(ch_iter++));
+							if(std::atoi(token.c_str()) != x) {
+								std::cerr << "----!ptce_test_board_serialize failure(4)" << std::endl;
+								result = PTCE_TEST_FAILURE;
+								goto exit;
+							}
+
+							token = std::string(1, serial.at(ch_iter++));
+							if(std::atoi(token.c_str()) != y) {
+								std::cerr << "----!ptce_test_board_serialize failure(5)" << std::endl;
+								result = PTCE_TEST_FAILURE;
+								goto exit;
+							}
+
+							token = std::string(1, serial.at(ch_iter++));
+							type = (ptce_piece_t) std::atoi(token.c_str());
+
+							if(type > PIECE_TYPE_MAX) {
+								std::cerr << "----!ptce_test_board_serialize failure(6)" << std::endl;
+								result = PTCE_TEST_FAILURE;
+								goto exit;
+							}
+
+							token = std::string(1, serial.at(ch_iter++));
+							color = (ptce_piece_col_t) std::atoi(token.c_str());
+
+							if(color > PIECE_COLOR_MAX) {
+								std::cerr << "----!ptce_test_board_serialize failure(7)" << std::endl;
+								result = PTCE_TEST_FAILURE;
+								goto exit;
+							}
+
+							if((type == PIECE_KING)
+									|| (type == PIECE_ROOK)
+									|| (type == PIECE_PAWN)) {
+
+								if((ch_iter + PIECE_TOKEN_FLAG_LEN) >= serial.size()) {
+									std::cerr << "----!ptce_test_board_serialize failure(8)" << std::endl;
+									result = PTCE_TEST_FAILURE;
+									goto exit;
+								}
+
+								++ch_iter;
+							}
+
+							if(serial.at(ch_iter) != PIECE_TOKEN_SEP) {
+								std::cerr << "----!ptce_test_board_serialize failure(9)" << std::endl;
+								result = PTCE_TEST_FAILURE;
+								goto exit;
+							}
+
+							++ch_iter;
+						}
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_serialize exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
 		ptce_test_board_size(void)
 		{
 			ptce_ptr inst = NULL;
@@ -1312,6 +1452,56 @@ exit:
 					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_state exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_board_unserialize(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_piece piece;
+				ptce_board board0, board1;
+
+				try {
+					board0.move(ptce_pos_t(3, 1), ptce_pos_t(3, 3));
+					board1.unserialize(board0.serialize());
+
+					if(!board1.contains(ptce_pos_t(3, 3))) {
+						std::cerr << "----!ptce_test_board_unserialize failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					piece = board1.piece(ptce_pos_t(3, 3));
+					if((piece.type() != PIECE_PAWN) || (piece.color() != PIECE_WHITE)) {
+						std::cerr << "----!ptce_test_board_unserialize failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_unserialize exception(0): " 
 							<< exc.what() << std::endl;
 					result = PTCE_TEST_FAILURE;
 					goto exit;

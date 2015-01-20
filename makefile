@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-EXE=ptce
+EXE=ptce_test
 EXE_DIR=./src/test/
 JOB_SLOTS=4
 LIB_DIR=./src/lib/

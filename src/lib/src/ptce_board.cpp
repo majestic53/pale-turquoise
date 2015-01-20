@@ -52,6 +52,20 @@ namespace PTCE_NS {
 		}
 
 		_ptce_board::_ptce_board(
+			__in const std::string &serial,
+			__out ptce_board_mv_t &type
+			) :
+				m_piece_captured(false),
+				m_state(BOARD_INACTIVE)
+		{
+			TRACE_ENTRY();
+
+			type = unserialize(serial);
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+		}
+
+		_ptce_board::_ptce_board(
 			__in const _ptce_board &other
 			) :
 				ptce_uid_base(other),
@@ -532,6 +546,46 @@ namespace PTCE_NS {
 			return m_piece_moved;
 		}
 
+		std::string 
+		_ptce_board::serialize(
+			__in_opt ptce_board_mv_t type
+			)
+		{
+			size_t x = 0, y;
+			ptce_piece piece;
+			std::stringstream result;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(type > BOARD_MOVE_MAX) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_TYPE,
+					"0x%x (must be at most %s (0x%x))", type, BOARD_MOVE_STRING(BOARD_MOVE_MAX),
+					BOARD_MOVE_MAX);
+			}
+
+			result << BOARD_MOVE_STRING(type) << ":";
+
+			for(; x < BOARD_WID; ++x) {
+
+				for(y = 0; y < BOARD_WID; ++y) {
+					piece = m_piece_list.at(BOARD_COORD(ptce_pos_t(x, y)));
+					result << x << y << piece.type() << piece.color();
+
+					if((piece.type() == PIECE_KING)
+							|| (piece.type() == PIECE_ROOK)
+							|| (piece.type() == PIECE_PAWN)) {
+						result << ((m_piece_moved.first == x) && (m_piece_moved.second == y));
+					}
+
+					result << " ";
+				}
+			}
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+			return result.str();
+		}
+
 		size_t 
 		_ptce_board::size(void)
 		{
@@ -564,6 +618,112 @@ namespace PTCE_NS {
 			SERIALIZE_CALL_RECUR(m_lock);
 			TRACE_EXIT("Return Value: 0x%x", 0);
 			return board_as_string(*this, verbose);
+		}
+
+		ptce_board_mv_t 
+		_ptce_board::unserialize(
+			__in const std::string &serial
+			)
+		{
+			std::string token;
+			ptce_piece_t type;
+			ptce_piece_col_t color;
+			ptce_board_mv_t result = BOARD_CHECKMATE;
+			size_t x = 0, y, ch_iter = 0, cmd_iter = 0;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(serial.empty()) {
+				THROW_PTCE_BOARD_EXCEPTION(PTCE_BOARD_EXCEPTION_EMPTY_SERIALIZATION);
+			}
+
+			for(; ch_iter < serial.size(); ++ch_iter) {
+
+				if(serial.at(ch_iter) == COMMAND_TOKEN_DELIM) {
+					break;
+				}
+
+				token += serial.at(ch_iter);
+			}
+
+			std::transform(token.begin(), token.end(), token.begin(), ::tolower);
+
+			for(; cmd_iter <= BOARD_MOVE_MAX; ++cmd_iter) {
+
+				if(token == BOARD_MOVE_STRING(cmd_iter)) {
+					break;
+				}
+			}
+
+			if(cmd_iter > BOARD_MOVE_MAX) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_UNKNOWN_BOARD_COMMAND,
+					"\'%s\'", token.c_str());
+			}
+
+			result = (ptce_board_mv_t) cmd_iter;
+
+			if((ch_iter++ == serial.size()) || (ch_iter == serial.size())) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_MALFORMED_SERIALIZATION,
+					"Missing pieces: Offset=%lu", ch_iter);
+			}
+
+			m_piece_list.resize(BOARD_LEN);
+
+			for(; x < BOARD_WID; ++x) {
+
+				for(y = 0; y < BOARD_WID; ++y) {
+
+					if((ch_iter + PIECE_TOKEN_LEN_MIN) >= serial.size()) {
+						THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_MALFORMED_SERIALIZATION,
+							"Missing piece {%lu, %lu}", x, y);
+					}
+
+					token = std::string(1, serial.at(ch_iter++));
+					if(std::atoi(token.c_str()) != x) {
+						THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_MALFORMED_SERIALIZATION,
+							"Piece {%lu, %lu}: Mismatched x-coordinate: %s", x, y, token.c_str());
+					}
+
+					token = std::string(1, serial.at(ch_iter++));
+					if(std::atoi(token.c_str()) != y) {
+						THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_MALFORMED_SERIALIZATION,
+							"Piece {%lu, %lu}: Mismatched y-coordinate: %s", x, y, token.c_str());
+					}
+
+					token = std::string(1, serial.at(ch_iter++));
+					type = (ptce_piece_t) std::atoi(token.c_str());
+					token = std::string(1, serial.at(ch_iter++));
+					color = (ptce_piece_col_t) std::atoi(token.c_str());
+
+					if((type == PIECE_KING)
+							|| (type == PIECE_ROOK)
+							|| (type == PIECE_PAWN)) {
+
+						if((ch_iter + PIECE_TOKEN_FLAG_LEN) >= serial.size()) {
+							THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_MALFORMED_SERIALIZATION,
+								"Missing piece {%lu, %lu} flag", x, y);
+						}
+
+						++ch_iter;
+					}
+
+					if(serial.at(ch_iter) != PIECE_TOKEN_SEP) {
+						THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_MALFORMED_SERIALIZATION,
+							"Missing piece {%lu, %lu} seperator", x, y);
+					}
+
+					m_piece_list.at(BOARD_COORD(ptce_pos_t(x, y))) = generate_piece(type, color);
+					++ch_iter;
+				}
+			}
+
+			m_piece_captured = false;
+			m_piece_moved = ptce_pos_t(0, 0);
+			m_state = BOARD_INACTIVE;
+
+			TRACE_EXIT("Return Value: %s (0x%x)", BOARD_MOVE_STRING(result), result);
+			return result;
 		}
 
 		ptce_board_factory_ptr ptce_board_factory::m_instance = NULL;

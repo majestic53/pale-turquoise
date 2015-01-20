@@ -130,7 +130,10 @@ initialize_test_suite(void)
 }
 
 int 
-main(void) 
+main(
+	__in int argc, 
+	__in const char **argv
+	) 
 {
 	int result = 0;
 
@@ -158,7 +161,7 @@ main(void)
 
 		// ---
 
-		std::cout << inst->to_string(true) << std::endl;
+		//std::cout << inst->to_string(true) << std::endl;
 		inst->destroy();
 #endif // RUN_TESTS
 	} catch(std::runtime_error &exc) {

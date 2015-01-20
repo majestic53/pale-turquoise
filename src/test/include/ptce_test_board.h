@@ -50,11 +50,13 @@ namespace PTCE_NS {
 			PTCE_TEST_BOARD_PIECE_LIST,
 			PTCE_TEST_BOARD_PIECE_MOVED,
 			PTCE_TEST_BOARD_PIECE_MOVED_COORDINATE,
+			PTCE_TEST_BOARD_SERIALIZE,
 			PTCE_TEST_BOARD_SIZE,
 			PTCE_TEST_BOARD_STATE,
+			PTCE_TEST_BOARD_UNSERIALIZE,
 		};
 
-		#define PTCE_TEST_BOARD_MAX PTCE_TEST_BOARD_STATE
+		#define PTCE_TEST_BOARD_MAX PTCE_TEST_BOARD_UNSERIALIZE
 
 		static const std::string PTCE_TEST_BOARD_STR[] = {
 			"PTCE_TEST_BOARD_ASSIGNMENT",
@@ -80,8 +82,10 @@ namespace PTCE_NS {
 			"PTCE_TEST_BOARD_PIECE_LIST",
 			"PTCE_TEST_BOARD_PIECE_MOVED",
 			"PTCE_TEST_BOARD_PIECE_MOVED_COORDINATE",
+			"PTCE_TEST_BOARD_SERIALIZE",
 			"PTCE_TEST_BOARD_SIZE",
 			"PTCE_TEST_BOARD_STATE",
+			"PTCE_TEST_BOARD_UNSERIALIZE",
 			};
 
 		#define PTCE_TEST_BOARD_STRING(_TYPE_) \
@@ -134,9 +138,13 @@ namespace PTCE_NS {
 
 		extern ptce_test_t ptce_test_board_piece_moved_coordinate(void);
 
+		extern ptce_test_t ptce_test_board_serialize(void);
+
 		extern ptce_test_t ptce_test_board_size(void);
 
 		extern ptce_test_t ptce_test_board_state(void);
+
+		extern ptce_test_t ptce_test_board_unserialize(void);
 
 		static const ptce_test_set_cb PTCE_TEST_BOARD_CB[] = {
 			ptce_test_board_assignment,
@@ -162,8 +170,10 @@ namespace PTCE_NS {
 			ptce_test_board_piece_list,
 			ptce_test_board_piece_moved,
 			ptce_test_board_piece_moved_coordinate,
+			ptce_test_board_serialize,
 			ptce_test_board_size,
 			ptce_test_board_state,
+			ptce_test_board_unserialize,
 			};
 
 		#define PTCE_TEST_BOARD_CALLBACK(_TYPE_) \

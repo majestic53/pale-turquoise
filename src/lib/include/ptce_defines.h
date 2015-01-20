@@ -20,6 +20,7 @@
 #ifndef PTCE_DEFINES_H_
 #define PTCE_DEFINES_H_
 
+#include <algorithm>
 #include <cstdint>
 #include <iomanip>
 #include <iostream>

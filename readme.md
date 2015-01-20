@@ -12,6 +12,11 @@ Table of Contents
 Changelog
 =========
 
+###Version 0.1.1504
+*Updated: 1/19/2015*
+
+* Added chess board serialization/unserialization
+
 ###Version 0.1.1503
 *Updated: 1/18/2015*
 
