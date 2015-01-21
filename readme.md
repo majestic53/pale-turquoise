@@ -13,6 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1504
+*Updated: 1/20/2015*
+
+* Added chess piece move routines (partial)
+
 *Updated: 1/19/2015*
 
 * Added chess board serialization/unserialization

@@ -57,6 +57,26 @@ namespace PTCE_NS {
 			((_TYPE_) > BOARD_STATE_MAX ? UNKNOWN : \
 			BOARD_STATE_STR[_TYPE_].c_str())
 
+		typedef enum _ptce_mv_t {
+			MOVE_CAPTURE = 0,
+			MOVE_CASTLE,
+			MOVE_CHECK,
+			MOVE_EN_PASSANT,
+			MOVE_INVALID,
+			MOVE_NORMAL,
+			MOVE_PROMOTE,
+		} ptce_mv_t;
+
+		#define MOVE_TYPE_MAX MOVE_PROMOTE
+
+		static const std::string MOVE_TYPE_STR[] = {
+			"CAPTURE", "CASTLE", "CHECK", "EN_PASSANT", "INVALID", "NORMAL", "PROMOTE",
+			};
+
+		#define MOVE_TYPE_STRING(_TYPE_) \
+			((_TYPE_) > MOVE_TYPE_MAX ? UNKNOWN : \
+			MOVE_TYPE_STR[_TYPE_].c_str())
+
 		#define BOARD_POS_MAX 7
 		#define BOARD_WID (BOARD_POS_MAX + 1)
 		#define BOARD_LEN (BOARD_WID * BOARD_WID)
@@ -67,6 +87,7 @@ namespace PTCE_NS {
 		#define PIECE_TOKEN_SEP ' '
 
 		typedef std::pair<uint8_t, uint8_t> ptce_pos_t;
+		typedef std::pair<ptce_mv_t, std::vector<std::pair<ptce_pos_t, ptce_pos_t>>> ptce_mv_ent_t;
 
 		typedef class _ptce_board :
 				public ptce_uid_base {
@@ -105,6 +126,11 @@ namespace PTCE_NS {
 
 				bool contains(
 					__in const ptce_pos_t &position
+					);
+
+				std::vector<ptce_mv_ent_t> generate_moves(
+					__in const ptce_pos_t &position,
+					__in_opt const ptce_piece_col_t &enemy_color = PIECE_BLACK
 					);
 
 				void move(
@@ -149,11 +175,66 @@ namespace PTCE_NS {
 
 				friend class _ptce_board_factory;
 
+				ptce_mv_t check_piece_move(
+					__out std::vector<ptce_mv_ent_t> &move_list,
+					__in const ptce_pos_t &old_position,
+					__in const ptce_pos_t &new_position,
+					__in_opt const ptce_piece_col_t &enemy_color = PIECE_BLACK
+					);
+
+				void check_piece_moves_cross(
+					__out std::vector<ptce_mv_ent_t> &move_list,
+					__in const ptce_pos_t &position,
+					__in_opt const ptce_piece_col_t &enemy_color = PIECE_BLACK
+					);
+
+				void check_piece_moves_diagonal(
+					__out std::vector<ptce_mv_ent_t> &move_list,
+					__in const ptce_pos_t &position,
+					__in_opt const ptce_piece_col_t &enemy_color = PIECE_BLACK
+					);
+
 				size_t decrement_piece_reference(
 					__in const ptce_piece &piece
 					);
 
 				void generate_initial_board(void);
+
+				std::vector<ptce_mv_ent_t> generate_moves_bishop(
+					__in const ptce_piece &board_piece,
+					__in const ptce_pos_t &position,
+					__in_opt const ptce_piece_col_t &enemy_color = PIECE_BLACK
+					);
+
+				std::vector<ptce_mv_ent_t> generate_moves_king(
+					__in const ptce_piece &board_piece,
+					__in const ptce_pos_t &position,
+					__in_opt const ptce_piece_col_t &enemy_color = PIECE_BLACK
+					);
+	
+				std::vector<ptce_mv_ent_t> generate_moves_knight(
+					__in const ptce_piece &board_piece,
+					__in const ptce_pos_t &position,
+					__in_opt const ptce_piece_col_t &enemy_color = PIECE_BLACK
+					);
+	
+				std::vector<ptce_mv_ent_t> generate_moves_pawn(
+					__in const ptce_piece &board_piece,
+					__in const ptce_pos_t &position,
+					__in_opt const ptce_piece_col_t &enemy_color = PIECE_BLACK
+					);
+	
+				std::vector<ptce_mv_ent_t> generate_moves_queen(
+					__in const ptce_piece &board_piece,
+					__in const ptce_pos_t &position,
+					__in_opt const ptce_piece_col_t &enemy_color = PIECE_BLACK
+					);
+	
+				std::vector<ptce_mv_ent_t> generate_moves_rook(
+					__in const ptce_piece &board_piece,
+					__in const ptce_pos_t &position,
+					__in_opt const ptce_piece_col_t &enemy_color = PIECE_BLACK
+					);
 
 				ptce_piece &generate_piece(
 					__in ptce_piece_t type,

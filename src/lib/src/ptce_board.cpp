@@ -273,6 +273,135 @@ namespace PTCE_NS {
 			return result.str();
 		}
 
+		ptce_mv_t 
+		_ptce_board::check_piece_move(
+			__out std::vector<ptce_mv_ent_t> &move_list,
+			__in const ptce_pos_t &old_position,
+			__in const ptce_pos_t &new_position,
+			__in_opt const ptce_piece_col_t &enemy_color
+			)
+		{
+			ptce_piece check_piece;
+			ptce_mv_t result = MOVE_INVALID;
+			std::vector<std::pair<ptce_pos_t, ptce_pos_t>> pos_list;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			check_piece = piece(new_position);
+			if(check_piece.type() != PIECE_EMPTY) {
+
+				if(check_piece.color() == enemy_color) {
+					result = MOVE_CAPTURE;
+					pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
+					move_list.push_back(ptce_mv_ent_t(result, pos_list));
+				}
+			} else {
+				result = MOVE_NORMAL;
+				pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
+				move_list.push_back(ptce_mv_ent_t(result, pos_list));
+			}
+
+			TRACE_EXIT("Return Value: %s (0x%x)", MOVE_TYPE_STRING(result), result);
+			return result;
+		}
+
+		void 
+		_ptce_board::check_piece_moves_cross(
+			__out std::vector<ptce_mv_ent_t> &move_list,
+			__in const ptce_pos_t &position,
+			__in_opt const ptce_piece_col_t &enemy_color
+			)
+		{
+			int x, y;
+			ptce_mv_t piece_type;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			for(x = position.first + 1; x < BOARD_WID; ++x) {
+
+				piece_type = check_piece_move(move_list, position, ptce_pos_t(x, position.second));
+				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+					break;
+				}
+			}
+
+			for(x = position.first - 1; x >= 0; --x) {
+
+				piece_type = check_piece_move(move_list, position, ptce_pos_t(x, position.second));
+				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+					break;
+				}
+			}
+
+			for(y = position.first + 1; y < BOARD_WID; ++y) {
+
+				piece_type = check_piece_move(move_list, position, ptce_pos_t(position.first, y));
+				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+					break;
+				}
+			}
+
+			for(y = position.first - 1; y >= 0; --y) {
+
+				piece_type = check_piece_move(move_list, position, ptce_pos_t(position.first, y));
+				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+					break;
+				}
+			}
+
+			TRACE_EXIT("Return Value: Moves=%lu", move_list.size());
+		}
+
+		void 
+		_ptce_board::check_piece_moves_diagonal(
+			__out std::vector<ptce_mv_ent_t> &move_list,
+			__in const ptce_pos_t &position,
+			__in_opt const ptce_piece_col_t &enemy_color
+			)
+		{
+			int x, y;
+			ptce_mv_t piece_type;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			for(x = position.first + 1; x < BOARD_WID; ++x) {
+
+				piece_type = check_piece_move(move_list, position, ptce_pos_t(x, x));
+				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+					break;
+				}
+			}
+
+			for(x = position.first - 1; x >= 0; --x) {
+
+				piece_type = check_piece_move(move_list, position, ptce_pos_t(x, x));
+				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+					break;
+				}
+			}
+
+			for(x = position.first + 1, y = position.first - 1; x < BOARD_WID; ++x, --y) {
+
+				piece_type = check_piece_move(move_list, position, ptce_pos_t(x, y));
+				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+					break;
+				}
+			}
+
+			for(x = position.first - 1, y = position.first + 1; x >= 0; --x, ++y) {
+
+				piece_type = check_piece_move(move_list, position, ptce_pos_t(x, y));
+				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+					break;
+				}
+			}
+
+			TRACE_EXIT("Return Value: Moves=%lu", move_list.size());
+		}
+
 		bool 
 		_ptce_board::contains(
 			__in const ptce_pos_t &position
@@ -362,6 +491,222 @@ namespace PTCE_NS {
 			m_state = BOARD_INACTIVE;
 
 			TRACE_EXIT("Return Value: 0x%x", 0);
+		}
+
+		std::vector<ptce_mv_ent_t> 
+		_ptce_board::generate_moves(
+			__in const ptce_pos_t &position,
+			__in_opt const ptce_piece_col_t &enemy_color
+			)
+		{
+			ptce_piece board_piece;
+			std::vector<ptce_mv_ent_t> result;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			board_piece = piece(position);
+			switch(board_piece.type()) {
+				case PIECE_BISHOP:
+					result = generate_moves_bishop(board_piece, position, enemy_color);
+					break;
+				case PIECE_KING:
+					result = generate_moves_king(board_piece, position, enemy_color);
+					break;
+				case PIECE_KNIGHT:
+					result = generate_moves_knight(board_piece, position, enemy_color);
+					break;
+				case PIECE_PAWN:
+					result = generate_moves_pawn(board_piece, position, enemy_color);
+					break;
+				case PIECE_QUEEN:
+					result = generate_moves_queen(board_piece, position, enemy_color);
+					break;
+				case PIECE_ROOK:
+					result = generate_moves_rook(board_piece, position, enemy_color);
+					break;
+				default:
+					THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_UNKNOWN_PIECE_TYPE,
+						"%s", board_piece.to_string().c_str());
+			}
+
+			TRACE_EXIT("Return Value: Moves=%lu", result.size());
+			return result;
+		}
+
+		std::vector<ptce_mv_ent_t> 
+		_ptce_board::generate_moves_bishop(
+			__in const ptce_piece &board_piece,
+			__in const ptce_pos_t &position,
+			__in_opt const ptce_piece_col_t &enemy_color
+			)
+		{
+			std::vector<ptce_mv_ent_t> result;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(board_piece.m_type != PIECE_BISHOP) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_TYPE,
+					"%s (expecting %s)", ptce_piece::piece_as_string(board_piece).c_str(),
+					PIECE_TYPE_STRING(PIECE_BISHOP));
+			}
+
+			if(board_piece.m_color == enemy_color) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_COLOR,
+					"%s", ptce_piece::piece_as_string(board_piece).c_str());
+			}
+
+			check_piece_moves_diagonal(result, position, enemy_color);
+
+			TRACE_EXIT("Return Value: Moves=%lu", result.size());
+			return result;
+		}
+
+		std::vector<ptce_mv_ent_t> 
+		_ptce_board::generate_moves_king(
+			__in const ptce_piece &board_piece,
+			__in const ptce_pos_t &position,
+			__in_opt const ptce_piece_col_t &enemy_color
+			)
+		{
+			std::vector<ptce_mv_ent_t> result;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(board_piece.m_type != PIECE_KING) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_TYPE,
+					"%s (expecting %s)", ptce_piece::piece_as_string(board_piece).c_str(),
+					PIECE_TYPE_STRING(PIECE_KING));
+			}
+
+			if(board_piece.m_color == enemy_color) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_COLOR,
+					"%s", ptce_piece::piece_as_string(board_piece).c_str());
+			}
+
+			// TODO
+
+			TRACE_EXIT("Return Value: Moves=%lu", result.size());
+			return result;
+		}
+
+		std::vector<ptce_mv_ent_t> 
+		_ptce_board::generate_moves_knight(
+			__in const ptce_piece &board_piece,
+			__in const ptce_pos_t &position,
+			__in_opt const ptce_piece_col_t &enemy_color
+			)
+		{
+			std::vector<ptce_mv_ent_t> result;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(board_piece.m_type != PIECE_KNIGHT) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_TYPE,
+					"%s (expecting %s)", ptce_piece::piece_as_string(board_piece).c_str(),
+					PIECE_TYPE_STRING(PIECE_KNIGHT));
+			}
+
+			if(board_piece.m_color == enemy_color) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_COLOR,
+					"%s", ptce_piece::piece_as_string(board_piece).c_str());
+			}
+
+			// TODO
+
+			TRACE_EXIT("Return Value: Moves=%lu", result.size());
+			return result;
+		}
+
+		std::vector<ptce_mv_ent_t> 
+		_ptce_board::generate_moves_pawn(
+			__in const ptce_piece &board_piece,
+			__in const ptce_pos_t &position,
+			__in_opt const ptce_piece_col_t &enemy_color
+			)
+		{
+			std::vector<ptce_mv_ent_t> result;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(board_piece.m_type != PIECE_PAWN) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_TYPE,
+					"%s (expecting %s)", ptce_piece::piece_as_string(board_piece).c_str(),
+					PIECE_TYPE_STRING(PIECE_PAWN));
+			}
+
+			if(board_piece.m_color == enemy_color) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_COLOR,
+					"%s", ptce_piece::piece_as_string(board_piece).c_str());
+			}
+
+			// TODO
+
+			TRACE_EXIT("Return Value: Moves=%lu", result.size());
+			return result;
+		}
+
+		std::vector<ptce_mv_ent_t> 
+		_ptce_board::generate_moves_queen(
+			__in const ptce_piece &board_piece,
+			__in const ptce_pos_t &position,
+			__in_opt const ptce_piece_col_t &enemy_color
+			)
+		{
+			std::vector<ptce_mv_ent_t> result;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(board_piece.m_type != PIECE_QUEEN) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_TYPE,
+					"%s (expecting %s)", ptce_piece::piece_as_string(board_piece).c_str(),
+					PIECE_TYPE_STRING(PIECE_QUEEN));
+			}
+
+			if(board_piece.m_color == enemy_color) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_COLOR,
+					"%s", ptce_piece::piece_as_string(board_piece).c_str());
+			}
+
+			check_piece_moves_cross(result, position, enemy_color);
+			check_piece_moves_diagonal(result, position, enemy_color);
+
+			TRACE_EXIT("Return Value: Moves=%lu", result.size());
+			return result;
+		}
+
+		std::vector<ptce_mv_ent_t> 
+		_ptce_board::generate_moves_rook(
+			__in const ptce_piece &board_piece,
+			__in const ptce_pos_t &position,
+			__in_opt const ptce_piece_col_t &enemy_color
+			)
+		{
+			std::vector<ptce_mv_ent_t> result;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(board_piece.m_type != PIECE_ROOK) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_TYPE,
+					"%s (expecting %s)", ptce_piece::piece_as_string(board_piece).c_str(),
+					PIECE_TYPE_STRING(PIECE_ROOK));
+			}
+
+			if(board_piece.m_color == enemy_color) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_COLOR,
+					"%s", ptce_piece::piece_as_string(board_piece).c_str());
+			}
+
+			// TODO
+
+			TRACE_EXIT("Return Value: Moves=%lu", result.size());
+			return result;
 		}
 
 		ptce_piece &

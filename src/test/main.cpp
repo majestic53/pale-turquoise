@@ -158,7 +158,27 @@ main(
 		inst->initialize();
 
 		// TODO
+		ptce_board board;
 
+		board.move(ptce_pos_t(4, 0), ptce_pos_t(3, 3));
+
+		std::cout<< board.to_string(true) << std::endl;
+
+		std::vector<ptce_mv_ent_t> gen_moves = board.generate_moves(ptce_pos_t(3, 3), PIECE_BLACK);
+		std::cout << "Count: " << gen_moves.size();
+
+		for(std::vector<ptce_mv_ent_t>::iterator iter = gen_moves.begin();
+				iter != gen_moves.end(); ++iter) {
+			std::cout << std::endl << MOVE_TYPE_STRING(iter->first) << "(" << iter->second.size() << "): ";
+
+			for(std::vector<std::pair<ptce_pos_t, ptce_pos_t>>::iterator pos_iter = iter->second.begin();
+					pos_iter != iter->second.end(); ++pos_iter) {
+				std::cout << "{{" << (int) pos_iter->first.first << ", " << (int) pos_iter->first.second << "}, {"
+						<< (int) pos_iter->second.first << ", " << (int) pos_iter->second.second << "}}";
+			}
+		}
+
+		std::cout << std::endl;
 		// ---
 
 		//std::cout << inst->to_string(true) << std::endl;
