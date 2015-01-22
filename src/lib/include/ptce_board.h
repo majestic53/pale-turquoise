@@ -61,7 +61,6 @@ namespace PTCE_NS {
 			MOVE_CAPTURE = 0,
 			MOVE_CASTLE,
 			MOVE_CHECK,
-			MOVE_EN_PASSANT,
 			MOVE_INVALID,
 			MOVE_NORMAL,
 			MOVE_PROMOTE,
@@ -70,7 +69,7 @@ namespace PTCE_NS {
 		#define MOVE_TYPE_MAX MOVE_PROMOTE
 
 		static const std::string MOVE_TYPE_STR[] = {
-			"CAPTURE", "CASTLE", "CHECK", "EN_PASSANT", "INVALID", "NORMAL", "PROMOTE",
+			"CAPTURE", "CASTLE", "CHECK", "INVALID", "NORMAL", "PROMOTE",
 			};
 
 		#define MOVE_TYPE_STRING(_TYPE_) \
@@ -238,7 +237,8 @@ namespace PTCE_NS {
 
 				ptce_piece &generate_piece(
 					__in ptce_piece_t type,
-					__in ptce_piece_col_t color
+					__in ptce_piece_col_t color,
+					__in_opt bool moved = false
 					);
 
 				size_t increment_piece_reference(

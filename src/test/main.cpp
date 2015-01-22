@@ -25,7 +25,7 @@
 #include "./include/ptce_test_singleton.h"
 #include "./include/ptce_test_uid.h"
 
-#define RUN_TESTS
+//#define RUN_TESTS
 
 ptce_test_set 
 create_test_set_ptce_board(void)
@@ -160,11 +160,15 @@ main(
 		// TODO
 		ptce_board board;
 
-		board.move(ptce_pos_t(4, 0), ptce_pos_t(3, 3));
+		board.move(ptce_pos_t(1, 0), ptce_pos_t(1, 3));
+		board.move(ptce_pos_t(2, 0), ptce_pos_t(2, 3));
+		board.move(ptce_pos_t(3, 0), ptce_pos_t(3, 3));
+		board.move(ptce_pos_t(5, 0), ptce_pos_t(5, 3));
+		board.move(ptce_pos_t(6, 0), ptce_pos_t(6, 3));
 
 		std::cout<< board.to_string(true) << std::endl;
 
-		std::vector<ptce_mv_ent_t> gen_moves = board.generate_moves(ptce_pos_t(3, 3), PIECE_BLACK);
+		std::vector<ptce_mv_ent_t> gen_moves = board.generate_moves(ptce_pos_t(4, 0), PIECE_BLACK);
 		std::cout << "Count: " << gen_moves.size();
 
 		for(std::vector<ptce_mv_ent_t>::iterator iter = gen_moves.begin();
@@ -173,8 +177,13 @@ main(
 
 			for(std::vector<std::pair<ptce_pos_t, ptce_pos_t>>::iterator pos_iter = iter->second.begin();
 					pos_iter != iter->second.end(); ++pos_iter) {
-				std::cout << "{{" << (int) pos_iter->first.first << ", " << (int) pos_iter->first.second << "}, {"
-						<< (int) pos_iter->second.first << ", " << (int) pos_iter->second.second << "}}";
+
+				if(pos_iter != iter->second.begin()) {
+					std::cout << ", ";
+				}
+
+				std::cout << "({" << (int) pos_iter->first.first << ", " << (int) pos_iter->first.second << "}, {"
+						<< (int) pos_iter->second.first << ", " << (int) pos_iter->second.second << "})";
 			}
 		}
 

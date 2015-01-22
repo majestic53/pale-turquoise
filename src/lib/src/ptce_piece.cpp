@@ -36,9 +36,11 @@ namespace PTCE_NS {
 
 		_ptce_piece::_ptce_piece(
 			__in_opt ptce_piece_t type,
-			__in_opt ptce_piece_col_t color
+			__in_opt ptce_piece_col_t color,
+			__in_opt bool moved
 			) :
 				m_color(color),
+				m_moved(moved),
 				m_type(type)
 		{
 			TRACE_ENTRY();
@@ -50,6 +52,7 @@ namespace PTCE_NS {
 			) :
 				ptce_uid_base(other),
 				m_color(other.m_color),
+				m_moved(other.m_moved),
 				m_type(other.m_type)
 		{
 			TRACE_ENTRY();
@@ -76,6 +79,7 @@ namespace PTCE_NS {
 			if(this != &other) {
 				ptce_uid_base::operator=(other);
 				m_color = other.m_color;
+				m_moved = other.m_moved;
 				m_type = other.m_type;
 			}
 
@@ -96,6 +100,7 @@ namespace PTCE_NS {
 			if(this != &other) {
 				result = ((id() == other.m_uid) 
 						&& (m_color == other.m_color) 
+						&& (m_moved == other.m_moved)
 						&& (m_type == other.m_type));
 			}
 
@@ -128,6 +133,15 @@ namespace PTCE_NS {
 			return m_color;
 		}
 
+		bool &
+		_ptce_piece::moved(void)
+		{
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+			TRACE_EXIT("Return Value: 0x%x", m_moved);
+			return m_moved;
+		}
+
 		std::string 
 		_ptce_piece::piece_as_string(
 			__in const _ptce_piece &piece,
@@ -141,7 +155,8 @@ namespace PTCE_NS {
 			result << ptce_uid::id_as_string(piece.m_uid) << " Type=" << PIECE_TYPE_STRING(piece.m_type) 
 					<< " (0x" << VALUE_AS_HEX(ptce_piece_t, piece.m_type) << "), Color=" 
 					<< PIECE_COLOR_STRING(piece.m_color) << " (0x" 
-					<< VALUE_AS_HEX(ptce_piece_col_t, piece.m_color) << ")";
+					<< VALUE_AS_HEX(ptce_piece_col_t, piece.m_color) << "), Moved=" 
+					<< (piece.m_moved ? "TRUE" : "FALSE");
 
 			if(verbose) {
 				result << ", Symbol=\'" << piece_as_symbol(piece) << "\'";
@@ -344,7 +359,8 @@ namespace PTCE_NS {
 		ptce_piece &
 		_ptce_piece_factory::generate(
 			__in ptce_piece_t type,
-			__in ptce_piece_col_t color
+			__in ptce_piece_col_t color,
+			__in_opt bool moved
 			)
 		{
 			ptce_piece piece;
@@ -371,7 +387,7 @@ namespace PTCE_NS {
 					"%s", piece.id().to_string().c_str());
 			}
 
-			piece = ptce_piece(type, color);
+			piece = ptce_piece(type, color, moved);
 			m_piece_map.insert(std::pair<ptce_uid, std::pair<ptce_piece, size_t>>(piece.id(), 
 					std::pair<ptce_piece, size_t>(piece, PTCE_INIT_REF_DEF)));
 

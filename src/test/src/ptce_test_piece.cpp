@@ -42,6 +42,7 @@ namespace PTCE_NS {
 
 					if((piece0.id() != piece1.id())
 							|| (piece0.color() != piece1.color())
+							|| (piece0.moved() != piece1.moved())
 							|| (piece0.type() != piece1.type())) {
 						std::cerr << "----!ptce_test_piece_assignment failure(0)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -196,6 +197,7 @@ exit:
 				inst = ptce::acquire();
 				inst->initialize();
 				ptce_piece piece0, piece1(PIECE_KING, PIECE_BLACK);
+				piece1.moved() = true;
 
 				try {
 
@@ -207,6 +209,7 @@ exit:
 
 					piece0.color() = PIECE_BLACK;
 					piece0.type() = PIECE_KING;
+					piece0.moved() = true;
 
 					if(piece0 == piece1) {
 						std::cerr << "----!ptce_test_piece_equals failure(1)" << std::endl;
@@ -458,10 +461,11 @@ exit:
 				ptce_piece piece;
 
 				try {
-					piece = fact_inst->generate(PIECE_KING, PIECE_BLACK);
+					piece = fact_inst->generate(PIECE_KING, PIECE_BLACK, true);
 
 					if((piece.type() != PIECE_KING)
-							|| (piece.color() != PIECE_BLACK)) {
+							|| (piece.color() != PIECE_BLACK)
+							|| (piece.moved() != true)) {
 						std::cerr << "----!ptce_test_piece_factory_generate failure(0)" << std::endl;
 						result = PTCE_TEST_FAILURE;
 						goto exit;
@@ -817,6 +821,54 @@ exit:
 					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_piece_factory_size exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_piece_moved(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_piece piece;
+
+				try {
+
+					if(piece.moved()) {
+						std::cerr << "----!ptce_test_piece_moved failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					piece.moved() = true;
+
+					if(!piece.moved()) {
+						std::cerr << "----!ptce_test_piece_moved failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_piece_moved exception(0): " 
 							<< exc.what() << std::endl;
 					result = PTCE_TEST_FAILURE;
 					goto exit;

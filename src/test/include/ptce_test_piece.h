@@ -42,6 +42,7 @@ namespace PTCE_NS {
 			PTCE_TEST_PIECE_FACTORY_IS_INITIALIZED,
 			PTCE_TEST_PIECE_FACTORY_REFERENCE_COUNT,
 			PTCE_TEST_PIECE_FACTORY_SIZE,
+			PTCE_TEST_PIECE_MOVED,
 			PTCE_TEST_PIECE_NOT_EQUALS,
 			PTCE_TEST_PIECE_TYPE,
 		};
@@ -64,6 +65,7 @@ namespace PTCE_NS {
 			"PTCE_TEST_PIECE_FACTORY_IS_INITIALIZED",
 			"PTCE_TEST_PIECE_FACTORY_REFERENCE_COUNT",
 			"PTCE_TEST_PIECE_FACTORY_SIZE",
+			"PTCE_TEST_PIECE_MOVED",
 			"PTCE_TEST_PIECE_NOT_EQUALS",
 			"PTCE_TEST_PIECE_TYPE",
 			};
@@ -102,6 +104,8 @@ namespace PTCE_NS {
 		
 		extern ptce_test_t ptce_test_piece_factory_size(void);
 		
+		extern ptce_test_t ptce_test_piece_moved(void);
+
 		extern ptce_test_t ptce_test_piece_not_equals(void);
 		
 		extern ptce_test_t ptce_test_piece_type(void);
@@ -122,6 +126,7 @@ namespace PTCE_NS {
 			ptce_test_piece_factory_is_initialized,
 			ptce_test_piece_factory_reference_count,
 			ptce_test_piece_factory_size,
+			ptce_test_piece_moved,
 			ptce_test_piece_not_equals,
 			ptce_test_piece_type,
 			};

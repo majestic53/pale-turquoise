@@ -66,7 +66,8 @@ namespace PTCE_NS {
 
 				_ptce_piece(
 					__in_opt ptce_piece_t type = PIECE_EMPTY,
-					__in_opt ptce_piece_col_t color = PIECE_WHITE
+					__in_opt ptce_piece_col_t color = PIECE_WHITE,
+					__in_opt bool moved = false
 					);
 
 				_ptce_piece(
@@ -88,6 +89,8 @@ namespace PTCE_NS {
 					);
 
 				ptce_piece_col_t &color(void);
+
+				bool &moved(void);
 
 				static std::string piece_as_string(
 					__in const _ptce_piece &piece,
@@ -111,6 +114,8 @@ namespace PTCE_NS {
 				friend class _ptce_piece_factory;
 
 				ptce_piece_col_t m_color;
+
+				bool m_moved;
 
 				ptce_piece_t m_type;
 
@@ -150,7 +155,8 @@ namespace PTCE_NS {
 
 				ptce_piece &generate(
 					__in ptce_piece_t type,
-					__in ptce_piece_col_t color
+					__in ptce_piece_col_t color,
+					__in_opt bool moved = false
 					);
 
 				size_t increment_reference(
