@@ -93,7 +93,9 @@ namespace PTCE_NS {
 
 			public:
 
-				_ptce_board(void);
+				_ptce_board(
+					__in_opt bool blank = false
+					);
 
 				_ptce_board(
 					__in const std::string &serial,
@@ -123,8 +125,17 @@ namespace PTCE_NS {
 					__in_opt bool verbose = false
 					);
 
+				void clear(void);
+
 				bool contains(
 					__in const ptce_pos_t &position
+					);
+
+				void generate_piece(
+					__in const ptce_pos_t &position,
+					__in ptce_piece_t type,
+					__in ptce_piece_col_t color,
+					__in_opt bool moved = false
 					);
 
 				std::vector<ptce_mv_ent_t> generate_moves(
@@ -153,6 +164,10 @@ namespace PTCE_NS {
 				ptce_piece &piece_moved(void);
 
 				ptce_pos_t &piece_moved_coordinate(void);
+
+				void remove(
+					__in const ptce_pos_t &position
+					);
 
 				std::string serialize(
 					__in_opt ptce_board_mv_t type = BOARD_CONTINUE
@@ -197,7 +212,9 @@ namespace PTCE_NS {
 					__in const ptce_piece &piece
 					);
 
-				void generate_initial_board(void);
+				void generate_initial_board(
+					__in_opt bool blank = false
+					);
 
 				std::vector<ptce_mv_ent_t> generate_moves_bishop(
 					__in const ptce_piece &board_piece,

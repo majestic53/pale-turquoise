@@ -83,9 +83,61 @@ exit:
 		}
 
 		ptce_test_t 
+		ptce_test_board_clear(void)
+		{
+			size_t x, y = 0;
+			ptce_ptr inst = NULL;
+			ptce_piece board_piece;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_board board;
+
+				try {
+					board.clear();
+
+					for(; y < BOARD_WID; ++y) {
+
+						for(x = 0; x < BOARD_WID; ++x) {
+
+							board_piece = board.piece(ptce_pos_t(x, y));
+							if(board_piece.type() != PIECE_EMPTY) {
+								std::cerr << "----!ptce_test_board_clear failure(0)" << std::endl;
+								result = PTCE_TEST_FAILURE;
+								goto exit;
+							}
+						}
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_clear exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
 		ptce_test_board_constructor(void)
 		{
+			size_t x, y;
 			ptce_ptr inst = NULL;
+			ptce_piece board_piece;
 			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
 
 			TRACE_ENTRY();
@@ -116,6 +168,25 @@ exit:
 						}
 					}
 
+					// constructor w/ blank flag
+					{
+						ptce_board board(true);
+
+						for(y = 0; y < BOARD_WID; ++y) {
+
+							for(x = 0; x < BOARD_WID; ++x) {
+
+								board_piece = board.piece(ptce_pos_t(x, y));
+								if((board_piece.type() != PIECE_EMPTY)
+										|| (board_piece.color() != PIECE_WHITE)) {
+									std::cerr << "----!ptce_test_board_constructor failure(2)" << std::endl;
+									result = PTCE_TEST_FAILURE;
+									goto exit;
+								}								
+							}
+						}
+					}
+
 					// constructor w/ parameter
 					{
 						ptce_board board0;
@@ -125,7 +196,7 @@ exit:
 						if(board1.piece_captured()
 								|| (board1.state() != BOARD_ACTIVE)
 								|| (board1.piece_list().size() != BOARD_LEN)) {
-							std::cerr << "----!ptce_test_board_constructor failure(2)" << std::endl;
+							std::cerr << "----!ptce_test_board_constructor failure(3)" << std::endl;
 							result = PTCE_TEST_FAILURE;
 							goto exit;
 						}
@@ -133,7 +204,7 @@ exit:
 						if((board1.piece_moved().type() != PIECE_PAWN)
 								|| (board1.piece(ptce_pos_t(3, 1)).type() != PIECE_EMPTY) 
 								|| (board1.piece(ptce_pos_t(3, 3)).type() != PIECE_PAWN)) {
-							std::cerr << "----!ptce_test_board_constructor failure(3)" << std::endl;
+							std::cerr << "----!ptce_test_board_constructor failure(4)" << std::endl;
 							result = PTCE_TEST_FAILURE;
 							goto exit;
 						}
@@ -847,6 +918,286 @@ exit:
 		}
 
 		ptce_test_t 
+		ptce_test_board_generate_moves_bishop(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_board board(true);
+
+				try {
+
+					// TODO
+
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_generate_moves_bishop exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_board_generate_moves_king(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_board board(true);
+
+				try {
+
+					// TODO
+
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_generate_moves_king exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_board_generate_moves_knight(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_board board(true);
+
+				try {
+
+					// TODO
+
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_generate_moves_knight exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_board_generate_moves_pawn(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_board board(true);
+
+				try {
+
+					// TODO
+
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_generate_moves_pawn exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_board_generate_moves_queen(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_board board(true);
+
+				try {
+
+					// TODO
+
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_generate_moves_queen exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_board_generate_moves_rook(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_board board(true);
+
+				try {
+
+					// TODO
+
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_generate_moves_rook exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_board_generate_piece(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_piece board_piece;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_board board(true);
+
+				try {
+					board.generate_piece(ptce_pos_t(3, 3), PIECE_BISHOP, PIECE_BLACK, true);
+
+					if(!board.contains(ptce_pos_t(3, 3))) {
+						std::cerr << "----!ptce_test_board_generate_piece exception(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board_piece = board.piece(ptce_pos_t(3, 3));
+					if((board_piece.type() != PIECE_BISHOP)
+							|| (board_piece.color() != PIECE_BLACK)
+							|| !board_piece.moved()) {
+						std::cerr << "----!ptce_test_board_generate_piece exception(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					try {
+						board.generate_piece(ptce_pos_t(3, 3), PIECE_KING, PIECE_WHITE);
+						std::cerr << "----!ptce_test_board_generate_piece exception(2)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					} catch(...) { }
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_generate_piece exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
 		ptce_test_board_move(void)
 		{
 			size_t black, white;
@@ -1224,6 +1575,58 @@ exit:
 					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_piece_moved_coordinate exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_board_remove(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_piece board_piece;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_board board;
+
+				try {
+
+					try {
+						board.remove(ptce_pos_t(3, 3));
+						std::cerr << "----!ptce_test_board_remove failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;	
+					} catch(...) { }
+
+					board.remove(ptce_pos_t(3, 1));
+
+					board_piece = board.piece(ptce_pos_t(3, 1));
+					if((board_piece.type() != PIECE_EMPTY)
+							|| (board_piece.color() != PIECE_WHITE)) {
+						std::cerr << "----!ptce_test_board_remove failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_remove exception(0): " 
 							<< exc.what() << std::endl;
 					result = PTCE_TEST_FAILURE;
 					goto exit;

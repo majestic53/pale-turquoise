@@ -30,12 +30,14 @@
 
 namespace PTCE_NS {
 
+	#ifndef _WIN32
 	#define __in
 	#define __in_opt
 	#define __out
 	#define __out_opt
 	#define __inout
 	#define __inout_opt
+	#endif // _WIN32
 
 	#define EMPTY "(EMPTY)"
 	#define ERROR "(ERROR)"

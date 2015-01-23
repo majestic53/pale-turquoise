@@ -28,6 +28,7 @@ namespace PTCE_NS {
 
 		enum {
 			PTCE_TEST_BOARD_ASSIGNMENT = 0,
+			PTCE_TEST_BOARD_CLEAR,
 			PTCE_TEST_BOARD_CONSTRUCTOR,
 			PTCE_TEST_BOARD_CONTAINS,
 			PTCE_TEST_BOARD_EQUALS,
@@ -42,6 +43,13 @@ namespace PTCE_NS {
 			PTCE_TEST_BOARD_FACTORY_IS_INITIALIZED,
 			PTCE_TEST_BOARD_FACTORY_REFERENCE_COUNT,
 			PTCE_TEST_BOARD_FACTORY_SIZE,
+			PTCE_TEST_BOARD_GENERATE_MOVES_BISHOP,
+			PTCE_TEST_BOARD_GENERATE_MOVES_KING,
+			PTCE_TEST_BOARD_GENERATE_MOVES_KNIGHT,
+			PTCE_TEST_BOARD_GENERATE_MOVES_PAWN,
+			PTCE_TEST_BOARD_GENERATE_MOVES_QUEEN,
+			PTCE_TEST_BOARD_GENERATE_MOVES_ROOK,
+			PTCE_TEST_BOARD_GENERATE_PIECE,
 			PTCE_TEST_BOARD_MOVE,
 			PTCE_TEST_BOARD_NOT_EQUALS,
 			PTCE_TEST_BOARD_PIECE,
@@ -50,6 +58,7 @@ namespace PTCE_NS {
 			PTCE_TEST_BOARD_PIECE_LIST,
 			PTCE_TEST_BOARD_PIECE_MOVED,
 			PTCE_TEST_BOARD_PIECE_MOVED_COORDINATE,
+			PTCE_TEST_BOARD_REMOVE,
 			PTCE_TEST_BOARD_SERIALIZE,
 			PTCE_TEST_BOARD_SIZE,
 			PTCE_TEST_BOARD_STATE,
@@ -60,6 +69,7 @@ namespace PTCE_NS {
 
 		static const std::string PTCE_TEST_BOARD_STR[] = {
 			"PTCE_TEST_BOARD_ASSIGNMENT",
+			"PTCE_TEST_BOARD_CLEAR",
 			"PTCE_TEST_BOARD_CONSTRUCTOR",
 			"PTCE_TEST_BOARD_CONTAINS",
 			"PTCE_TEST_BOARD_EQUALS",
@@ -74,6 +84,13 @@ namespace PTCE_NS {
 			"PTCE_TEST_BOARD_FACTORY_IS_INITIALIZED",
 			"PTCE_TEST_BOARD_FACTORY_REFERENCE_COUNT",
 			"PTCE_TEST_BOARD_FACTORY_SIZE",
+			"PTCE_TEST_BOARD_GENERATE_MOVES_BISHOP",
+			"PTCE_TEST_BOARD_GENERATE_MOVES_KING",
+			"PTCE_TEST_BOARD_GENERATE_MOVES_KNIGHT",
+			"PTCE_TEST_BOARD_GENERATE_MOVES_PAWN",
+			"PTCE_TEST_BOARD_GENERATE_MOVES_QUEEN",
+			"PTCE_TEST_BOARD_GENERATE_MOVES_ROOK",
+			"PTCE_TEST_BOARD_GENERATE_PIECE",
 			"PTCE_TEST_BOARD_MOVE",
 			"PTCE_TEST_BOARD_NOT_EQUALS",
 			"PTCE_TEST_BOARD_PIECE",
@@ -82,6 +99,7 @@ namespace PTCE_NS {
 			"PTCE_TEST_BOARD_PIECE_LIST",
 			"PTCE_TEST_BOARD_PIECE_MOVED",
 			"PTCE_TEST_BOARD_PIECE_MOVED_COORDINATE",
+			"PTCE_TEST_BOARD_REMOVE",
 			"PTCE_TEST_BOARD_SERIALIZE",
 			"PTCE_TEST_BOARD_SIZE",
 			"PTCE_TEST_BOARD_STATE",
@@ -93,6 +111,8 @@ namespace PTCE_NS {
 			PTCE_TEST_BOARD_STR[_TYPE_].c_str())
 
 		extern ptce_test_t ptce_test_board_assignment(void);
+
+		extern ptce_test_t ptce_test_board_clear(void);
 
 		extern ptce_test_t ptce_test_board_constructor(void);
 
@@ -122,6 +142,20 @@ namespace PTCE_NS {
 
 		extern ptce_test_t ptce_test_board_factory_size(void);
 
+		extern ptce_test_t ptce_test_board_generate_moves_bishop(void);
+
+		extern ptce_test_t ptce_test_board_generate_moves_king(void);
+
+		extern ptce_test_t ptce_test_board_generate_moves_knight(void);
+
+		extern ptce_test_t ptce_test_board_generate_moves_pawn(void);
+
+		extern ptce_test_t ptce_test_board_generate_moves_queen(void);
+
+		extern ptce_test_t ptce_test_board_generate_moves_rook(void);
+
+		extern ptce_test_t ptce_test_board_generate_piece(void);
+
 		extern ptce_test_t ptce_test_board_move(void);
 
 		extern ptce_test_t ptce_test_board_not_equals(void);
@@ -138,6 +172,8 @@ namespace PTCE_NS {
 
 		extern ptce_test_t ptce_test_board_piece_moved_coordinate(void);
 
+		extern ptce_test_t ptce_test_board_remove(void);
+
 		extern ptce_test_t ptce_test_board_serialize(void);
 
 		extern ptce_test_t ptce_test_board_size(void);
@@ -148,6 +184,7 @@ namespace PTCE_NS {
 
 		static const ptce_test_set_cb PTCE_TEST_BOARD_CB[] = {
 			ptce_test_board_assignment,
+			ptce_test_board_clear,
 			ptce_test_board_constructor,
 			ptce_test_board_contains,
 			ptce_test_board_equals,
@@ -162,6 +199,13 @@ namespace PTCE_NS {
 			ptce_test_board_factory_is_initialized,
 			ptce_test_board_factory_reference_count,
 			ptce_test_board_factory_size,
+			ptce_test_board_generate_moves_bishop,
+			ptce_test_board_generate_moves_king,
+			ptce_test_board_generate_moves_knight,
+			ptce_test_board_generate_moves_pawn,
+			ptce_test_board_generate_moves_queen,
+			ptce_test_board_generate_moves_rook,
+			ptce_test_board_generate_piece,
 			ptce_test_board_move,
 			ptce_test_board_not_equals,
 			ptce_test_board_piece,
@@ -170,6 +214,7 @@ namespace PTCE_NS {
 			ptce_test_board_piece_list,
 			ptce_test_board_piece_moved,
 			ptce_test_board_piece_moved_coordinate,
+			ptce_test_board_remove,
 			ptce_test_board_serialize,
 			ptce_test_board_size,
 			ptce_test_board_state,

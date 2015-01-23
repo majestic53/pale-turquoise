@@ -47,13 +47,15 @@ namespace PTCE_NS {
 		#define PIECE_ORDER(_POS_) \
 			((_POS_) > BOARD_POS_MAX ? PIECE_EMPTY : PIECE_ODR[_POS_])
 
-		_ptce_board::_ptce_board(void) :
-			m_piece_captured(false),
-			m_state(BOARD_INACTIVE)
+		_ptce_board::_ptce_board(
+			__in_opt bool blank
+			) :
+				m_piece_captured(false),
+				m_state(BOARD_INACTIVE)
 		{
 			TRACE_ENTRY();
 
-			generate_initial_board();
+			generate_initial_board(blank);
 
 			TRACE_EXIT("Return Value: 0x%x", 0);
 		}
@@ -426,6 +428,29 @@ namespace PTCE_NS {
 			TRACE_EXIT("Return Value: Moves=%lu", move_list.size());
 		}
 
+		void 
+		_ptce_board::clear(void)
+		{
+			size_t x, y = 0;
+			ptce_piece board_piece;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			for(; y < BOARD_WID; ++y) {
+
+				for(x = 0; x < BOARD_WID; ++x) {
+
+					board_piece = piece(ptce_pos_t(x, y));
+					if(board_piece.type() != PIECE_EMPTY) {
+						remove(ptce_pos_t(x, y));
+					}
+				}
+			}
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+		}
+
 		bool 
 		_ptce_board::contains(
 			__in const ptce_pos_t &position
@@ -475,7 +500,9 @@ namespace PTCE_NS {
 		}
 
 		void 
-		_ptce_board::generate_initial_board(void)
+		_ptce_board::generate_initial_board(
+			__in_opt bool blank
+			)
 		{
 			size_t x, y = 0;
 
@@ -488,24 +515,30 @@ namespace PTCE_NS {
 
 				for(x = 0; x < BOARD_WID; ++x) {
 
-					switch(y) {
-						case BLACK_RANK_SECOND:
-							m_piece_list.at(BOARD_COORD(ptce_pos_t(x, y))) 
-								= generate_piece(PIECE_PAWN, PIECE_BLACK);
-							break;
-						case BLACK_RANK_FIRST:
-						case WHITE_RANK_FIRST:
-							m_piece_list.at(BOARD_COORD(ptce_pos_t(x, y))) = generate_piece(PIECE_ORDER(x), 
-								y == BLACK_RANK_FIRST ? PIECE_BLACK : PIECE_WHITE);
-							break;
-						case WHITE_RANK_SECOND:
-							m_piece_list.at(BOARD_COORD(ptce_pos_t(x, y))) 
-								= generate_piece(PIECE_PAWN, PIECE_WHITE);
-							break;
-						default:
-							m_piece_list.at(BOARD_COORD(ptce_pos_t(x, y))) 
-								= generate_piece(PIECE_EMPTY, PIECE_WHITE);
-							break;
+					if(!blank) {
+
+						switch(y) {
+							case BLACK_RANK_SECOND:
+								m_piece_list.at(BOARD_COORD(ptce_pos_t(x, y))) 
+									= generate_piece(PIECE_PAWN, PIECE_BLACK);
+								break;
+							case BLACK_RANK_FIRST:
+							case WHITE_RANK_FIRST:
+								m_piece_list.at(BOARD_COORD(ptce_pos_t(x, y))) = generate_piece(PIECE_ORDER(x), 
+									y == BLACK_RANK_FIRST ? PIECE_BLACK : PIECE_WHITE);
+								break;
+							case WHITE_RANK_SECOND:
+								m_piece_list.at(BOARD_COORD(ptce_pos_t(x, y))) 
+									= generate_piece(PIECE_PAWN, PIECE_WHITE);
+								break;
+							default:
+								m_piece_list.at(BOARD_COORD(ptce_pos_t(x, y))) 
+									= generate_piece(PIECE_EMPTY, PIECE_WHITE);
+								break;
+						}
+					} else {
+						m_piece_list.at(BOARD_COORD(ptce_pos_t(x, y))) 
+							= generate_piece(PIECE_EMPTY, PIECE_WHITE);
 					}
 				}
 			}
@@ -595,8 +628,13 @@ namespace PTCE_NS {
 			)
 		{
 			int x, y, y_off;
-			std::vector<ptce_mv_ent_t> result;
+			size_t iter_x, iter_y;
+			bool castling_allowed;
+			ptce_piece enemy_piece;
+			std::vector<ptce_mv_ent_t> enemy_pos_list, result;
 			std::vector<std::pair<ptce_pos_t, ptce_pos_t>> pos_list;
+			std::vector<ptce_mv_ent_t>::iterator enemy_pos_list_iter;
+			std::vector<std::pair<ptce_pos_t, ptce_pos_t>>::iterator enemy_pos_iter;
 
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -631,35 +669,136 @@ namespace PTCE_NS {
 			if(contains(ptce_pos_t(KING_POS_INIT, y_off))
 					&& (piece(ptce_pos_t(KING_POS_INIT, y_off)).type() == PIECE_KING)
 					&& (piece(ptce_pos_t(KING_POS_INIT, y_off)).color() 
-							== ((enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK))) {
+							== ((enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK))
+					&& !piece(ptce_pos_t(KING_POS_INIT, y_off)).moved()) {
 
 				if(contains(ptce_pos_t(ROOK_POS_LEFT_INIT, y_off))
 						&& (piece(ptce_pos_t(ROOK_POS_LEFT_INIT, y_off)).type() == PIECE_ROOK)
 						&& (piece(ptce_pos_t(ROOK_POS_LEFT_INIT, y_off)).color() 
 								== ((enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK))
+						&& !piece(ptce_pos_t(ROOK_POS_LEFT_INIT, y_off)).moved()
 						&& !contains(ptce_pos_t(ROOK_POS_LEFT_INIT + 1, y_off))
 						&& !contains(ptce_pos_t(ROOK_POS_LEFT_INIT + 2, y_off))
 						&& !contains(ptce_pos_t(ROOK_POS_LEFT_INIT + 3, y_off))) {
-					pos_list.clear();
-					pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(ROOK_POS_LEFT_INIT, y_off), 
-							ptce_pos_t(ROOK_POS_CASTLING_LEFT, y_off)));
-					pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(KING_POS_INIT, y_off), 
-							ptce_pos_t(KING_POS_CASTLING_LEFT, y_off)));
-					result.push_back(ptce_mv_ent_t(MOVE_CASTLE, pos_list));
+
+					castling_allowed = true;
+
+					for(iter_y = 0; iter_y < BOARD_WID; ++iter_y) {
+
+						for(iter_x = 0; iter_x < BOARD_WID; ++iter_x) {
+
+							enemy_piece = piece(ptce_pos_t(iter_x, iter_y));
+							if((enemy_piece.type() != PIECE_EMPTY)
+									&& (enemy_piece.color() == enemy_color)) {
+								enemy_pos_list = generate_moves(ptce_pos_t(iter_x, iter_y), 
+										(enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK);
+
+								for(enemy_pos_list_iter = enemy_pos_list.begin(); 
+										enemy_pos_list_iter != enemy_pos_list.end();
+										++enemy_pos_list_iter) {
+
+									for(enemy_pos_iter = enemy_pos_list_iter->second.begin();
+											enemy_pos_iter != enemy_pos_list_iter->second.end();
+											++enemy_pos_iter) {
+
+										if(((enemy_pos_iter->second.first == (ROOK_POS_LEFT_INIT + 1)) 
+												&& (enemy_pos_iter->second.second == y_off))
+												|| ((enemy_pos_iter->second.first == (ROOK_POS_LEFT_INIT + 2)) 
+												&& (enemy_pos_iter->second.second == y_off))
+												|| ((enemy_pos_iter->second.first == (ROOK_POS_LEFT_INIT + 3)) 
+												&& (enemy_pos_iter->second.second == y_off))) {
+											castling_allowed = false;
+											break;
+										}
+									}
+								}
+
+								if(!castling_allowed) {
+									break;
+								}
+							}
+
+							if(!castling_allowed) {
+								break;
+							}
+						}
+
+						if(!castling_allowed) {
+							break;
+						}
+					}
+
+					if(castling_allowed) {
+						pos_list.clear();
+						pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(ROOK_POS_LEFT_INIT, y_off), 
+								ptce_pos_t(ROOK_POS_CASTLING_LEFT, y_off)));
+						pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(KING_POS_INIT, y_off), 
+								ptce_pos_t(KING_POS_CASTLING_LEFT, y_off)));
+						result.push_back(ptce_mv_ent_t(MOVE_CASTLE, pos_list));
+					}
 				}
 
 				if(contains(ptce_pos_t(ROOK_POS_RIGHT_INIT, y_off))
 						&& (piece(ptce_pos_t(ROOK_POS_RIGHT_INIT, y_off)).type() == PIECE_ROOK)
 						&& (piece(ptce_pos_t(ROOK_POS_RIGHT_INIT, y_off)).color() 
 								== ((enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK))
+						&& !piece(ptce_pos_t(ROOK_POS_RIGHT_INIT, y_off)).moved()
 						&& !contains(ptce_pos_t(ROOK_POS_RIGHT_INIT - 1, y_off))
 						&& !contains(ptce_pos_t(ROOK_POS_RIGHT_INIT - 2, y_off))) {
-					pos_list.clear();
-					pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(ROOK_POS_RIGHT_INIT, y_off), 
-							ptce_pos_t(ROOK_POS_CASTLING_RIGHT, y_off)));
-					pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(KING_POS_INIT, y_off), 
-							ptce_pos_t(KING_POS_CASTLING_RIGHT, y_off)));
-					result.push_back(ptce_mv_ent_t(MOVE_CASTLE, pos_list));
+
+					castling_allowed = true;
+
+					for(iter_y = 0; iter_y < BOARD_WID; ++iter_y) {
+
+						for(iter_x = 0; iter_x < BOARD_WID; ++iter_x) {
+
+							enemy_piece = piece(ptce_pos_t(iter_x, iter_y));
+							if((enemy_piece.type() != PIECE_EMPTY)
+									&& (enemy_piece.color() == enemy_color)) {
+								enemy_pos_list = generate_moves(ptce_pos_t(iter_x, iter_y), 
+										(enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK);
+
+								for(enemy_pos_list_iter = enemy_pos_list.begin(); 
+										enemy_pos_list_iter != enemy_pos_list.end();
+										++enemy_pos_list_iter) {
+
+									for(enemy_pos_iter = enemy_pos_list_iter->second.begin();
+											enemy_pos_iter != enemy_pos_list_iter->second.end();
+											++enemy_pos_iter) {
+
+										if(((enemy_pos_iter->second.first == (ROOK_POS_RIGHT_INIT - 1)) 
+												&& (enemy_pos_iter->second.second == y_off))
+												|| ((enemy_pos_iter->second.first == (ROOK_POS_RIGHT_INIT - 2)) 
+												&& (enemy_pos_iter->second.second == y_off))) {
+											castling_allowed = false;
+											break;
+										}
+									}
+								}
+
+								if(!castling_allowed) {
+									break;
+								}
+							}
+
+							if(!castling_allowed) {
+								break;
+							}
+						}
+
+						if(!castling_allowed) {
+							break;
+						}
+					}
+
+					if(castling_allowed) {
+						pos_list.clear();
+						pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(ROOK_POS_RIGHT_INIT, y_off), 
+								ptce_pos_t(ROOK_POS_CASTLING_RIGHT, y_off)));
+						pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(KING_POS_INIT, y_off), 
+								ptce_pos_t(KING_POS_CASTLING_RIGHT, y_off)));
+						result.push_back(ptce_mv_ent_t(MOVE_CASTLE, pos_list));
+					}
 				}
 			}
 
@@ -747,7 +886,7 @@ namespace PTCE_NS {
 					check_piece_move(result, position, ptce_pos_t(position.first, position.second + 1), 
 							enemy_color);
 
-					if((position.second == WHITE_RANK_SECOND)
+					if(!board_piece.m_moved 
 							&& !contains(ptce_pos_t(position.first, position.second + 2))) {
 						check_piece_move(result, position, ptce_pos_t(position.first, position.second + 2), 
 								enemy_color);
@@ -774,7 +913,7 @@ namespace PTCE_NS {
 					check_piece_move(result, position, ptce_pos_t(position.first, position.second - 1), 
 							enemy_color);
 
-					if((position.second == BLACK_RANK_SECOND)
+					if(!board_piece.m_moved 
 							&& !contains(ptce_pos_t(position.first, position.second - 2))) {
 						check_piece_move(result, position, ptce_pos_t(position.first, position.second - 2), 
 								enemy_color);
@@ -843,6 +982,31 @@ namespace PTCE_NS {
 
 			TRACE_EXIT("Return Value: Moves=%lu", result.size());
 			return result;
+		}
+
+		void 
+		_ptce_board::generate_piece(
+			__in const ptce_pos_t &position,
+			__in ptce_piece_t type,
+			__in ptce_piece_col_t color,
+			__in_opt bool moved
+			)
+		{
+			ptce_piece old_piece;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(contains(position)) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_PIECE_ALREADY_EXISTS,
+					"{%i, %i}", position.first, position.second);
+			}
+
+			old_piece = piece(position);
+			m_piece_list.at(BOARD_COORD(position)) = generate_piece(type, color, moved);
+			decrement_piece_reference(old_piece);
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
 		}
 
 		ptce_piece &
@@ -923,7 +1087,7 @@ namespace PTCE_NS {
 			m_piece_captured = contains(new_position);
 			decrement_piece_reference(m_piece_list.at(BOARD_COORD(new_position)));
 			m_piece_list.at(BOARD_COORD(new_position)) = m_piece_list.at(BOARD_COORD(old_position));
-			m_piece_list.at(BOARD_COORD(old_position)).moved() = true;
+			m_piece_list.at(BOARD_COORD(new_position)).moved() = true;
 			m_piece_list.at(BOARD_COORD(old_position)) = generate_piece(PIECE_EMPTY, PIECE_WHITE);
 			m_piece_moved = new_position;
 
@@ -1029,6 +1193,36 @@ namespace PTCE_NS {
 			return m_piece_moved;
 		}
 
+		void 
+		_ptce_board::remove(
+			__in const ptce_pos_t &position
+			)
+		{
+			ptce_piece old_piece;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if((position.first > BOARD_POS_MAX)
+					|| (position.second > BOARD_POS_MAX)) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_POSITION,
+					"{%i, %i} (must be at most {%i, %i})", position.first, position.second, 
+					BOARD_POS_MAX, BOARD_POS_MAX);
+			}
+
+			old_piece = piece(position);
+			if(old_piece.type() == PIECE_EMPTY) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_TYPE,
+					"%s, {%i, %i}", PIECE_TYPE_STRING(old_piece.type()), position.first,
+					position.second);
+			}
+
+			m_piece_list.at(BOARD_COORD(position)) = generate_piece(PIECE_EMPTY, PIECE_WHITE);
+			decrement_piece_reference(old_piece);
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+		}
+
 		std::string 
 		_ptce_board::serialize(
 			__in_opt ptce_board_mv_t type
@@ -1058,7 +1252,7 @@ namespace PTCE_NS {
 					if((piece.type() == PIECE_KING)
 							|| (piece.type() == PIECE_ROOK)
 							|| (piece.type() == PIECE_PAWN)) {
-						result << ((m_piece_moved.first == x) && (m_piece_moved.second == y));
+						result << piece.moved();
 					}
 
 					result << " ";
@@ -1190,7 +1384,7 @@ namespace PTCE_NS {
 						}
 
 						token = std::string(1, serial.at(ch_iter++));
-						moved = (bool) std::atoi(token.c_str());
+						moved = std::atoi(token.c_str()) ? true : false;
 					} else {
 						moved = false;
 					}

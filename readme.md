@@ -13,6 +13,12 @@ Changelog
 =========
 
 ###Version 0.1.1504
+*Updated: 1/22/2015*
+
+* Added chess piece move routines tests (partial)
+* Added a series of board routines (clear, generate_piece, remove)
+* Added castling error checking
+
 *Updated: 1/21/2015*
 
 * Added chess piece move routines

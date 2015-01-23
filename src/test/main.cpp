@@ -25,7 +25,7 @@
 #include "./include/ptce_test_singleton.h"
 #include "./include/ptce_test_uid.h"
 
-//#define RUN_TESTS
+#define RUN_TESTS
 
 ptce_test_set 
 create_test_set_ptce_board(void)
@@ -160,15 +160,20 @@ main(
 		// TODO
 		ptce_board board;
 
-		board.move(ptce_pos_t(1, 0), ptce_pos_t(1, 3));
+		/*board.move(ptce_pos_t(1, 0), ptce_pos_t(1, 3));
 		board.move(ptce_pos_t(2, 0), ptce_pos_t(2, 3));
 		board.move(ptce_pos_t(3, 0), ptce_pos_t(3, 3));
 		board.move(ptce_pos_t(5, 0), ptce_pos_t(5, 3));
 		board.move(ptce_pos_t(6, 0), ptce_pos_t(6, 3));
 
+		board.remove(ptce_pos_t(2, 6));
+		board.remove(ptce_pos_t(2, 7));
+
+		board.move(ptce_pos_t(2, 1), ptce_pos_t(2, 7));*/
+
 		std::cout<< board.to_string(true) << std::endl;
 
-		std::vector<ptce_mv_ent_t> gen_moves = board.generate_moves(ptce_pos_t(4, 0), PIECE_BLACK);
+		/*std::vector<ptce_mv_ent_t> gen_moves = board.generate_moves(ptce_pos_t(2, 7), PIECE_BLACK);
 		std::cout << "Count: " << gen_moves.size();
 
 		for(std::vector<ptce_mv_ent_t>::iterator iter = gen_moves.begin();
@@ -187,7 +192,7 @@ main(
 			}
 		}
 
-		std::cout << std::endl;
+		std::cout << std::endl;*/
 		// ---
 
 		//std::cout << inst->to_string(true) << std::endl;
