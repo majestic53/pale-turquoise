@@ -711,10 +711,10 @@ namespace PTCE_NS {
 											break;
 										}
 									}
-								}
 
-								if(!castling_allowed) {
-									break;
+									if(!castling_allowed) {
+										break;
+									}
 								}
 							}
 
@@ -774,10 +774,10 @@ namespace PTCE_NS {
 											break;
 										}
 									}
-								}
 
-								if(!castling_allowed) {
-									break;
+									if(!castling_allowed) {
+										break;
+									}
 								}
 							}
 
