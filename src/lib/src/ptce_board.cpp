@@ -284,7 +284,7 @@ namespace PTCE_NS {
 
 		ptce_mv_t 
 		_ptce_board::check_piece_move(
-			__out std::vector<ptce_mv_ent_t> &move_list,
+			__out std::set<ptce_mv_ent_t> &move_list,
 			__in const ptce_pos_t &old_position,
 			__in const ptce_pos_t &new_position,
 			__in_opt const ptce_piece_col_t &enemy_color
@@ -292,7 +292,7 @@ namespace PTCE_NS {
 		{			
 			ptce_mv_t result = MOVE_INVALID;
 			ptce_piece check_piece, curr_piece;
-			std::vector<std::pair<ptce_pos_t, ptce_pos_t>> pos_list;
+			std::set<std::pair<ptce_pos_t, ptce_pos_t>> pos_list;
 
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -307,13 +307,13 @@ namespace PTCE_NS {
 
 					if(check_piece.color() == enemy_color) {
 						result = (check_piece.type() == PIECE_KING) ? MOVE_CHECK : MOVE_CAPTURE;
-						pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
-						move_list.push_back(ptce_mv_ent_t(result, pos_list));
+						pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
+						move_list.insert(ptce_mv_ent_t(result, pos_list));
 					}
 				} else {
 					result = MOVE_NORMAL;
-					pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
-					move_list.push_back(ptce_mv_ent_t(result, pos_list));
+					pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
+					move_list.insert(ptce_mv_ent_t(result, pos_list));
 				}
 
 				curr_piece = piece(old_position);
@@ -323,8 +323,8 @@ namespace PTCE_NS {
 						|| ((enemy_color == PIECE_WHITE) 
 						&& !new_position.second))) {
 					pos_list.clear();
-					pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
-					move_list.push_back(ptce_mv_ent_t(MOVE_PROMOTE, pos_list));					
+					pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
+					move_list.insert(ptce_mv_ent_t(MOVE_PROMOTE, pos_list));					
 				}
 			}
 
@@ -334,7 +334,7 @@ namespace PTCE_NS {
 
 		void 
 		_ptce_board::check_piece_moves_cross(
-			__out std::vector<ptce_mv_ent_t> &move_list,
+			__out std::set<ptce_mv_ent_t> &move_list,
 			__in const ptce_pos_t &position,
 			__in_opt const ptce_piece_col_t &enemy_color
 			)
@@ -382,7 +382,7 @@ namespace PTCE_NS {
 
 		void 
 		_ptce_board::check_piece_moves_diagonal(
-			__out std::vector<ptce_mv_ent_t> &move_list,
+			__out std::set<ptce_mv_ent_t> &move_list,
 			__in const ptce_pos_t &position,
 			__in_opt const ptce_piece_col_t &enemy_color
 			)
@@ -550,14 +550,14 @@ namespace PTCE_NS {
 			TRACE_EXIT("Return Value: 0x%x", 0);
 		}
 
-		std::vector<ptce_mv_ent_t> 
+		std::set<ptce_mv_ent_t> 
 		_ptce_board::generate_moves(
 			__in const ptce_pos_t &position,
 			__in_opt const ptce_piece_col_t &enemy_color
 			)
 		{
 			ptce_piece board_piece;
-			std::vector<ptce_mv_ent_t> result;
+			std::set<ptce_mv_ent_t> result;
 
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -591,14 +591,14 @@ namespace PTCE_NS {
 			return result;
 		}
 
-		std::vector<ptce_mv_ent_t> 
+		std::set<ptce_mv_ent_t> 
 		_ptce_board::generate_moves_bishop(
 			__in const ptce_piece &board_piece,
 			__in const ptce_pos_t &position,
 			__in_opt const ptce_piece_col_t &enemy_color
 			)
 		{
-			std::vector<ptce_mv_ent_t> result;
+			std::set<ptce_mv_ent_t> result;
 
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -620,7 +620,7 @@ namespace PTCE_NS {
 			return result;
 		}
 
-		std::vector<ptce_mv_ent_t> 
+		std::set<ptce_mv_ent_t> 
 		_ptce_board::generate_moves_king(
 			__in const ptce_piece &board_piece,
 			__in const ptce_pos_t &position,
@@ -631,10 +631,10 @@ namespace PTCE_NS {
 			size_t iter_x, iter_y;
 			bool castling_allowed;
 			ptce_piece enemy_piece;
-			std::vector<ptce_mv_ent_t> enemy_pos_list, result;
-			std::vector<std::pair<ptce_pos_t, ptce_pos_t>> pos_list;
-			std::vector<ptce_mv_ent_t>::iterator enemy_pos_list_iter;
-			std::vector<std::pair<ptce_pos_t, ptce_pos_t>>::iterator enemy_pos_iter;
+			std::set<ptce_mv_ent_t> enemy_pos_list, result;
+			std::set<std::pair<ptce_pos_t, ptce_pos_t>> pos_list;
+			std::set<ptce_mv_ent_t>::iterator enemy_pos_list_iter;
+			std::set<std::pair<ptce_pos_t, ptce_pos_t>>::iterator enemy_pos_iter;
 
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -730,11 +730,11 @@ namespace PTCE_NS {
 
 					if(castling_allowed) {
 						pos_list.clear();
-						pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(ROOK_POS_LEFT_INIT, y_off), 
+						pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(ROOK_POS_LEFT_INIT, y_off), 
 								ptce_pos_t(ROOK_POS_CASTLING_LEFT, y_off)));
-						pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(KING_POS_INIT, y_off), 
+						pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(KING_POS_INIT, y_off), 
 								ptce_pos_t(KING_POS_CASTLING_LEFT, y_off)));
-						result.push_back(ptce_mv_ent_t(MOVE_CASTLE, pos_list));
+						result.insert(ptce_mv_ent_t(MOVE_CASTLE, pos_list));
 					}
 				}
 
@@ -793,11 +793,11 @@ namespace PTCE_NS {
 
 					if(castling_allowed) {
 						pos_list.clear();
-						pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(ROOK_POS_RIGHT_INIT, y_off), 
+						pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(ROOK_POS_RIGHT_INIT, y_off), 
 								ptce_pos_t(ROOK_POS_CASTLING_RIGHT, y_off)));
-						pos_list.push_back(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(KING_POS_INIT, y_off), 
+						pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(ptce_pos_t(KING_POS_INIT, y_off), 
 								ptce_pos_t(KING_POS_CASTLING_RIGHT, y_off)));
-						result.push_back(ptce_mv_ent_t(MOVE_CASTLE, pos_list));
+						result.insert(ptce_mv_ent_t(MOVE_CASTLE, pos_list));
 					}
 				}
 			}
@@ -806,14 +806,14 @@ namespace PTCE_NS {
 			return result;
 		}
 
-		std::vector<ptce_mv_ent_t> 
+		std::set<ptce_mv_ent_t> 
 		_ptce_board::generate_moves_knight(
 			__in const ptce_piece &board_piece,
 			__in const ptce_pos_t &position,
 			__in_opt const ptce_piece_col_t &enemy_color
 			)
 		{
-			std::vector<ptce_mv_ent_t> result;
+			std::set<ptce_mv_ent_t> result;
 
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -842,14 +842,14 @@ namespace PTCE_NS {
 			return result;
 		}
 
-		std::vector<ptce_mv_ent_t> 
+		std::set<ptce_mv_ent_t> 
 		_ptce_board::generate_moves_pawn(
 			__in const ptce_piece &board_piece,
 			__in const ptce_pos_t &position,
 			__in_opt const ptce_piece_col_t &enemy_color
 			)
 		{
-			std::vector<ptce_mv_ent_t> result;
+			std::set<ptce_mv_ent_t> result;
 
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -925,14 +925,14 @@ namespace PTCE_NS {
 			return result;
 		}
 
-		std::vector<ptce_mv_ent_t> 
+		std::set<ptce_mv_ent_t> 
 		_ptce_board::generate_moves_queen(
 			__in const ptce_piece &board_piece,
 			__in const ptce_pos_t &position,
 			__in_opt const ptce_piece_col_t &enemy_color
 			)
 		{
-			std::vector<ptce_mv_ent_t> result;
+			std::set<ptce_mv_ent_t> result;
 
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -955,14 +955,14 @@ namespace PTCE_NS {
 			return result;
 		}
 
-		std::vector<ptce_mv_ent_t> 
+		std::set<ptce_mv_ent_t> 
 		_ptce_board::generate_moves_rook(
 			__in const ptce_piece &board_piece,
 			__in const ptce_pos_t &position,
 			__in_opt const ptce_piece_col_t &enemy_color
 			)
 		{
-			std::vector<ptce_mv_ent_t> result;
+			std::set<ptce_mv_ent_t> result;
 
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);

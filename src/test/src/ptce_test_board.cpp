@@ -27,6 +27,82 @@ namespace PTCE_NS {
 		#define BOARD_PIECE_LEN 32
 		#define BOARD_PIECE_COLOR_LEN (BOARD_PIECE_LEN / 2)
 
+		void 
+		append_test_move_set(
+			__inout std::set<ptce_mv_ent_t> &set,
+			__in ptce_mv_t type,
+			__in const ptce_pos_t &old_position,
+			__in const ptce_pos_t &new_position,
+			__in_opt const ptce_pos_t &old_position_aux = INVALID_POS,
+			__in_opt const ptce_pos_t &new_position_aux = INVALID_POS
+			)
+		{
+			ptce_mv_ent_t entry;
+
+			TRACE_ENTRY();
+
+			entry.first = type;
+			entry.second.insert(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
+
+			if((old_position_aux.first != INVALID_POS.first)
+					&&  (old_position_aux.second != INVALID_POS.second)
+					&& (new_position_aux.first != INVALID_POS.first)
+					&& (new_position_aux.second != INVALID_POS.second)) {
+				entry.second.insert(std::pair<ptce_pos_t, ptce_pos_t>(old_position_aux, new_position_aux));
+			}
+
+			set.insert(entry);
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+		}
+
+		bool 
+		compare_test_move_sets(
+			__in const std::set<ptce_mv_ent_t> &left,
+			__in const std::set<ptce_mv_ent_t> &right
+			)
+		{
+			bool result;
+
+			std::set<ptce_mv_ent_t>::const_iterator left_iter, right_iter;
+			std::set<std::pair<ptce_pos_t, ptce_pos_t>>::iterator left_pos_iter, right_pos_iter;
+
+			TRACE_ENTRY();
+
+			result = (left.size() == right.size());
+			if(result) {
+
+				for(left_iter = left.begin(), right_iter = right.begin();
+						left_iter != left.end(); ++left_iter, ++right_iter) {
+					
+					result = ((left_iter->first == right_iter->first)
+							&& (left_iter->second.size() == right_iter->second.size()));
+					if(result) {
+
+						for(left_pos_iter = left_iter->second.begin(), right_pos_iter = right_iter->second.begin();
+								left_pos_iter != left_iter->second.end(); ++left_pos_iter, ++right_pos_iter) {
+
+							result = ((left_pos_iter->first.first == right_pos_iter->first.first)
+									&& (left_pos_iter->first.second == right_pos_iter->first.second)
+									&& (left_pos_iter->second.first == right_pos_iter->second.first)
+									&& (left_pos_iter->second.second == right_pos_iter->second.second));
+
+							if(!result) {
+								break;
+							}
+						}
+					}
+
+					if(!result) {
+						break;
+					}
+				}
+			}
+
+			TRACE_EXIT("Return Value: 0x%x", result);
+			return result;
+		}
+
 		ptce_test_t 
 		ptce_test_board_assignment(void)
 		{
@@ -1032,6 +1108,7 @@ exit:
 		ptce_test_board_generate_moves_pawn(void)
 		{
 			ptce_ptr inst = NULL;
+			std::set<ptce_mv_ent_t> move_set;
 			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
 
 			TRACE_ENTRY();
@@ -1042,9 +1119,124 @@ exit:
 				ptce_board board(true);
 
 				try {
+					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
+					append_test_move_set(move_set, MOVE_NORMAL, ptce_pos_t(3, 1), ptce_pos_t(3, 2));
+					append_test_move_set(move_set, MOVE_NORMAL, ptce_pos_t(3, 1), ptce_pos_t(3, 3));
 
-					// TODO
+					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(3, 1), PIECE_BLACK), 
+							move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 
+					board.clear();
+					move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_BLACK, true);
+
+					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(3, 1), PIECE_BLACK), 
+							move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(3, 3), PIECE_PAWN, PIECE_BLACK, true);
+					append_test_move_set(move_set, MOVE_NORMAL, ptce_pos_t(3, 1), ptce_pos_t(3, 2));
+
+					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(3, 1), PIECE_BLACK), 
+							move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(2)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_WHITE, true);
+					board.generate_piece(ptce_pos_t(2, 2), PIECE_PAWN, PIECE_BLACK, true);
+					board.generate_piece(ptce_pos_t(4, 2), PIECE_PAWN, PIECE_BLACK, true);
+					append_test_move_set(move_set, MOVE_CAPTURE, ptce_pos_t(3, 1), ptce_pos_t(2, 2));
+					append_test_move_set(move_set, MOVE_CAPTURE, ptce_pos_t(3, 1), ptce_pos_t(4, 2));
+
+					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(3, 1), PIECE_BLACK), 
+							move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(3)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_WHITE, true);
+					append_test_move_set(move_set, MOVE_NORMAL, ptce_pos_t(3, 2), ptce_pos_t(3, 3));
+
+					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(3, 2), PIECE_BLACK), 
+							move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(4)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_WHITE, true);
+					board.generate_piece(ptce_pos_t(3, 3), PIECE_PAWN, PIECE_BLACK, true);
+
+					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(3, 2), PIECE_BLACK), 
+							move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(5)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_WHITE, true);
+					board.generate_piece(ptce_pos_t(2, 3), PIECE_PAWN, PIECE_BLACK, true);
+					board.generate_piece(ptce_pos_t(4, 3), PIECE_PAWN, PIECE_BLACK, true);
+					append_test_move_set(move_set, MOVE_NORMAL, ptce_pos_t(3, 2), ptce_pos_t(3, 3));
+					append_test_move_set(move_set, MOVE_CAPTURE, ptce_pos_t(3, 2), ptce_pos_t(2, 3));
+					append_test_move_set(move_set, MOVE_CAPTURE, ptce_pos_t(3, 2), ptce_pos_t(4, 3));
+
+					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(3, 2), PIECE_BLACK), 
+							move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(6)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					board.generate_piece(ptce_pos_t(2, 6), PIECE_PAWN, PIECE_WHITE, true);
+					board.generate_piece(ptce_pos_t(3, 7), PIECE_KING, PIECE_BLACK, true);
+					append_test_move_set(move_set, MOVE_CHECK, ptce_pos_t(2, 6), ptce_pos_t(3, 7));
+					append_test_move_set(move_set, MOVE_PROMOTE, ptce_pos_t(2, 6), ptce_pos_t(3, 7));
+					append_test_move_set(move_set, MOVE_NORMAL, ptce_pos_t(2, 6), ptce_pos_t(2, 7));
+					append_test_move_set(move_set, MOVE_PROMOTE, ptce_pos_t(2, 6), ptce_pos_t(2, 7));					
+
+					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(2, 6), PIECE_BLACK), 
+							move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(7)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					board.generate_piece(ptce_pos_t(2, 7), PIECE_PAWN, PIECE_WHITE, true);					
+
+					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(2, 7), PIECE_BLACK), 
+							move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(8)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_generate_moves_pawn exception(0): " 
 							<< exc.what() << std::endl;

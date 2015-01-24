@@ -158,29 +158,21 @@ main(
 		inst->initialize();
 
 		// TODO
-		ptce_board board;
+		ptce_board board(true);
 
-		/*board.move(ptce_pos_t(1, 0), ptce_pos_t(1, 3));
-		board.move(ptce_pos_t(2, 0), ptce_pos_t(2, 3));
-		board.move(ptce_pos_t(3, 0), ptce_pos_t(3, 3));
-		board.move(ptce_pos_t(5, 0), ptce_pos_t(5, 3));
-		board.move(ptce_pos_t(6, 0), ptce_pos_t(6, 3));
-
-		board.remove(ptce_pos_t(2, 6));
-		board.remove(ptce_pos_t(2, 7));
-
-		board.move(ptce_pos_t(2, 1), ptce_pos_t(2, 7));*/
+		board.generate_piece(ptce_pos_t(3, 5), PIECE_PAWN, PIECE_WHITE, true);
+		board.generate_piece(ptce_pos_t(4, 7), PIECE_KING, PIECE_BLACK);
 
 		std::cout<< board.to_string(true) << std::endl;
 
-		/*std::vector<ptce_mv_ent_t> gen_moves = board.generate_moves(ptce_pos_t(2, 7), PIECE_BLACK);
+		std::set<ptce_mv_ent_t> gen_moves = board.generate_moves(ptce_pos_t(3, 5), PIECE_BLACK);
 		std::cout << "Count: " << gen_moves.size();
 
-		for(std::vector<ptce_mv_ent_t>::iterator iter = gen_moves.begin();
+		for(std::set<ptce_mv_ent_t>::iterator iter = gen_moves.begin();
 				iter != gen_moves.end(); ++iter) {
 			std::cout << std::endl << MOVE_TYPE_STRING(iter->first) << "(" << iter->second.size() << "): ";
 
-			for(std::vector<std::pair<ptce_pos_t, ptce_pos_t>>::iterator pos_iter = iter->second.begin();
+			for(std::set<std::pair<ptce_pos_t, ptce_pos_t>>::iterator pos_iter = iter->second.begin();
 					pos_iter != iter->second.end(); ++pos_iter) {
 
 				if(pos_iter != iter->second.begin()) {
@@ -192,7 +184,7 @@ main(
 			}
 		}
 
-		std::cout << std::endl;*/
+		std::cout << std::endl;
 		// ---
 
 		//std::cout << inst->to_string(true) << std::endl;
