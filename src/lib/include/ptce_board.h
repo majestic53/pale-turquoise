@@ -66,12 +66,13 @@ namespace PTCE_NS {
 			MOVE_INVALID,
 			MOVE_NORMAL,
 			MOVE_PROMOTE,
+			MOVE_PROTECT,
 		} ptce_mv_t;
 
-		#define MOVE_TYPE_MAX MOVE_PROMOTE
+		#define MOVE_TYPE_MAX MOVE_PROTECT
 
 		static const std::string MOVE_TYPE_STR[] = {
-			"CAPTURE", "CASTLE", "CHECK", "INVALID", "NORMAL", "PROMOTE",
+			"CAPTURE", "CASTLE", "CHECK", "INVALID", "NORMAL", "PROMOTE", "PROTECT",
 			};
 
 		#define MOVE_TYPE_STRING(_TYPE_) \

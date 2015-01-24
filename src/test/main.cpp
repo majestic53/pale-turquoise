@@ -160,27 +160,33 @@ main(
 		// TODO
 		ptce_board board(true);
 
-		board.generate_piece(ptce_pos_t(3, 5), PIECE_PAWN, PIECE_WHITE, true);
+		board.generate_piece(ptce_pos_t(3, 3), PIECE_QUEEN, PIECE_WHITE, true);
+		board.generate_piece(ptce_pos_t(2, 5), PIECE_PAWN, PIECE_WHITE, true);
+		board.generate_piece(ptce_pos_t(3, 6), PIECE_PAWN, PIECE_WHITE, true);
 		board.generate_piece(ptce_pos_t(4, 7), PIECE_KING, PIECE_BLACK);
 
 		std::cout<< board.to_string(true) << std::endl;
 
-		std::set<ptce_mv_ent_t> gen_moves = board.generate_moves(ptce_pos_t(3, 5), PIECE_BLACK);
+		std::set<ptce_mv_ent_t> gen_moves = board.generate_moves(ptce_pos_t(4, 7), PIECE_WHITE);
 		std::cout << "Count: " << gen_moves.size();
 
 		for(std::set<ptce_mv_ent_t>::iterator iter = gen_moves.begin();
 				iter != gen_moves.end(); ++iter) {
-			std::cout << std::endl << MOVE_TYPE_STRING(iter->first) << "(" << iter->second.size() << "): ";
+			std::cout << std::endl << MOVE_TYPE_STRING(iter->first) << "(" << iter->second.size() << ")";
 
-			for(std::set<std::pair<ptce_pos_t, ptce_pos_t>>::iterator pos_iter = iter->second.begin();
-					pos_iter != iter->second.end(); ++pos_iter) {
+			if(!iter->second.empty()) {
+				std::cout << ": ";
 
-				if(pos_iter != iter->second.begin()) {
-					std::cout << ", ";
+				for(std::set<std::pair<ptce_pos_t, ptce_pos_t>>::iterator pos_iter = iter->second.begin();
+						pos_iter != iter->second.end(); ++pos_iter) {
+
+					if(pos_iter != iter->second.begin()) {
+						std::cout << ", ";
+					}
+
+					std::cout << "({" << (int) pos_iter->first.first << ", " << (int) pos_iter->first.second << "}, {"
+							<< (int) pos_iter->second.first << ", " << (int) pos_iter->second.second << "})";
 				}
-
-				std::cout << "({" << (int) pos_iter->first.first << ", " << (int) pos_iter->first.second << "}, {"
-						<< (int) pos_iter->second.first << ", " << (int) pos_iter->second.second << "})";
 			}
 		}
 

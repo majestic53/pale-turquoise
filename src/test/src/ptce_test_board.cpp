@@ -31,8 +31,8 @@ namespace PTCE_NS {
 		append_test_move_set(
 			__inout std::set<ptce_mv_ent_t> &set,
 			__in ptce_mv_t type,
-			__in const ptce_pos_t &old_position,
-			__in const ptce_pos_t &new_position,
+			__in_opt const ptce_pos_t &old_position = INVALID_POS,
+			__in_opt const ptce_pos_t &new_position = INVALID_POS,
 			__in_opt const ptce_pos_t &old_position_aux = INVALID_POS,
 			__in_opt const ptce_pos_t &new_position_aux = INVALID_POS
 			)
@@ -42,7 +42,13 @@ namespace PTCE_NS {
 			TRACE_ENTRY();
 
 			entry.first = type;
-			entry.second.insert(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
+
+			if((old_position.first != INVALID_POS.first)
+					&&  (old_position.second != INVALID_POS.second)
+					&& (new_position.first != INVALID_POS.first)
+					&& (new_position.second != INVALID_POS.second)) {
+				entry.second.insert(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
+			}
 
 			if((old_position_aux.first != INVALID_POS.first)
 					&&  (old_position_aux.second != INVALID_POS.second)
@@ -1122,6 +1128,8 @@ exit:
 					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
 					append_test_move_set(move_set, MOVE_NORMAL, ptce_pos_t(3, 1), ptce_pos_t(3, 2));
 					append_test_move_set(move_set, MOVE_NORMAL, ptce_pos_t(3, 1), ptce_pos_t(3, 3));
+					append_test_move_set(move_set, MOVE_PROTECT, ptce_pos_t(3, 1), ptce_pos_t(2, 2));
+					append_test_move_set(move_set, MOVE_PROTECT, ptce_pos_t(3, 1), ptce_pos_t(4, 2));
 
 					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(3, 1), PIECE_BLACK), 
 							move_set)) {
@@ -1134,6 +1142,8 @@ exit:
 					move_set.clear();
 					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_BLACK, true);
+					append_test_move_set(move_set, MOVE_PROTECT, ptce_pos_t(3, 1), ptce_pos_t(2, 2));
+					append_test_move_set(move_set, MOVE_PROTECT, ptce_pos_t(3, 1), ptce_pos_t(4, 2));
 
 					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(3, 1), PIECE_BLACK), 
 							move_set)) {
@@ -1147,6 +1157,8 @@ exit:
 					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(3, 3), PIECE_PAWN, PIECE_BLACK, true);
 					append_test_move_set(move_set, MOVE_NORMAL, ptce_pos_t(3, 1), ptce_pos_t(3, 2));
+					append_test_move_set(move_set, MOVE_PROTECT, ptce_pos_t(3, 1), ptce_pos_t(2, 2));
+					append_test_move_set(move_set, MOVE_PROTECT, ptce_pos_t(3, 1), ptce_pos_t(4, 2));
 
 					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(3, 1), PIECE_BLACK), 
 							move_set)) {
@@ -1175,6 +1187,8 @@ exit:
 					move_set.clear();
 					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_WHITE, true);
 					append_test_move_set(move_set, MOVE_NORMAL, ptce_pos_t(3, 2), ptce_pos_t(3, 3));
+					append_test_move_set(move_set, MOVE_PROTECT, ptce_pos_t(3, 2), ptce_pos_t(2, 3));
+					append_test_move_set(move_set, MOVE_PROTECT, ptce_pos_t(3, 2), ptce_pos_t(4, 3));
 
 					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(3, 2), PIECE_BLACK), 
 							move_set)) {
@@ -1187,6 +1201,8 @@ exit:
 					move_set.clear();
 					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_WHITE, true);
 					board.generate_piece(ptce_pos_t(3, 3), PIECE_PAWN, PIECE_BLACK, true);
+					append_test_move_set(move_set, MOVE_PROTECT, ptce_pos_t(3, 2), ptce_pos_t(2, 3));
+					append_test_move_set(move_set, MOVE_PROTECT, ptce_pos_t(3, 2), ptce_pos_t(4, 3));
 
 					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(3, 2), PIECE_BLACK), 
 							move_set)) {
@@ -1216,9 +1232,9 @@ exit:
 					board.generate_piece(ptce_pos_t(2, 6), PIECE_PAWN, PIECE_WHITE, true);
 					board.generate_piece(ptce_pos_t(3, 7), PIECE_KING, PIECE_BLACK, true);
 					append_test_move_set(move_set, MOVE_CHECK, ptce_pos_t(2, 6), ptce_pos_t(3, 7));
-					append_test_move_set(move_set, MOVE_PROMOTE, ptce_pos_t(2, 6), ptce_pos_t(3, 7));
 					append_test_move_set(move_set, MOVE_NORMAL, ptce_pos_t(2, 6), ptce_pos_t(2, 7));
-					append_test_move_set(move_set, MOVE_PROMOTE, ptce_pos_t(2, 6), ptce_pos_t(2, 7));					
+					append_test_move_set(move_set, MOVE_PROMOTE, ptce_pos_t(2, 6), ptce_pos_t(2, 7));
+					append_test_move_set(move_set, MOVE_PROTECT, ptce_pos_t(2, 6), ptce_pos_t(1, 7));
 
 					if(!compare_test_move_sets(board.generate_moves(ptce_pos_t(2, 6), PIECE_BLACK), 
 							move_set)) {

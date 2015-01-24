@@ -289,10 +289,15 @@ namespace PTCE_NS {
 			__in const ptce_pos_t &new_position,
 			__in_opt const ptce_piece_col_t &enemy_color
 			)
-		{			
+		{
+			size_t iter_x, iter_y = 0;
 			ptce_mv_t result = MOVE_INVALID;
-			ptce_piece check_piece, curr_piece;
+			bool allow = true, check = false;
+			std::set<ptce_mv_ent_t> enemy_moves;
+			ptce_piece check_piece, curr_piece, enemy_piece;
+			std::set<ptce_mv_ent_t>::iterator enemy_move_iter;
 			std::set<std::pair<ptce_pos_t, ptce_pos_t>> pos_list;
+			std::set<std::pair<ptce_pos_t, ptce_pos_t>>::iterator enemy_pos_iter;
 
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -302,29 +307,83 @@ namespace PTCE_NS {
 					&& (new_position.first < BOARD_WID) 
 					&& (new_position.second < BOARD_WID)) {
 
-				check_piece = piece(new_position);
-				if(check_piece.type() != PIECE_EMPTY) {
+				curr_piece = piece(old_position);
+				if(curr_piece.type() == PIECE_KING) {
 
-					if(check_piece.color() == enemy_color) {
-						result = (check_piece.type() == PIECE_KING) ? MOVE_CHECK : MOVE_CAPTURE;
+					for(; iter_y < BOARD_WID; ++iter_y) {
+
+						for(iter_x = 0; iter_x < BOARD_WID; ++iter_x) {
+
+							enemy_piece = piece(ptce_pos_t(iter_x, iter_y));
+							if((enemy_piece.type() != PIECE_EMPTY)
+									&& (enemy_piece.color() == enemy_color)) {
+								enemy_moves = generate_moves(ptce_pos_t(iter_x, iter_y), 
+										(enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK);
+
+								for(enemy_move_iter = enemy_moves.begin(); enemy_move_iter != enemy_moves.end();
+										++enemy_move_iter) {
+
+									if((enemy_piece.type() == PIECE_PAWN)
+											&& ((enemy_move_iter->first == MOVE_NORMAL)
+											|| (enemy_move_iter->first == MOVE_PROMOTE))) {
+										continue;
+									}
+
+									for(enemy_pos_iter = enemy_move_iter->second.begin();
+											enemy_pos_iter != enemy_move_iter->second.end();
+											++enemy_pos_iter) {
+
+										if((enemy_pos_iter->second.first == new_position.first)
+												&& (enemy_pos_iter->second.second == new_position.second)) {
+											allow = false;
+											break;
+										}
+									}
+
+									if(!allow) {
+										break;
+									}
+								}
+							}
+						}
+
+						if(!allow) {
+							break;
+						}
+					}
+				}
+
+				if(allow) {
+
+					check_piece = piece(new_position);
+					if(check_piece.type() != PIECE_EMPTY) {
+
+						if(check_piece.color() == enemy_color) {
+							result = (check_piece.type() == PIECE_KING) ? MOVE_CHECK : MOVE_CAPTURE;
+							pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
+							check = true;
+						} else {
+							result = MOVE_PROTECT;
+							pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
+						}
+
+						move_list.insert(ptce_mv_ent_t(result, pos_list));
+					} else {
+						result = MOVE_NORMAL;
 						pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
 						move_list.insert(ptce_mv_ent_t(result, pos_list));
 					}
-				} else {
-					result = MOVE_NORMAL;
-					pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
-					move_list.insert(ptce_mv_ent_t(result, pos_list));
-				}
 
-				curr_piece = piece(old_position);
-				if((curr_piece.type() == PIECE_PAWN)
-						&& (((enemy_color == PIECE_BLACK) 
-						&& (new_position.second == BOARD_POS_MAX))
-						|| ((enemy_color == PIECE_WHITE) 
-						&& !new_position.second))) {
-					pos_list.clear();
-					pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
-					move_list.insert(ptce_mv_ent_t(MOVE_PROMOTE, pos_list));					
+					if(!check 
+							&& (curr_piece.type() == PIECE_PAWN)
+							&& (((enemy_color == PIECE_BLACK) 
+							&& (new_position.second == BOARD_POS_MAX))
+							|| ((enemy_color == PIECE_WHITE) 
+							&& !new_position.second))) {
+						pos_list.clear();
+						pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(old_position, new_position));
+						move_list.insert(ptce_mv_ent_t(MOVE_PROMOTE, pos_list));					
+					}
 				}
 			}
 
@@ -348,7 +407,9 @@ namespace PTCE_NS {
 			for(x = position.first + 1; x < BOARD_WID; ++x) {
 
 				piece_type = check_piece_move(move_list, position, ptce_pos_t(x, position.second), enemy_color);
-				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+				if((piece_type == MOVE_CAPTURE) 
+						|| (piece_type == MOVE_INVALID)
+						|| (piece_type == MOVE_PROTECT)) {
 					break;
 				}
 			}
@@ -356,7 +417,9 @@ namespace PTCE_NS {
 			for(x = position.first - 1; x >= 0; --x) {
 
 				piece_type = check_piece_move(move_list, position, ptce_pos_t(x, position.second), enemy_color);
-				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+				if((piece_type == MOVE_CAPTURE) 
+						|| (piece_type == MOVE_INVALID)
+						|| (piece_type == MOVE_PROTECT)) {
 					break;
 				}
 			}
@@ -364,7 +427,9 @@ namespace PTCE_NS {
 			for(y = position.second + 1; y < BOARD_WID; ++y) {
 
 				piece_type = check_piece_move(move_list, position, ptce_pos_t(position.first, y), enemy_color);
-				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+				if((piece_type == MOVE_CAPTURE) 
+						|| (piece_type == MOVE_INVALID)
+						|| (piece_type == MOVE_PROTECT)) {
 					break;
 				}
 			}
@@ -372,7 +437,9 @@ namespace PTCE_NS {
 			for(y = position.second - 1; y >= 0; --y) {
 
 				piece_type = check_piece_move(move_list, position, ptce_pos_t(position.first, y), enemy_color);
-				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+				if((piece_type == MOVE_CAPTURE) 
+						|| (piece_type == MOVE_INVALID)
+						|| (piece_type == MOVE_PROTECT)) {
 					break;
 				}
 			}
@@ -396,7 +463,9 @@ namespace PTCE_NS {
 			for(x = position.first + 1, y = position.second + 1; x < BOARD_WID; ++x, ++y) {
 
 				piece_type = check_piece_move(move_list, position, ptce_pos_t(x, y), enemy_color);
-				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+				if((piece_type == MOVE_CAPTURE) 
+						|| (piece_type == MOVE_INVALID) 
+						|| (piece_type == MOVE_PROTECT)) {
 					break;
 				}
 			}
@@ -404,7 +473,9 @@ namespace PTCE_NS {
 			for(x = position.first - 1, y = position.second + 1; x >= 0; --x, ++y) {
 
 				piece_type = check_piece_move(move_list, position, ptce_pos_t(x, y), enemy_color);
-				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+				if((piece_type == MOVE_CAPTURE) 
+						|| (piece_type == MOVE_INVALID) 
+						|| (piece_type == MOVE_PROTECT)) {
 					break;
 				}
 			}
@@ -412,7 +483,9 @@ namespace PTCE_NS {
 			for(x = position.first + 1, y = position.second - 1; x < BOARD_WID; ++x, --y) {
 
 				piece_type = check_piece_move(move_list, position, ptce_pos_t(x, y), enemy_color);
-				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+				if((piece_type == MOVE_CAPTURE) 
+						|| (piece_type == MOVE_INVALID) 
+						|| (piece_type == MOVE_PROTECT)) {
 					break;
 				}
 			}
@@ -420,7 +493,9 @@ namespace PTCE_NS {
 			for(x = position.first - 1, y = position.second - 1; x >= 0; --x, --y) {
 
 				piece_type = check_piece_move(move_list, position, ptce_pos_t(x, y), enemy_color);
-				if((piece_type == MOVE_CAPTURE) || (piece_type == MOVE_INVALID)) {
+				if((piece_type == MOVE_CAPTURE) 
+						|| (piece_type == MOVE_INVALID) 
+						|| (piece_type == MOVE_PROTECT)) {
 					break;
 				}
 			}
@@ -849,7 +924,9 @@ namespace PTCE_NS {
 			__in_opt const ptce_piece_col_t &enemy_color
 			)
 		{
+			ptce_piece enemy_piece;
 			std::set<ptce_mv_ent_t> result;
+			std::set<std::pair<ptce_pos_t, ptce_pos_t>> pos_list;
 
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -868,17 +945,35 @@ namespace PTCE_NS {
 			if(enemy_color == PIECE_BLACK) {
 
 				if((position.first < BOARD_POS_MAX)
-						&& (position.second < BOARD_POS_MAX) 
-						&& contains(ptce_pos_t(position.first + 1, position.second + 1))) {
-					check_piece_move(result, position, ptce_pos_t(position.first + 1, position.second + 1), 
-							enemy_color);
+						&& (position.second < BOARD_POS_MAX)) {
+
+					enemy_piece = piece(ptce_pos_t(position.first + 1, position.second + 1));
+					if((enemy_piece.type() != PIECE_EMPTY)
+							&& (enemy_piece.color() == enemy_color)) {
+						check_piece_move(result, position, ptce_pos_t(position.first + 1, position.second + 1), 
+								enemy_color);
+					} else {
+						pos_list.clear();
+						pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(position, 
+								ptce_pos_t(position.first + 1, position.second + 1)));
+						result.insert(ptce_mv_ent_t(MOVE_PROTECT, pos_list));
+					}
 				}
 			
 				if(position.first
-							&& (position.second < BOARD_POS_MAX) 
-							&& contains(ptce_pos_t(position.first - 1, position.second + 1))) {
-					check_piece_move(result, position, ptce_pos_t(position.first - 1, position.second + 1), 
-							enemy_color);
+							&& (position.second < BOARD_POS_MAX)) {
+
+					enemy_piece = piece(ptce_pos_t(position.first - 1, position.second + 1));
+					if((enemy_piece.type() != PIECE_EMPTY)
+							&& (enemy_piece.color() == enemy_color)) {
+						check_piece_move(result, position, ptce_pos_t(position.first - 1, position.second + 1), 
+								enemy_color);
+					} else {
+						pos_list.clear();
+						pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(position, 
+								ptce_pos_t(position.first - 1, position.second + 1)));
+						result.insert(ptce_mv_ent_t(MOVE_PROTECT, pos_list));
+					}
 				}
 
 				if((position.second < BOARD_POS_MAX)
@@ -895,17 +990,35 @@ namespace PTCE_NS {
 			} else {
 
 				if((position.first < BOARD_POS_MAX)
-						&& position.second 
-						&& contains(ptce_pos_t(position.first + 1, position.second - 1))) {
-					check_piece_move(result, position, ptce_pos_t(position.first + 1, position.second - 1), 
-							enemy_color);
+						&& position.second) {
+
+					enemy_piece = piece(ptce_pos_t(position.first + 1, position.second - 1));
+					if((enemy_piece.type() != PIECE_EMPTY)
+							&& (enemy_piece.color() == enemy_color)) {
+						check_piece_move(result, position, ptce_pos_t(position.first + 1, position.second - 1), 
+								enemy_color);
+					} else {
+						pos_list.clear();
+						pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(position, 
+								ptce_pos_t(position.first + 1, position.second - 1)));
+						result.insert(ptce_mv_ent_t(MOVE_PROTECT, pos_list));
+					}
 				}
 			
 				if(position.first
-							&& position.second 
-							&& contains(ptce_pos_t(position.first - 1, position.second - 1))) {
-					check_piece_move(result, position, ptce_pos_t(position.first - 1, position.second - 1), 
-							enemy_color);
+							&& position.second) {
+
+					enemy_piece = piece(ptce_pos_t(position.first - 1, position.second - 1));
+					if((enemy_piece.type() != PIECE_EMPTY)
+							&& (enemy_piece.color() == enemy_color)) {
+						check_piece_move(result, position, ptce_pos_t(position.first - 1, position.second - 1), 
+								enemy_color);
+					} else {
+						pos_list.clear();
+						pos_list.insert(std::pair<ptce_pos_t, ptce_pos_t>(position, 
+								ptce_pos_t(position.first - 1, position.second - 1)));
+						result.insert(ptce_mv_ent_t(MOVE_PROTECT, pos_list));
+					}
 				}
 
 				if(position.second
