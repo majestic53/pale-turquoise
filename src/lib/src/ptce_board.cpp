@@ -317,6 +317,7 @@ namespace PTCE_NS {
 							enemy_piece = piece(ptce_pos_t(iter_x, iter_y));
 							if((enemy_piece.type() != PIECE_EMPTY)
 									&& (enemy_piece.color() == enemy_color)) {
+
 								enemy_moves = generate_moves(ptce_pos_t(iter_x, iter_y), 
 										(enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK);
 
@@ -961,7 +962,7 @@ namespace PTCE_NS {
 				}
 			
 				if(position.first
-							&& (position.second < BOARD_POS_MAX)) {
+						&& (position.second < BOARD_POS_MAX)) {
 
 					enemy_piece = piece(ptce_pos_t(position.first - 1, position.second + 1));
 					if((enemy_piece.type() != PIECE_EMPTY)
@@ -982,6 +983,7 @@ namespace PTCE_NS {
 							enemy_color);
 
 					if(!board_piece.m_moved 
+							&& (position.second < (BOARD_WID - 2))
 							&& !contains(ptce_pos_t(position.first, position.second + 2))) {
 						check_piece_move(result, position, ptce_pos_t(position.first, position.second + 2), 
 								enemy_color);
@@ -1006,7 +1008,7 @@ namespace PTCE_NS {
 				}
 			
 				if(position.first
-							&& position.second) {
+						&& position.second) {
 
 					enemy_piece = piece(ptce_pos_t(position.first - 1, position.second - 1));
 					if((enemy_piece.type() != PIECE_EMPTY)
@@ -1027,6 +1029,7 @@ namespace PTCE_NS {
 							enemy_color);
 
 					if(!board_piece.m_moved 
+							&& (position.second >= 2)
 							&& !contains(ptce_pos_t(position.first, position.second - 2))) {
 						check_piece_move(result, position, ptce_pos_t(position.first, position.second - 2), 
 								enemy_color);

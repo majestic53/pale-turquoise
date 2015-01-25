@@ -13,6 +13,11 @@ Changelog
 =========
 
 ###Version 0.1.1504
+*Updated: 1/24/2015*
+
+* Added chess piece move routine tests
+* Minor bug fixes
+
 *Updated: 1/22/2015*
 
 * Added chess piece move routines tests (partial)

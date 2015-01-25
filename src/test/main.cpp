@@ -160,12 +160,13 @@ main(
 		// TODO
 		ptce_board board(true);
 
-		board.generate_piece(ptce_pos_t(3, 5), PIECE_BISHOP, PIECE_WHITE);
-		board.generate_piece(ptce_pos_t(5, 7), PIECE_KING, PIECE_BLACK);
+		board.generate_piece(ptce_pos_t(3, 0), PIECE_KING, PIECE_WHITE);
+		board.generate_piece(ptce_pos_t(4, 1), PIECE_PAWN, PIECE_BLACK, true);
+		board.generate_piece(ptce_pos_t(5, 2), PIECE_PAWN, PIECE_BLACK, true);
 
 		std::cout<< board.to_string(true) << std::endl;
 
-		std::set<ptce_mv_ent_t> gen_moves = board.generate_moves(ptce_pos_t(3, 5), PIECE_BLACK);
+		std::set<ptce_mv_ent_t> gen_moves = board.generate_moves(ptce_pos_t(3, 0), PIECE_BLACK);
 		std::cout << "Count: " << gen_moves.size();
 
 		for(std::set<ptce_mv_ent_t>::iterator iter = gen_moves.begin();
