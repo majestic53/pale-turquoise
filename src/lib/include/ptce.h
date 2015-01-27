@@ -26,6 +26,8 @@
 #define PTCE_NS ptce_ns
 #endif // PTCE_NS
 
+#include <thread>
+
 #include "ptce_defines.h"
 #include "ptce_version.h"
 #include "ptce_exception.h"
@@ -42,8 +44,15 @@
 #include "ptce_piece.h"
 #include "ptce_board.h"
 
+#ifndef PTCE_NET_NS
+#define PTCE_NET_NS ptce_net_ns
+#endif // PTCE_NET_NS
+
+#include "ptce_game.h"
+
 using namespace PTCE_NS;
 using namespace PTCE_NS::PTCE_COMP_NS;
+using namespace PTCE_NS::PTCE_NET_NS;
 
 namespace PTCE_NS {
 

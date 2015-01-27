@@ -20,6 +20,7 @@
 #include "../lib/include/ptce.h"
 #include "./include/ptce_test.h"
 #include "./include/ptce_test_board.h"
+#include "./include/ptce_test_game.h"
 #include "./include/ptce_test_node.h"
 #include "./include/ptce_test_piece.h"
 #include "./include/ptce_test_singleton.h"
@@ -38,6 +39,23 @@ create_test_set_ptce_board(void)
 	for(; test_iter <= PTCE_TEST_BOARD_MAX; ++test_iter) {
 		result.add(PTCE_TEST_BOARD_STRING(test_iter), 
 				PTCE_TEST_BOARD_CALLBACK(test_iter));
+	}
+
+	TRACE_EXIT("Return Value: 0x%x", 0);
+	return result;	
+}
+
+ptce_test_set 
+create_test_set_ptce_game(void)
+{
+	size_t test_iter = 0;
+	ptce_test_set result(PTCE_TEST_GAME_TRACE_HEADER);
+
+	TRACE_ENTRY();
+
+	for(; test_iter <= PTCE_TEST_GAME_MAX; ++test_iter) {
+		result.add(PTCE_TEST_GAME_STRING(test_iter), 
+				PTCE_TEST_GAME_CALLBACK(test_iter));
 	}
 
 	TRACE_EXIT("Return Value: 0x%x", 0);
@@ -125,6 +143,7 @@ initialize_test_suite(void)
 	inst->add(PTCE_TEST_NODE_TRACE_HEADER, create_test_set_ptce_node());
 	inst->add(PTCE_TEST_PIECE_TRACE_HEADER, create_test_set_ptce_piece());
 	inst->add(PTCE_TEST_BOARD_TRACE_HEADER, create_test_set_ptce_board());
+	inst->add(PTCE_TEST_GAME_TRACE_HEADER, create_test_set_ptce_game());
 
 	TRACE_EXIT("Return Value: 0x%x", 0);
 }
@@ -166,7 +185,7 @@ main(
 
 		std::cout<< board.to_string(true) << std::endl;
 
-		std::set<ptce_mv_ent_t> gen_moves = board.generate_moves(ptce_pos_t(3, 0), PIECE_BLACK);
+		std::set<ptce_mv_ent_t> gen_moves = board.generate_move_set(ptce_pos_t(3, 0), PIECE_BLACK);
 		std::cout << "Count: " << gen_moves.size();
 
 		for(std::set<ptce_mv_ent_t>::iterator iter = gen_moves.begin();

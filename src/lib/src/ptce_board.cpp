@@ -318,7 +318,7 @@ namespace PTCE_NS {
 							if((enemy_piece.type() != PIECE_EMPTY)
 									&& (enemy_piece.color() == enemy_color)) {
 
-								enemy_moves = generate_moves(ptce_pos_t(iter_x, iter_y), 
+								enemy_moves = generate_move_set(ptce_pos_t(iter_x, iter_y), 
 										(enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK);
 
 								for(enemy_move_iter = enemy_moves.begin(); enemy_move_iter != enemy_moves.end();
@@ -627,7 +627,7 @@ namespace PTCE_NS {
 		}
 
 		std::set<ptce_mv_ent_t> 
-		_ptce_board::generate_moves(
+		_ptce_board::generate_move_set(
 			__in const ptce_pos_t &position,
 			__in_opt const ptce_piece_col_t &enemy_color
 			)
@@ -766,7 +766,7 @@ namespace PTCE_NS {
 							enemy_piece = piece(ptce_pos_t(iter_x, iter_y));
 							if((enemy_piece.type() != PIECE_EMPTY)
 									&& (enemy_piece.color() == enemy_color)) {
-								enemy_pos_list = generate_moves(ptce_pos_t(iter_x, iter_y), 
+								enemy_pos_list = generate_move_set(ptce_pos_t(iter_x, iter_y), 
 										(enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK);
 
 								for(enemy_pos_list_iter = enemy_pos_list.begin(); 
@@ -831,7 +831,7 @@ namespace PTCE_NS {
 							enemy_piece = piece(ptce_pos_t(iter_x, iter_y));
 							if((enemy_piece.type() != PIECE_EMPTY)
 									&& (enemy_piece.color() == enemy_color)) {
-								enemy_pos_list = generate_moves(ptce_pos_t(iter_x, iter_y), 
+								enemy_pos_list = generate_move_set(ptce_pos_t(iter_x, iter_y), 
 										(enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK);
 
 								for(enemy_pos_list_iter = enemy_pos_list.begin(); 
@@ -1337,6 +1337,35 @@ namespace PTCE_NS {
 			decrement_piece_reference(old_piece);
 
 			TRACE_EXIT("Return Value: 0x%x", 0);
+		}
+
+		size_t 
+		_ptce_board::score_move_set(
+			__in const ptce_piece_t &type,
+			__in const std::set<ptce_mv_ent_t> &moves,
+			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
+			)
+		{
+			size_t result = 0;
+			std::set<ptce_mv_ent_t>::const_iterator move_iter;
+
+			TRACE_ENTRY();
+		
+			if(type > PIECE_TYPE_MAX) {
+				THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_TYPE,
+					"%lu (must be at most %lu)", type, PIECE_TYPE_MAX);
+			}
+
+			scores.clear();
+
+			for(move_iter = moves.begin(); move_iter != moves.end(); ++move_iter) {
+
+				// TODO: rank move set and output highest score along with scores set
+
+			}
+
+			TRACE_EXIT("Return Value: %lu");
+			return result;
 		}
 
 		std::string 

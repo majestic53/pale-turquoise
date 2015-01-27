@@ -60,7 +60,7 @@ namespace PTCE_NS {
 			BOARD_STATE_STR[_TYPE_].c_str())
 
 		typedef enum _ptce_mv_t {
-			MOVE_CAPTURE = 0,
+			MOVE_CAPTURE,
 			MOVE_CASTLE,
 			MOVE_CHECK,
 			MOVE_INVALID,
@@ -143,7 +143,7 @@ namespace PTCE_NS {
 					__in_opt bool moved = false
 					);
 
-				std::set<ptce_mv_ent_t> generate_moves(
+				std::set<ptce_mv_ent_t> generate_move_set(
 					__in const ptce_pos_t &position,
 					__in_opt const ptce_piece_col_t &enemy_color = PIECE_BLACK
 					);
@@ -172,6 +172,12 @@ namespace PTCE_NS {
 
 				void remove(
 					__in const ptce_pos_t &position
+					);
+
+				static size_t score_move_set(
+					__in const ptce_piece_t &type,
+					__in const std::set<ptce_mv_ent_t> &moves,
+					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 					);
 
 				std::string serialize(

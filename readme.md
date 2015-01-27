@@ -12,6 +12,13 @@ Table of Contents
 Changelog
 =========
 
+###Version 0.1.1505
+*Updated: 1/26/2015*
+
+* Added chess game class (partial)
+* Added chess game class tests (partial)
+* Added static board score move set routine (partial)
+
 ###Version 0.1.1504
 *Updated: 1/24/2015*
 

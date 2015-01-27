@@ -31,7 +31,7 @@ all: build archive exe
 archive:
 	@echo ""
 	@echo "--- BUILDING PTCE TEST LIBRARY -------------"
-	ar rcs $(OUT_BUILD)$(LIB_TEST) $(OUT_BUILD)ptce.o $(OUT_BUILD)ptce_board.o $(OUT_BUILD)ptce_defines.o $(OUT_BUILD)ptce_node.o $(OUT_BUILD)ptce_piece.o $(OUT_BUILD)ptce_uid.o $(OUT_BUILD)ptce_test_set.o $(OUT_BUILD)ptce_test.o $(OUT_BUILD)ptce_test_board.o $(OUT_BUILD)ptce_test_node.o $(OUT_BUILD)ptce_test_piece.o $(OUT_BUILD)ptce_test_singleton.o $(OUT_BUILD)ptce_test_uid.o
+	ar rcs $(OUT_BUILD)$(LIB_TEST) $(OUT_BUILD)ptce.o $(OUT_BUILD)ptce_board.o $(OUT_BUILD)ptce_game.o $(OUT_BUILD)ptce_defines.o $(OUT_BUILD)ptce_node.o $(OUT_BUILD)ptce_piece.o $(OUT_BUILD)ptce_uid.o $(OUT_BUILD)ptce_test_set.o $(OUT_BUILD)ptce_test.o $(OUT_BUILD)ptce_test_board.o $(OUT_BUILD)ptce_test_game.o $(OUT_BUILD)ptce_test_node.o $(OUT_BUILD)ptce_test_piece.o $(OUT_BUILD)ptce_test_singleton.o $(OUT_BUILD)ptce_test_uid.o
 	@echo "--- DONE -----------------------------------"
 	@echo ""
 
@@ -42,7 +42,7 @@ exe:
 	@echo "--- DONE -----------------------------------"
 	@echo ""
 
-build: ptce_test_set.o ptce_test.o ptce_test_board.o ptce_test_node.o ptce_test_piece.o ptce_test_singleton.o ptce_test_uid.o
+build: ptce_test_set.o ptce_test.o ptce_test_board.o ptce_test_game.o ptce_test_node.o ptce_test_piece.o ptce_test_singleton.o ptce_test_uid.o
 
 ptce_test.o: $(SRC)ptce_test.cpp $(INC)ptce_test.h
 	$(CC) $(FLAGS) -c $(SRC)ptce_test.cpp -o $(OUT_BUILD)ptce_test.o
@@ -54,6 +54,9 @@ ptce_test_set.o: $(SRC)ptce_test_set.cpp $(INC)ptce_test_set.h
 
 ptce_test_board.o: $(SRC)ptce_test_board.cpp $(INC)ptce_test_board.h
 	$(CC) $(FLAGS) -c $(SRC)ptce_test_board.cpp -o $(OUT_BUILD)ptce_test_board.o
+
+ptce_test_game.o: $(SRC)ptce_test_game.cpp $(INC)ptce_test_game.h
+	$(CC) $(FLAGS) -c $(SRC)ptce_test_game.cpp -o $(OUT_BUILD)ptce_test_game.o
 
 ptce_test_node.o: $(SRC)ptce_test_node.cpp $(INC)ptce_test_node.h
 	$(CC) $(FLAGS) -c $(SRC)ptce_test_node.cpp -o $(OUT_BUILD)ptce_test_node.o
