@@ -13,7 +13,7 @@ Changelog
 =========
 
 ###Version 0.1.1505
-* Updated: 1/27/2015*
+*Updated: 1/27/2015*
 
 * Added chess move scoring heuristic
 * Added chess move scoring tests (partial)
