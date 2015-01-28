@@ -71,6 +71,22 @@ namespace PTCE_NS {
 
 		#define MOVE_TYPE_MAX MOVE_PROTECT
 
+		static const size_t MOVE_HEURISTIC_VAL[][MOVE_TYPE_MAX + 1] = {
+			// CAPTURE, CASTLE, CHECK, INVALID, NORMAL, PROMOTE, PROTECT,
+			{ 0, 0, 0, 0, 0, 0, 0 }, // EMPTY
+			{ 10, 20, 0, 0, 4, 0, 3 }, // KING
+			{ 10, 0, 100, 0, 4, 0, 3 }, // QUEEN
+			{ 10, 0, 100, 0, 4, 0, 3 }, // ROOK
+			{ 10, 0, 100, 0, 4, 0, 3 }, // BISHOP
+			{ 10, 0, 100, 0, 4, 0, 3 }, // KNIGHT
+			{ 10, 0, 100, 0, 4, 80, 3 }, // PAWN
+			};
+
+		#define MOVE_HEURISTIC_VALUE(_TYPE_, _MOVE_) \
+			((_TYPE_) > PIECE_TYPE_MAX ? 0 : \
+			((_MOVE_) > MOVE_TYPE_MAX ? 0 : \
+			MOVE_HEURISTIC_VAL[_TYPE_][_MOVE_]))
+
 		static const std::string MOVE_TYPE_STR[] = {
 			"CAPTURE", "CASTLE", "CHECK", "INVALID", "NORMAL", "PROMOTE", "PROTECT",
 			};
@@ -271,6 +287,36 @@ namespace PTCE_NS {
 
 				size_t increment_piece_reference(
 					__in const ptce_piece &piece
+					);
+
+				static size_t score_move_bishop(
+					__in const ptce_mv_ent_t &move,
+					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
+					);
+
+				static size_t score_move_king(
+					__in const ptce_mv_ent_t &move,
+					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
+					);
+
+				static size_t score_move_knight(
+					__in const ptce_mv_ent_t &move,
+					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
+					);
+
+				static size_t score_move_pawn(
+					__in const ptce_mv_ent_t &move,
+					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
+					);
+
+				static size_t score_move_queen(
+					__in const ptce_mv_ent_t &move,
+					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
+					);
+
+				static size_t score_move_rook(
+					__in const ptce_mv_ent_t &move,
+					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 					);
 
 				bool m_piece_captured;

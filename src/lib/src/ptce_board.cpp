@@ -1340,13 +1340,182 @@ namespace PTCE_NS {
 		}
 
 		size_t 
+		_ptce_board::score_move_bishop(
+			__in const ptce_mv_ent_t &move,
+			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
+			)
+		{
+			size_t result = 0;
+
+			TRACE_ENTRY();
+
+			switch(move.first) {
+				case MOVE_CAPTURE:
+				case MOVE_CHECK:
+				case MOVE_NORMAL:
+				case MOVE_PROTECT:
+					result = MOVE_HEURISTIC_VALUE(PIECE_BISHOP, move.first);
+					break;
+				default:
+					THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_TYPE,
+						"type=%lu", move.first);
+			}
+
+			scores.insert(std::pair<ptce_mv_ent_t, size_t>(move, result));
+
+			TRACE_EXIT("Return Value: %lu", result);
+			return result;
+		}
+
+		size_t 
+		_ptce_board::score_move_king(
+			__in const ptce_mv_ent_t &move,
+			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
+			)
+		{
+			size_t result = 0;
+
+			TRACE_ENTRY();
+
+			switch(move.first) {
+				case MOVE_CAPTURE:
+				case MOVE_CASTLE:
+				case MOVE_NORMAL:
+				case MOVE_PROTECT:
+					result = MOVE_HEURISTIC_VALUE(PIECE_KING, move.first);
+					break;
+				default:
+					THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_TYPE,
+						"type=%lu", move.first);
+			}
+
+			scores.insert(std::pair<ptce_mv_ent_t, size_t>(move, result));
+
+			TRACE_EXIT("Return Value: %lu", result);
+			return result;
+		}
+
+		size_t 
+		_ptce_board::score_move_knight(
+			__in const ptce_mv_ent_t &move,
+			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
+			)
+		{
+			size_t result = 0;
+
+			TRACE_ENTRY();
+
+			switch(move.first) {
+				case MOVE_CAPTURE:
+				case MOVE_CHECK:
+				case MOVE_NORMAL:
+				case MOVE_PROTECT:
+					result = MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, move.first);
+					break;
+				default:
+					THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_TYPE,
+						"type=%lu", move.first);
+			}
+
+			scores.insert(std::pair<ptce_mv_ent_t, size_t>(move, result));
+
+			TRACE_EXIT("Return Value: %lu", result);
+			return result;
+		}
+
+		size_t 
+		_ptce_board::score_move_pawn(
+			__in const ptce_mv_ent_t &move,
+			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
+			)
+		{
+			size_t result = 0;
+
+			TRACE_ENTRY();
+
+			switch(move.first) {
+				case MOVE_CAPTURE:
+				case MOVE_CHECK:
+				case MOVE_NORMAL:
+				case MOVE_PROMOTE:
+				case MOVE_PROTECT:
+					result = MOVE_HEURISTIC_VALUE(PIECE_PAWN, move.first);
+					break;
+				default:
+					THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_TYPE,
+						"type=%lu", move.first);
+			}
+
+			scores.insert(std::pair<ptce_mv_ent_t, size_t>(move, result));
+
+			TRACE_EXIT("Return Value: %lu", result);
+			return result;
+		}
+
+		size_t 
+		_ptce_board::score_move_queen(
+			__in const ptce_mv_ent_t &move,
+			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
+			)
+		{
+			size_t result = 0;
+
+			TRACE_ENTRY();
+
+			switch(move.first) {
+				case MOVE_CAPTURE:
+				case MOVE_CHECK:
+				case MOVE_NORMAL:
+				case MOVE_PROTECT:
+					result = MOVE_HEURISTIC_VALUE(PIECE_QUEEN, move.first);
+					break;
+				default:
+					THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_TYPE,
+						"type=%lu", move.first);
+			}
+
+			scores.insert(std::pair<ptce_mv_ent_t, size_t>(move, result));
+
+			TRACE_EXIT("Return Value: %lu", result);
+			return result;
+		}
+
+		size_t 
+		_ptce_board::score_move_rook(
+			__in const ptce_mv_ent_t &move,
+			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
+			)
+		{
+			size_t result = 0;
+
+			TRACE_ENTRY();
+
+			switch(move.first) {
+				case MOVE_CAPTURE:
+				case MOVE_CHECK:
+				case MOVE_NORMAL:
+				case MOVE_PROTECT:
+					result = MOVE_HEURISTIC_VALUE(PIECE_ROOK, move.first);
+					break;
+				default:
+					THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_TYPE,
+						"type=%lu", move.first);
+			}
+
+			scores.insert(std::pair<ptce_mv_ent_t, size_t>(move, result));
+
+			TRACE_EXIT("Return Value: %lu", result);
+			return result;
+		}
+
+		size_t 
 		_ptce_board::score_move_set(
 			__in const ptce_piece_t &type,
 			__in const std::set<ptce_mv_ent_t> &moves,
 			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 			)
 		{
-			size_t result = 0;
+			size_t result = 0, score;
 			std::set<ptce_mv_ent_t>::const_iterator move_iter;
 
 			TRACE_ENTRY();
@@ -1360,8 +1529,33 @@ namespace PTCE_NS {
 
 			for(move_iter = moves.begin(); move_iter != moves.end(); ++move_iter) {
 
-				// TODO: rank move set and output highest score along with scores set
+				switch(type) {
+					case PIECE_KING:
+						score = score_move_king(*move_iter, scores);
+						break;
+					case PIECE_QUEEN:
+						score = score_move_queen(*move_iter, scores);
+						break;
+					case PIECE_ROOK:
+						score = score_move_rook(*move_iter, scores);
+						break;
+					case PIECE_BISHOP:
+						score = score_move_bishop(*move_iter, scores);
+						break;
+					case PIECE_KNIGHT:
+						score = score_move_knight(*move_iter, scores);
+						break;
+					case PIECE_PAWN:
+						score = score_move_pawn(*move_iter, scores);
+						break;
+					default:
+						THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_TYPE,
+							"type=%lu", type);
+				}
 
+				if(score > result) {
+					result = score;
+				}
 			}
 
 			TRACE_EXIT("Return Value: %lu");

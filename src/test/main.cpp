@@ -188,22 +188,28 @@ main(
 		std::set<ptce_mv_ent_t> gen_moves = board.generate_move_set(ptce_pos_t(3, 0), PIECE_BLACK);
 		std::cout << "Count: " << gen_moves.size();
 
-		for(std::set<ptce_mv_ent_t>::iterator iter = gen_moves.begin();
-				iter != gen_moves.end(); ++iter) {
-			std::cout << std::endl << MOVE_TYPE_STRING(iter->first) << "(" << iter->second.size() << ")";
+		std::set<std::pair<ptce_mv_ent_t, size_t>> scores;
+		size_t max_score = ptce_board::score_move_set(PIECE_KING, gen_moves, scores);
 
-			if(!iter->second.empty()) {
+		std::cout << std::endl << "Max score: " << max_score << ", Count: " << scores.size();
+
+		for(std::set<std::pair<ptce_mv_ent_t, size_t>>::iterator iter = scores.begin();
+				iter != scores.end(); ++iter) {
+			std::cout << std::endl << MOVE_TYPE_STRING(iter->first.first) << "(" << iter->first.second.size() << ")";
+
+			if(!iter->first.second.empty()) {
 				std::cout << ": ";
 
-				for(std::set<std::pair<ptce_pos_t, ptce_pos_t>>::iterator pos_iter = iter->second.begin();
-						pos_iter != iter->second.end(); ++pos_iter) {
+				for(std::set<std::pair<ptce_pos_t, ptce_pos_t>>::iterator pos_iter = iter->first.second.begin();
+						pos_iter != iter->first.second.end(); ++pos_iter) {
 
-					if(pos_iter != iter->second.begin()) {
+					if(pos_iter != iter->first.second.begin()) {
 						std::cout << ", ";
 					}
 
 					std::cout << "({" << (int) pos_iter->first.first << ", " << (int) pos_iter->first.second << "}, {"
-							<< (int) pos_iter->second.first << ", " << (int) pos_iter->second.second << "})";
+							<< (int) pos_iter->second.first << ", " << (int) pos_iter->second.second << "})"
+							<< ", Score: " << iter->second;
 				}
 			}
 		}

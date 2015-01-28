@@ -59,6 +59,12 @@ namespace PTCE_NS {
 			PTCE_TEST_BOARD_PIECE_MOVED,
 			PTCE_TEST_BOARD_PIECE_MOVED_COORDINATE,
 			PTCE_TEST_BOARD_REMOVE,
+			PTCE_TEST_BOARD_SCORE_MOVES_BISHOP,
+			PTCE_TEST_BOARD_SCORE_MOVES_KING,
+			PTCE_TEST_BOARD_SCORE_MOVES_KNIGHT,
+			PTCE_TEST_BOARD_SCORE_MOVES_PAWN,
+			PTCE_TEST_BOARD_SCORE_MOVES_QUEEN,
+			PTCE_TEST_BOARD_SCORE_MOVES_ROOK,
 			PTCE_TEST_BOARD_SERIALIZE,
 			PTCE_TEST_BOARD_SIZE,
 			PTCE_TEST_BOARD_STATE,
@@ -100,6 +106,12 @@ namespace PTCE_NS {
 			"PTCE_TEST_BOARD_PIECE_MOVED",
 			"PTCE_TEST_BOARD_PIECE_MOVED_COORDINATE",
 			"PTCE_TEST_BOARD_REMOVE",
+			"PTCE_TEST_BOARD_SCORE_MOVES_BISHOP",
+			"PTCE_TEST_BOARD_SCORE_MOVES_KING",
+			"PTCE_TEST_BOARD_SCORE_MOVES_KNIGHT",
+			"PTCE_TEST_BOARD_SCORE_MOVES_PAWN",
+			"PTCE_TEST_BOARD_SCORE_MOVES_QUEEN",
+			"PTCE_TEST_BOARD_SCORE_MOVES_ROOK",
 			"PTCE_TEST_BOARD_SERIALIZE",
 			"PTCE_TEST_BOARD_SIZE",
 			"PTCE_TEST_BOARD_STATE",
@@ -174,6 +186,18 @@ namespace PTCE_NS {
 
 		extern ptce_test_t ptce_test_board_remove(void);
 
+		extern ptce_test_t ptce_test_board_score_moves_bishop(void);
+
+		extern ptce_test_t ptce_test_board_score_moves_king(void);
+
+		extern ptce_test_t ptce_test_board_score_moves_knight(void);
+
+		extern ptce_test_t ptce_test_board_score_moves_pawn(void);
+
+		extern ptce_test_t ptce_test_board_score_moves_queen(void);
+
+		extern ptce_test_t ptce_test_board_score_moves_rook(void);
+
 		extern ptce_test_t ptce_test_board_serialize(void);
 
 		extern ptce_test_t ptce_test_board_size(void);
@@ -215,6 +239,12 @@ namespace PTCE_NS {
 			ptce_test_board_piece_moved,
 			ptce_test_board_piece_moved_coordinate,
 			ptce_test_board_remove,
+			ptce_test_board_score_moves_bishop,
+			ptce_test_board_score_moves_king,
+			ptce_test_board_score_moves_knight,
+			ptce_test_board_score_moves_pawn,
+			ptce_test_board_score_moves_queen,
+			ptce_test_board_score_moves_rook,
 			ptce_test_board_serialize,
 			ptce_test_board_size,
 			ptce_test_board_state,
