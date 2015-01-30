@@ -70,6 +70,8 @@ namespace PTCE_NS {
 		__in const char *format,
 		...
 		);
+
+	std::string time_stamp(void);
 }
 
 #endif // PTCE_DEFINES_H_

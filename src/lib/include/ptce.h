@@ -68,6 +68,8 @@ namespace PTCE_NS {
 
 			ptce_board_factory_ptr acquire_board_factory(void);
 
+			ptce_game_manager_ptr acquire_game_manager(void);
+
 			ptce_node_factory_ptr acquire_node_factory(void);
 			
 			ptce_piece_factory_ptr acquire_piece_factory(void);
@@ -83,6 +85,8 @@ namespace PTCE_NS {
 			bool is_initialized(void);
 		
 			static void release_board_factory(void);
+
+			static void release_game_manager(void);
 
 			static void release_node_factory(void);
 
@@ -123,6 +127,8 @@ namespace PTCE_NS {
 			ptce_piece_factory_ptr m_factory_piece;
 
 			ptce_uid_factory_ptr m_factory_uid;
+
+			ptce_game_manager_ptr m_manager_game;
 
 		private:
 		

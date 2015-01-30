@@ -15,6 +15,7 @@ Changelog
 ###Version 0.1.1505
 *Updated: 1/29/2015*
 
+* Added client connection handler (partial)
 * Added additional chess move scoring tests
 
 *Updated: 1/27/2015*

@@ -33,16 +33,22 @@ namespace PTCE_NS {
 		#define PTCE_GAME_TRACE_HEADER "(GAME)"
 
 		enum {
-			PTCE_GAME_EXCEPTION_ACQUIRE_FAILED = 0,
+			PTCE_GAME_EXCEPTION_ACCEPT_FAILED = 0,
+			PTCE_GAME_EXCEPTION_ACQUIRE_FAILED,
+			PTCE_GAME_EXCEPTION_BIND_FAILED,
 			PTCE_GAME_EXCEPTION_INITIALIZED,
+			PTCE_GAME_EXCEPTION_SOCKET_FAILED,
 			PTCE_GAME_EXCEPTION_UNINITIALIZED,
 		};
 
 		#define PTCE_GAME_EXCEPTION_MAX PTCE_GAME_EXCEPTION_UNINITIALIZED
 
 		static const std::string PTCE_GAME_EXCEPTION_STR[] = {
+			PTCE_GAME_HEADER " Failed to accept client connection",
 			PTCE_GAME_HEADER " Failed to acquire game manager",
+			PTCE_GAME_HEADER " Failed to bind to port",
 			PTCE_GAME_HEADER " Game manager is already initialized",
+			PTCE_GAME_HEADER " Failed to create socket",
 			PTCE_GAME_HEADER " Game manager is uninitialized",
 			};
 

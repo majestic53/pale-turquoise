@@ -18,13 +18,18 @@
  */
 
 #include <cstring>
+#include <netdb.h>
+#include <unistd.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
 #include "../include/ptce.h"
 #include "../include/ptce_game_type.h"
 
 namespace PTCE_NS {
 
 	namespace PTCE_NET_NS {
+
+		typedef struct sockaddr_in sockaddr_t;
 
 		_ptce_game::_ptce_game(
 			__in const sockaddr_t &information,
@@ -196,8 +201,8 @@ namespace PTCE_NS {
 
 			if(!m_instance) {
 
-				result = new ptce_game_manager;
-				if(!result) {
+				m_instance = new ptce_game_manager();
+				if(!m_instance) {
 					THROW_PTCE_GAME_EXCEPTION(PTCE_GAME_EXCEPTION_ACQUIRE_FAILED);
 				}
 			}
@@ -220,6 +225,8 @@ namespace PTCE_NS {
 		void 
 		_ptce_game_manager::destroy(void)
 		{
+			std::map<ptce_uid, std::thread>::iterator game_iter;
+
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
 
@@ -227,8 +234,14 @@ namespace PTCE_NS {
 				THROW_PTCE_GAME_EXCEPTION(PTCE_GAME_EXCEPTION_UNINITIALIZED);
 			}
 
-			// TODO: kill all threads and stop server
+			for(game_iter = m_game_map.begin(); game_iter != m_game_map.end(); ++game_iter) {
 
+				if(game_iter->second.joinable()) {
+					game_iter->second.join();
+				}
+			}
+
+			m_game_map.clear();
 			m_port = 0;
 			m_connections = 0;
 			m_initialized = true;
@@ -239,9 +252,15 @@ namespace PTCE_NS {
 		void 
 		_ptce_game_manager::initialize(
 			__in_opt uint16_t port,
-			__in_opt uint8_t connections
+			__in_opt uint8_t connections,
+			__in_opt bool verbose
 			)
 		{
+			socklen_t len_cli;
+			int sock_cli, sock_serv;
+			sockaddr_t addr_cli, addr_serv;
+			char addr_cli_host_buf[NI_MAXHOST], addr_cli_port_buf[NI_MAXSERV];
+
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
 
@@ -252,9 +271,76 @@ namespace PTCE_NS {
 			m_port = port;
 			m_connections = connections;
 
-			// TODO: start server on port w/ connection count
+			if(verbose) {
+				std::cout << "[" << time_stamp() << "] Opening socket" << "... ";
+			}
+
+			sock_serv = socket(AF_INET, SOCK_STREAM, 0);
+			if(sock_serv < 0) {
+				THROW_PTCE_GAME_EXCEPTION(PTCE_GAME_EXCEPTION_SOCKET_FAILED);
+			}
+
+			if(verbose) {
+				std::cout << "Done.";
+			}
+
+			memset(&addr_serv, 0, sizeof(sockaddr_t));
+			addr_serv.sin_family = AF_INET;
+			addr_serv.sin_addr.s_addr = INADDR_ANY;
+			addr_serv.sin_port = htons(m_port);
+
+			if(verbose) {
+				std::cout << "[" << time_stamp() << "] Binding to port " << m_port << "... ";
+			}
+
+			if(bind(sock_serv, (struct sockaddr *) &addr_serv, sizeof(sockaddr_t)) < 0) {
+				THROW_PTCE_GAME_EXCEPTION_MESSAGE(PTCE_GAME_EXCEPTION_BIND_FAILED,
+					"%i", m_port);
+			}
+
+			if(verbose) {
+				std::cout << "Done.";
+			}
 
 			m_initialized = true;
+			listen(sock_serv, m_connections);
+
+			if(verbose) {
+				std::cout << "[" << time_stamp() << "] Listening for client connections(" << m_connections 
+						<< ")..." << std::endl;
+			}
+
+			for(;;) {
+				len_cli = sizeof(addr_cli);
+
+				sock_cli = accept(sock_serv, (struct sockaddr *) &addr_cli, &len_cli);
+				if(sock_cli < 0) {
+					std::cerr << "[" << time_stamp() << "] " 
+						<< PTCE_GAME_EXCEPTION_STRING(PTCE_GAME_EXCEPTION_ACCEPT_FAILED) << std::endl;
+				}
+
+				if(verbose) {
+					memset(addr_cli_host_buf, 0, sizeof(char) * NI_MAXHOST);
+					memset(addr_cli_port_buf, 0, sizeof(char) * NI_MAXSERV);
+					std::cout << "[" << time_stamp() << "] Client connected";
+
+					if(!getnameinfo((struct sockaddr *) &addr_cli, len_cli, 
+							addr_cli_host_buf, sizeof(char) * NI_MAXHOST, 
+							addr_cli_port_buf, sizeof(char) * NI_MAXSERV, 
+							NI_NUMERICHOST | NI_NUMERICSERV)) {
+						std::cout << " (Host: " << addr_cli_host_buf << ", Port: " 
+							<< addr_cli_port_buf << ")";
+					}
+
+					std::cout << std::endl;
+				}
+
+				// TODO: invoke new thread to handle sock_cli
+				close(sock_cli);
+				// ---
+			}
+
+			close(sock_serv);
 
 			TRACE_EXIT("Return Value: 0x%x", 0);
 		}

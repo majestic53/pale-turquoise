@@ -100,7 +100,8 @@ namespace PTCE_NS {
 
 				void initialize(
 					__in_opt uint16_t port = GAME_PORT_DEF,
-					__in_opt uint8_t connections = GAME_CONNECTION_DEF
+					__in_opt uint8_t connections = GAME_CONNECTION_DEF,
+					__in_opt bool verbose = false
 					);
 
 				static bool is_allocated(void);

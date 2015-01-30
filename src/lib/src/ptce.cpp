@@ -42,7 +42,8 @@ namespace PTCE_NS {
 		m_factory_board(ptce_board_factory::acquire()),
 		m_factory_node(ptce_node_factory::acquire()),
 		m_factory_piece(ptce_piece_factory::acquire()),
-		m_factory_uid(ptce_uid_factory::acquire())
+		m_factory_uid(ptce_uid_factory::acquire()),
+		m_manager_game(ptce_game_manager::acquire())
 	{
 		TRACE_ENTRY();
 		
@@ -55,6 +56,7 @@ namespace PTCE_NS {
 	{
 		TRACE_ENTRY();		
 
+		release_game_manager();
 		release_board_factory();
 		release_piece_factory();
 		release_node_factory();
@@ -102,6 +104,22 @@ namespace PTCE_NS {
 
 		TRACE_EXIT("Return Value: 0x%p", m_factory_board);
 		return m_factory_board;
+	}
+
+	ptce_game_manager_ptr 
+	_ptce::acquire_game_manager(void)
+	{
+		TRACE_ENTRY();
+		SERIALIZE_CALL_RECUR(m_lock);
+
+		if(!m_initialized) {
+			THROW_PTCE_EXCEPTION(PTCE_EXCEPTION_UNINITIALIZED);
+		}
+
+		m_manager_game = ptce_game_manager::acquire();
+
+		TRACE_EXIT("Return Value: 0x%p", m_manager_game);
+		return m_manager_game;
 	}
 
 	ptce_node_factory_ptr 
@@ -162,6 +180,10 @@ namespace PTCE_NS {
 			THROW_PTCE_EXCEPTION(PTCE_EXCEPTION_UNINITIALIZED);
 		}
 		
+		if(m_manager_game && m_manager_game->is_initialized()) {
+			m_manager_game->destroy();
+		}
+
 		if(m_factory_board && m_factory_board->is_initialized()) {
 			m_factory_board->destroy();
 		}
@@ -250,6 +272,19 @@ namespace PTCE_NS {
 	}
 
 	void 
+	_ptce::release_game_manager(void)
+	{
+		TRACE_ENTRY();
+
+		if(ptce::is_allocated()) {
+			ptce::acquire()->m_manager_game = NULL;
+			ptce_game_manager_destroy();
+		}
+
+		TRACE_EXIT("Return Value: 0x%x", 0);
+	}
+
+	void 
 	_ptce::release_node_factory(void)
 	{
 		TRACE_ENTRY();
@@ -319,6 +354,10 @@ namespace PTCE_NS {
 			result << std::endl << m_factory_board->to_string(verbose);
 		}
 		
+		if(m_manager_game) {
+			result << std::endl << m_manager_game->to_string(verbose);
+		}
+
 		TRACE_EXIT("Return Value: 0x%x", 0);
 		return result.str();
 	}

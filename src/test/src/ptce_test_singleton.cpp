@@ -108,6 +108,53 @@ exit:
 		}
 
 		ptce_test_t 
+		ptce_test_singleton_acquire_game_manager(void)
+		{
+			ptce_ptr parent = NULL;
+			ptce_game_manager_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				parent = ptce::acquire();
+				parent->initialize();
+
+				inst = parent->acquire_game_manager();
+				if(!inst) {
+					std::cerr << "----!ptce_test_singleton_acquire_game_manager failure(0)" << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				if(inst->is_initialized()) {
+					std::cerr << "----!ptce_test_singleton_acquire_game_manager failure(1)" << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				parent->destroy();
+
+				if(inst->is_initialized()) {
+					std::cerr << "----!ptce_test_singleton_acquire_game_manager failure(2)" << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+			} catch(std::runtime_error &exc) {
+				std::cerr << "----!ptce_test_singleton_acquire_game_manager exception(0): " << exc.what() << std::endl;
+				result = PTCE_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), 
+					result);
+			return result;
+		}
+
+		ptce_test_t 
 		ptce_test_singleton_acquire_node_factory(void)
 		{
 			ptce_ptr parent = NULL;
@@ -474,6 +521,48 @@ exit:
 					parent->acquire_board_factory();
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_singleton_release_board_factory exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				parent->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_singleton_release_game_manager(void)
+		{
+			ptce_ptr parent = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				parent = ptce::acquire();
+				parent->initialize();
+
+				try {
+					ptce::release_game_manager();
+
+					if(ptce_game_manager::is_allocated()) {
+						std::cerr << "----!ptce_test_singleton_release_game_manager failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					parent->acquire_game_manager();
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_singleton_release_game_manager exception(0): " 
 							<< exc.what() << std::endl;
 					result = PTCE_TEST_FAILURE;
 					goto exit;

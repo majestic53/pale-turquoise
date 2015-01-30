@@ -20,6 +20,7 @@
 #include <cerrno>
 #include <cstdarg>
 #include <cstdio>
+#include <ctime>
 #include "../include/ptce.h"
 #include "../include/ptce_defines_type.h"
 
@@ -60,6 +61,21 @@ cleanup:
 		va_end(arguments);
 		
 exit:
+		return result;
+	}
+
+	std::string 
+	time_stamp(void)
+	{
+		time_t tm;
+		std::string result;
+
+		TRACE_ENTRY();
+
+		time(&tm);
+		result = ctime(&tm);
+
+		TRACE_EXIT("Return Value: 0x%x", 0);
 		return result;
 	}
 }
