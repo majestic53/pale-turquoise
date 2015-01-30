@@ -3526,9 +3526,183 @@ exit:
 				ptce_board board(true);
 
 				try {
-					
-					// TODO
+					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL),
+							ptce_pos_t(3, 1), ptce_pos_t(3, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL),
+							ptce_pos_t(3, 1), ptce_pos_t(3, 3));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+							ptce_pos_t(3, 1), ptce_pos_t(2, 2));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+							ptce_pos_t(3, 1), ptce_pos_t(4, 2));
+					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+							board.generate_move_set(ptce_pos_t(3, 1), PIECE_BLACK), result_move_set);
 
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_BLACK, true);
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+							ptce_pos_t(3, 1), ptce_pos_t(2, 2));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+							ptce_pos_t(3, 1), ptce_pos_t(4, 2));
+					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+							board.generate_move_set(ptce_pos_t(3, 1), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(3, 3), PIECE_PAWN, PIECE_BLACK, true);
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL),
+							ptce_pos_t(3, 1), ptce_pos_t(3, 2));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+							ptce_pos_t(3, 1), ptce_pos_t(2, 2));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+							ptce_pos_t(3, 1), ptce_pos_t(4, 2));
+					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+							board.generate_move_set(ptce_pos_t(3, 1), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(2)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_WHITE, true);
+					board.generate_piece(ptce_pos_t(2, 2), PIECE_PAWN, PIECE_BLACK, true);
+					board.generate_piece(ptce_pos_t(4, 2), PIECE_PAWN, PIECE_BLACK, true);
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_CAPTURE),
+							ptce_pos_t(3, 1), ptce_pos_t(2, 2));
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_CAPTURE),
+							ptce_pos_t(3, 1), ptce_pos_t(4, 2));
+					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+							board.generate_move_set(ptce_pos_t(3, 1), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_CAPTURE))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(3)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_WHITE, true);
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL),
+							ptce_pos_t(3, 2), ptce_pos_t(3, 3));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+							ptce_pos_t(3, 2), ptce_pos_t(2, 3));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+							ptce_pos_t(3, 2), ptce_pos_t(4, 3));
+					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+							board.generate_move_set(ptce_pos_t(3, 2), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(4)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_WHITE, true);
+					board.generate_piece(ptce_pos_t(3, 3), PIECE_PAWN, PIECE_BLACK, true);
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+							ptce_pos_t(3, 2), ptce_pos_t(2, 3));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+							ptce_pos_t(3, 2), ptce_pos_t(4, 3));
+					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+							board.generate_move_set(ptce_pos_t(3, 2), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(5)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_WHITE, true);
+					board.generate_piece(ptce_pos_t(2, 3), PIECE_PAWN, PIECE_BLACK, true);
+					board.generate_piece(ptce_pos_t(4, 3), PIECE_PAWN, PIECE_BLACK, true);
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL),
+							ptce_pos_t(3, 2), ptce_pos_t(3, 3));
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_CAPTURE),
+							ptce_pos_t(3, 2), ptce_pos_t(2, 3));
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_CAPTURE),
+							ptce_pos_t(3, 2), ptce_pos_t(4, 3));
+					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+							board.generate_move_set(ptce_pos_t(3, 2), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_CAPTURE))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(6)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(2, 6), PIECE_PAWN, PIECE_WHITE, true);
+					board.generate_piece(ptce_pos_t(3, 7), PIECE_KING, PIECE_BLACK, true);
+					append_test_score_move_set(move_set, MOVE_CHECK, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_CHECK),
+							ptce_pos_t(2, 6), ptce_pos_t(3, 7));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL),
+							ptce_pos_t(2, 6), ptce_pos_t(2, 7));
+					append_test_score_move_set(move_set, MOVE_PROMOTE, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROMOTE),
+							ptce_pos_t(2, 6), ptce_pos_t(2, 7));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+							ptce_pos_t(2, 6), ptce_pos_t(1, 7));
+					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+							board.generate_move_set(ptce_pos_t(2, 6), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_CHECK))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(7)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(2, 7), PIECE_PAWN, PIECE_WHITE, true);					
+					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+							board.generate_move_set(ptce_pos_t(2, 7), PIECE_BLACK), result_move_set);
+
+					if(result_score 
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(8)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_score_moves_pawn exception(0): " 
 							<< exc.what() << std::endl;
@@ -3565,9 +3739,493 @@ exit:
 				ptce_board board(true);
 
 				try {
-					
-					// TODO
+					board.generate_piece(ptce_pos_t(0, 0), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(0, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(1, 0), PIECE_QUEEN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(1, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(2, 0), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(2, 1), PIECE_PAWN, PIECE_WHITE);
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(0, 0));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(0, 1));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(1, 1));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(2, 0));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(2, 1));
+					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
 
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_queen failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(0, 0), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(0, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(1, 0), PIECE_QUEEN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(1, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(2, 0), PIECE_PAWN, PIECE_WHITE);
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(0, 0));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(0, 1));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(1, 1));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(2, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(1, 0), ptce_pos_t(2, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(1, 0), ptce_pos_t(3, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(1, 0), ptce_pos_t(4, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(1, 0), ptce_pos_t(5, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(1, 0), ptce_pos_t(6, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(1, 0), ptce_pos_t(7, 6));
+					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_queen failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(0, 0), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(0, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(1, 0), PIECE_QUEEN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(1, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(2, 0), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(4, 3), PIECE_PAWN, PIECE_BLACK);
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(0, 0));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(0, 1));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(1, 1));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(2, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(1, 0), ptce_pos_t(2, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(1, 0), ptce_pos_t(3, 2));
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE),
+							ptce_pos_t(1, 0), ptce_pos_t(4, 3));
+					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_queen failure(2)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(0, 0), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(0, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(1, 0), PIECE_QUEEN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(1, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(2, 0), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(4, 3), PIECE_PAWN, PIECE_WHITE);
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(0, 0));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(0, 1));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(1, 1));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(2, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(1, 0), ptce_pos_t(2, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(1, 0), ptce_pos_t(3, 2));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(1, 0), ptce_pos_t(4, 3));
+					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_queen failure(2)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 3), PIECE_QUEEN, PIECE_WHITE);
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 6));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 6));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 7));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 6));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(7, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(7, 7));
+					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_queen failure(3)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 3), PIECE_QUEEN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(0, 0), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(0, 3), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(0, 6), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(3, 0), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(3, 7), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(6, 0), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(7, 3), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(7, 7), PIECE_PAWN, PIECE_BLACK);
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 0));
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 3));
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 6));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 4));
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 6));
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 7));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 5));
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 6));
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE),
+							ptce_pos_t(3, 3), ptce_pos_t(7, 3));
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE),
+							ptce_pos_t(3, 3), ptce_pos_t(7, 7));
+					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_queen failure(4)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 3), PIECE_QUEEN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(0, 0), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(0, 3), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(0, 6), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(3, 0), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(3, 7), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(6, 0), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(7, 3), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(7, 7), PIECE_PAWN, PIECE_WHITE);
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 0));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 3));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 6));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 4));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 6));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 7));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 5));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 6));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(3, 3), ptce_pos_t(7, 3));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+							ptce_pos_t(3, 3), ptce_pos_t(7, 7));
+					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_queen failure(5)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 3), PIECE_QUEEN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(3, 7), PIECE_KING, PIECE_BLACK);
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 6));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 6));
+					append_test_score_move_set(move_set, MOVE_CHECK, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CHECK),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 7));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 6));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(7, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(7, 7));
+					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CHECK))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_queen failure(6)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 3), PIECE_QUEEN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(7, 7), PIECE_KING, PIECE_BLACK);
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(0, 6));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(1, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(2, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 6));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(3, 7));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(4, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(5, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(6, 6));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
+							ptce_pos_t(3, 3), ptce_pos_t(7, 3));
+					append_test_score_move_set(move_set, MOVE_CHECK, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CHECK),
+							ptce_pos_t(3, 3), ptce_pos_t(7, 7));
+					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CHECK))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_queen failure(7)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_score_moves_queen exception(0): " 
 							<< exc.what() << std::endl;
@@ -3604,9 +4262,158 @@ exit:
 				ptce_board board(true);
 
 				try {
-					
-					// TODO
+					board.generate_piece(ptce_pos_t(0, 0), PIECE_ROOK, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(0, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(1, 0), PIECE_PAWN, PIECE_WHITE);
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_PROTECT),
+							ptce_pos_t(0, 0), ptce_pos_t(0, 1));
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_PROTECT),
+							ptce_pos_t(0, 0), ptce_pos_t(1, 0));
+					result_score = ptce_board::score_move_set(PIECE_ROOK, 
+							board.generate_move_set(ptce_pos_t(0, 0), PIECE_BLACK), result_move_set);
 
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_PROTECT))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_rook failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(0, 0), PIECE_ROOK, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(0, 1), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(1, 0), PIECE_PAWN, PIECE_BLACK);
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_CAPTURE),
+							ptce_pos_t(0, 0), ptce_pos_t(0, 1));
+					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_CAPTURE),
+							ptce_pos_t(0, 0), ptce_pos_t(1, 0));
+					result_score = ptce_board::score_move_set(PIECE_ROOK, 
+							board.generate_move_set(ptce_pos_t(0, 0), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_CAPTURE))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_rook failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(0, 0), PIECE_ROOK, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(0, 1), PIECE_PAWN, PIECE_WHITE);
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_PROTECT),
+							ptce_pos_t(0, 0), ptce_pos_t(0, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(1, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(2, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(3, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(4, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(5, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(6, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(7, 0));
+					result_score = ptce_board::score_move_set(PIECE_ROOK, 
+							board.generate_move_set(ptce_pos_t(0, 0), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_rook failure(2)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(0, 0), PIECE_ROOK, PIECE_WHITE);
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(0, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(0, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(0, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(0, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(0, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(0, 6));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(0, 7));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(1, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(2, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(3, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(4, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(5, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(6, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(0, 0), ptce_pos_t(7, 0));
+					result_score = ptce_board::score_move_set(PIECE_ROOK, 
+							board.generate_move_set(ptce_pos_t(0, 0), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_rook failure(3)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					move_set.clear();
+					result_move_set.clear();
+					board.generate_piece(ptce_pos_t(3, 0), PIECE_ROOK, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(3, 7), PIECE_KING, PIECE_BLACK);
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(3, 0), ptce_pos_t(0, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(3, 0), ptce_pos_t(1, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(3, 0), ptce_pos_t(2, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(3, 0), ptce_pos_t(3, 1));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(3, 0), ptce_pos_t(3, 2));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(3, 0), ptce_pos_t(3, 3));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(3, 0), ptce_pos_t(3, 4));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(3, 0), ptce_pos_t(3, 5));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(3, 0), ptce_pos_t(3, 6));
+					append_test_score_move_set(move_set, MOVE_CHECK, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_CHECK),
+							ptce_pos_t(3, 0), ptce_pos_t(3, 7));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(3, 0), ptce_pos_t(4, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(3, 0), ptce_pos_t(5, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(3, 0), ptce_pos_t(6, 0));
+					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
+							ptce_pos_t(3, 0), ptce_pos_t(7, 0));
+					result_score = ptce_board::score_move_set(PIECE_ROOK, 
+							board.generate_move_set(ptce_pos_t(3, 0), PIECE_BLACK), result_move_set);
+
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_CHECK))
+							|| !compare_test_score_move_sets(move_set, result_move_set)) {
+						std::cerr << "----!ptce_test_board_generate_moves_rook failure(4)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_score_moves_rook exception(0): " 
 							<< exc.what() << std::endl;
