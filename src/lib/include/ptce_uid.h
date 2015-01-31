@@ -217,8 +217,6 @@ namespace PTCE_NS {
 
 			protected:
 
-				friend class _ptce_game_manager;
-
 				ptce_uid generate_id(
 					__in bool unique
 					);

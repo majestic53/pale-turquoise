@@ -26,7 +26,7 @@
 #include "./include/ptce_test_singleton.h"
 #include "./include/ptce_test_uid.h"
 
-//#define RUN_TESTS
+#define RUN_TESTS
 
 ptce_test_set 
 create_test_set_ptce_board(void)
