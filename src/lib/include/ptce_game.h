@@ -107,7 +107,8 @@ namespace PTCE_NS {
 				void start(
 					__in_opt uint16_t port = GAME_PORT_DEF,
 					__in_opt uint8_t connections = GAME_CONNECTION_DEF,
-					__in_opt bool verbose = false
+					__in_opt bool verbose = false,
+					__in_opt bool debug = false
 					);
 
 				void stop(
@@ -134,10 +135,32 @@ namespace PTCE_NS {
 
 				void client_game_handler(
 					__in const ptce_uid uid,
-					__in const sockaddr_t information,
+					__in const sockaddr_t info_serv,
+					__in const sockaddr_t info_cli,
 					__in const socklen_t length,
 					__in int socket,
-					__in_opt bool verbose = false
+					__in_opt bool verbose = false,
+					__in_opt bool debug = false
+					);
+
+				int client_read(
+					__in uint8_t *data,
+					__in size_t length,
+					__in char *addr_host,
+					__in char *addr_port,
+					__in int socket,
+					__in_opt bool verbose = false,
+					__in_opt bool debug = false
+					);
+
+				bool client_write(
+					__in uint8_t *data,
+					__in size_t length,
+					__in char *addr_host,
+					__in char *addr_port,
+					__in int socket,
+					__in_opt bool verbose = false,
+					__in_opt bool debug = false
 					);
 
 				uint8_t m_connections;

@@ -29,6 +29,9 @@ namespace PTCE_NS {
 
 	namespace PTCE_NET_NS {
 
+		#define CLIENT_DATA_LEN_MAX 0x400
+		#define CLIENT_MESSAGE "You are now playing against Pale Turquoise ver." VERSION_STR
+
 		typedef struct sockaddr_in sockaddr_t;
 
 		_ptce_game::_ptce_game(
@@ -216,13 +219,19 @@ namespace PTCE_NS {
 		void 
 		_ptce_game_manager::client_game_handler(
 			__in const ptce_uid uid,
-			__in const sockaddr_t information,
+			__in const sockaddr_t info_serv,
+			__in const sockaddr_t info_cli,
 			__in const socklen_t length,
 			__in int socket,
-			__in_opt bool verbose
+			__in_opt bool verbose,
+			__in_opt bool debug
 			)
 		{
-			bool cli_addr_known = false;
+			ptce_board board;
+			//size_t cli_data_len;
+			std::stringstream message;
+			bool addr_cli_known = false;
+			//uint8_t cli_data[CLIENT_DATA_LEN_MAX];
 			std::map<ptce_uid, std::thread>::iterator game_iter;
 			char addr_cli_host_buf[NI_MAXHOST], addr_cli_port_buf[NI_MAXSERV];
 
@@ -233,17 +242,31 @@ namespace PTCE_NS {
 				memset(addr_cli_port_buf, 0, sizeof(char) * NI_MAXSERV);
 				std::cout << "[" << time_stamp() << "] Client connected";
 
-				if(!getnameinfo((struct sockaddr *) &information, length, 
+				if(!getnameinfo((struct sockaddr *) &info_cli, length, 
 						addr_cli_host_buf, sizeof(char) * NI_MAXHOST, 
 						addr_cli_port_buf, sizeof(char) * NI_MAXSERV, 
 						NI_NUMERICHOST | NI_NUMERICSERV)) {
-					cli_addr_known = true;
+					addr_cli_known = true;
 					std::cout << " (Host: " << addr_cli_host_buf << ", Port: " << addr_cli_port_buf 
 							<< ")";
 				}
 
 				std::cout << std::endl;
 			}
+
+			message << CLIENT_MESSAGE << " (Host: " << addr_cli_host_buf << ", Port: " << addr_cli_port_buf 
+					<< ")" ;
+			client_write((uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
+					socket, verbose, debug);
+
+			message.clear();
+			message.str(std::string());
+			message << board.serialize(BOARD_CONTINUE);
+			client_write((uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
+					socket, verbose, debug);
+
+			/*cli_data_len = client_read(cli_data, CLIENT_DATA_LEN_MAX, addr_cli_host_buf, addr_cli_port_buf, 
+					socket, verbose, debug);*/
 
 			// TODO
 
@@ -252,7 +275,7 @@ namespace PTCE_NS {
 			if(verbose) {
 				std::cout << "[" << time_stamp() << "] Client disconnected";
 
-				if(cli_addr_known) {
+				if(addr_cli_known) {
 					std::cout << " (Host: " << addr_cli_host_buf << ", Port: " << addr_cli_port_buf 
 							<< ")";
 				}
@@ -274,6 +297,124 @@ namespace PTCE_NS {
 			}
 
 			TRACE_EXIT("Return Value: 0x%x", 0);
+		}
+
+		int 
+		_ptce_game_manager::client_read(
+			__in uint8_t *data,
+			__in size_t length,
+			__in char *addr_host,
+			__in char *addr_port,
+			__in int socket,
+			__in_opt bool verbose,
+			__in_opt bool debug
+			)
+		{
+			int result = 0;
+			size_t data_iter = 0;
+
+			TRACE_ENTRY();
+
+			if((!data && length) || (data && !length) || !addr_host || !addr_port) {
+				THROW_PTCE_GAME_EXCEPTION_MESSAGE(PTCE_GAME_EXCEPTION_INVALID_IO_PARAMETER,
+					"Data: 0x%p, Length: %lu, Host addr: 0x%p, Port addr: 0x%p",
+					data, length, addr_host, addr_port);
+			}
+
+			memset(&data, 0, length);
+			std::cout << "[" << time_stamp() << "] Server attepmpting to read data from client (Host: " 
+					<< addr_host << ", Port: " << addr_port << ")... ";
+
+			result = read(socket, data, length);
+			if((result < 0)) {
+
+				if(verbose) {
+					std::cout << "Failure!" << std::endl << "[" << time_stamp() << "] Client read failed (Host: " 
+						<< addr_host << ", Port: " << addr_port << "): " << strerror(errno) << std::endl;
+				}
+			} else if(verbose){
+				std::cout << "Success." << std::endl;
+			}
+
+			if(debug && (result >= 0)) {
+				std::cout << std::endl << "\tPayload: " << (char *) data << std::endl << "\tData length: " 
+						<< std::setprecision(4) << (length / BYTES_PER_KBYTE) << " KB (" << length << " bytes)";
+
+				for(; data_iter < length; ++data_iter) {
+
+					if(!(data_iter % BLOCK_LEN)) {
+						std::cout << std::endl << "\t0x" << VALUE_AS_HEX(uint16_t, data_iter) << " |";
+					}
+
+					std::cout << " " << VALUE_AS_HEX(uint8_t, data[data_iter]);
+				}
+
+				std::cout << std::endl;
+			}
+
+			TRACE_EXIT("Return Value: %.02f KB (%lu bytes)", result / BYTES_PER_KBYTE, result);
+			return result;
+		}
+
+		bool 
+		_ptce_game_manager::client_write(
+			__in uint8_t *data,
+			__in size_t length,
+			__in char *addr_host,
+			__in char *addr_port,
+			__in int socket,
+			__in_opt bool verbose,
+			__in_opt bool debug
+			)
+		{
+			int data_len;
+			bool result = true;
+			size_t data_iter = 0;
+
+			TRACE_ENTRY();
+
+			if((!data && length) || (data && !length) || !addr_host || !addr_port) {
+				THROW_PTCE_GAME_EXCEPTION_MESSAGE(PTCE_GAME_EXCEPTION_INVALID_IO_PARAMETER,
+					"Data: 0x%p, Length: %lu, Host addr: 0x%p, Port addr: 0x%p",
+					data, length, addr_host, addr_port);
+			}
+
+			std::cout << "[" << time_stamp() << "] Server attepmpting to write data to client (Host: " 
+					<< addr_host << ", Port: " << addr_port << ")";
+
+			if(debug) {
+				std::cout << std::endl << "\tPayload: " << (char *) data << std::endl << "\tData length: " 
+						<< std::setprecision(4) << (length / BYTES_PER_KBYTE) << " KB (" << length << " bytes)";
+
+				for(; data_iter < length; ++data_iter) {
+
+					if(!(data_iter % BLOCK_LEN)) {
+						std::cout << std::endl << "\t0x" << VALUE_AS_HEX(uint16_t, data_iter) << " |";
+					}
+
+					std::cout << " " << VALUE_AS_HEX(uint8_t, data[data_iter]);
+				}
+
+				std::cout << std::endl;
+			}
+
+			std::cout << "... ";
+
+			data_len = write(socket, data, length);
+			if((data_len < 0)) {
+
+				if(verbose) {
+					std::cout << "Failure!" << std::endl << "[" << time_stamp() << "] Client write failed (Host: " 
+						<< addr_host << ", Port: " << addr_port << "): " << strerror(errno) << std::endl;
+				}
+
+				result = false;
+			} else if(verbose){
+				std::cout << "Success." << std::endl;
+			}
+
+			TRACE_EXIT("Return Value: 0x%x", result);
+			return result;
 		}
 
 		uint8_t 
@@ -343,7 +484,8 @@ namespace PTCE_NS {
 		_ptce_game_manager::start(
 			__in_opt uint16_t port,
 			__in_opt uint8_t connections,
-			__in_opt bool verbose
+			__in_opt bool verbose,
+			__in_opt bool debug
 			)
 		{
 			socklen_t len_cli;
@@ -413,7 +555,7 @@ namespace PTCE_NS {
 				cli_thread_id.increment_reference();
 				m_game_map.insert(std::pair<ptce_uid, std::thread>(cli_thread_id.id(), 
 						std::thread(&ptce_game_manager::client_game_handler, 
-						this, cli_thread_id.id(), addr_cli, len_cli, sock_cli, verbose)));
+						this, cli_thread_id.id(), addr_serv, addr_cli, len_cli, sock_cli, verbose, debug)));
 				m_game_map.find(cli_thread_id.id())->second.detach();
 			}
 

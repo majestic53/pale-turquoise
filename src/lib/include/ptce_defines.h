@@ -39,6 +39,8 @@ namespace PTCE_NS {
 	#define __inout_opt
 	#endif // _WIN32
 
+	#define BLOCK_LEN 0x10
+	#define BYTES_PER_KBYTE (1024.0)
 	#define EMPTY "(EMPTY)"
 	#define ERROR "(ERROR)"
 	#define UNKNOWN "(UNKNOWN)"
