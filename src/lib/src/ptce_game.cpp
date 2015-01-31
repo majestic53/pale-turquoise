@@ -326,7 +326,7 @@ namespace PTCE_NS {
 					<< addr_host << ", Port: " << addr_port << ")... ";
 
 			result = read(socket, data, length);
-			if((result < 0)) {
+			if(result < 0) {
 
 				if(verbose) {
 					std::cout << "Failure!" << std::endl << "[" << time_stamp() << "] Client read failed (Host: " 
@@ -401,7 +401,7 @@ namespace PTCE_NS {
 			std::cout << "... ";
 
 			data_len = write(socket, data, length);
-			if((data_len < 0)) {
+			if(data_len < 0) {
 
 				if(verbose) {
 					std::cout << "Failure!" << std::endl << "[" << time_stamp() << "] Client write failed (Host: " 
