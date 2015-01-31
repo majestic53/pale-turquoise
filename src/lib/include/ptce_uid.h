@@ -68,6 +68,11 @@ namespace PTCE_NS {
 
 			protected:
 
+				friend bool operator==(
+					__in const _ptce_uid &left,
+					__in const _ptce_uid &right
+					);
+
 				friend bool operator<(
 					__in const _ptce_uid &left,
 					__in const _ptce_uid &right
@@ -82,6 +87,11 @@ namespace PTCE_NS {
 				std::recursive_mutex m_lock;
 
 		} ptce_uid, *ptce_uid_ptr;
+
+		bool operator==(
+			__in const _ptce_uid &left,
+			__in const _ptce_uid &right
+			);
 
 		bool operator<(
 			__in const _ptce_uid &left,
@@ -193,7 +203,13 @@ namespace PTCE_NS {
 					__in const _ptce_uid_base &other
 					);
 
+				size_t decrement_reference(void);
+
 				ptce_uid &id(void);
+
+				size_t increment_reference(void);
+
+				size_t reference_count(void);
 
 				virtual std::string to_string(
 					__in_opt bool verbose = false
@@ -201,15 +217,11 @@ namespace PTCE_NS {
 
 			protected:
 
-				size_t decrement_reference(void);
+				friend class _ptce_game_manager;
 
 				ptce_uid generate_id(
 					__in bool unique
 					);
-
-				size_t increment_reference(void);
-
-				size_t reference_count(void);
 
 				ptce_uid m_uid;
 

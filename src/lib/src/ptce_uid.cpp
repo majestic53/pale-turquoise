@@ -25,6 +25,22 @@ namespace PTCE_NS {
 	namespace PTCE_COMP_NS {
 
 		bool 
+		operator==(
+			__in const _ptce_uid &left,
+			__in const _ptce_uid &right
+			)
+		{			
+			bool result;
+
+			TRACE_ENTRY();
+
+			result = (left.m_uid == right.m_uid);
+
+			TRACE_EXIT("Return Value: 0x%x", result);
+			return result;
+		}
+
+		bool 
 		operator<(
 			__in const _ptce_uid &left,
 			__in const _ptce_uid &right

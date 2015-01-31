@@ -96,21 +96,23 @@ namespace PTCE_NS {
 
 				uint8_t connections(void);
 
-				void destroy(void);
+				static bool is_allocated(void);
 
-				void initialize(
+				bool is_started(void);
+
+				uint16_t port(void);
+
+				size_t size(void);
+
+				void start(
 					__in_opt uint16_t port = GAME_PORT_DEF,
 					__in_opt uint8_t connections = GAME_CONNECTION_DEF,
 					__in_opt bool verbose = false
 					);
 
-				static bool is_allocated(void);
-
-				bool is_initialized(void);
-
-				uint16_t port(void);
-
-				size_t size(void);
+				void stop(
+					__in_opt bool verbose = false
+					);
 
 				std::string to_string(
 					__in_opt bool verbose = false
@@ -130,15 +132,23 @@ namespace PTCE_NS {
 					__in const _ptce_game_manager &other
 					);
 
+				void client_game_handler(
+					__in const ptce_uid uid,
+					__in const sockaddr_t information,
+					__in const socklen_t length,
+					__in int socket,
+					__in_opt bool verbose = false
+					);
+
 				uint8_t m_connections;
 
 				std::map<ptce_uid, std::thread> m_game_map;
 
-				bool m_initialized;
-
 				static _ptce_game_manager *m_instance;
 
 				uint16_t m_port;
+
+				bool m_started;
 
 			private:
 

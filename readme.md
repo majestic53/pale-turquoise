@@ -13,6 +13,11 @@ Changelog
 =========
 
 ###Version 0.1.1505
+*Updated: 1/30/2015*
+
+* Added game manager client handler (partial)
+* Cropped changelist
+
 *Updated: 1/29/2015*
 
 * Added client connection handler (partial)
@@ -52,42 +57,6 @@ Changelog
 *Updated: 1/19/2015*
 
 * Added chess board serialization/unserialization
-
-###Version 0.1.1503
-*Updated: 1/18/2015*
-
-* Added chess board tests
-* Added chess board factory class/tests
-
-*Updated: 1/17/2015*
-
-* Added chess board class
-* Added chess board tests (partial)
-
-*Updated: 1/16/2015*
-
-* Added chess piece/piece factory tests
-* Added chess board class (partial)
-* Bug fixes
-
-*Updated: 1/14/2015*
-
-* Added chess piece factory
-* Bug fixes
-
-*Updated: 1/13/2015*
-
-* Added chess piece class
-* Added node factory unit tests
-
-###Version 0.1.1502
-*Updated: 1/12/2015*
-
-* Repo creation
-
-*Updated: 1/9/2015*
-
-* Project creation
 
 License
 ======

@@ -174,8 +174,8 @@ namespace PTCE_NS {
 
 		_ptce_game_manager::_ptce_game_manager(void) :
 			m_connections(0),
-			m_initialized(false),
-			m_port(0)
+			m_port(0),
+			m_started(false)
 		{
 			TRACE_ENTRY();
 			TRACE_EXIT("Return Value: 0x%x", 0);
@@ -185,8 +185,8 @@ namespace PTCE_NS {
 		{
 			TRACE_ENTRY();
 
-			if(m_initialized) {
-				destroy();
+			if(m_started) {
+				stop();
 			}
 
 			TRACE_EXIT("Return Value: 0x%x", 0);
@@ -213,6 +213,69 @@ namespace PTCE_NS {
 			return result;
 		}
 
+		void 
+		_ptce_game_manager::client_game_handler(
+			__in const ptce_uid uid,
+			__in const sockaddr_t information,
+			__in const socklen_t length,
+			__in int socket,
+			__in_opt bool verbose
+			)
+		{
+			bool cli_addr_known = false;
+			std::map<ptce_uid, std::thread>::iterator game_iter;
+			char addr_cli_host_buf[NI_MAXHOST], addr_cli_port_buf[NI_MAXSERV];
+
+			TRACE_ENTRY();
+
+			if(verbose) {
+				memset(addr_cli_host_buf, 0, sizeof(char) * NI_MAXHOST);
+				memset(addr_cli_port_buf, 0, sizeof(char) * NI_MAXSERV);
+				std::cout << "[" << time_stamp() << "] Client connected";
+
+				if(!getnameinfo((struct sockaddr *) &information, length, 
+						addr_cli_host_buf, sizeof(char) * NI_MAXHOST, 
+						addr_cli_port_buf, sizeof(char) * NI_MAXSERV, 
+						NI_NUMERICHOST | NI_NUMERICSERV)) {
+					cli_addr_known = true;
+					std::cout << " (Host: " << addr_cli_host_buf << ", Port: " << addr_cli_port_buf 
+							<< ")";
+				}
+
+				std::cout << std::endl;
+			}
+
+			// TODO
+
+			close(socket);
+
+			if(verbose) {
+				std::cout << "[" << time_stamp() << "] Client disconnected";
+
+				if(cli_addr_known) {
+					std::cout << " (Host: " << addr_cli_host_buf << ", Port: " << addr_cli_port_buf 
+							<< ")";
+				}
+
+				std::cout << std::endl;
+			}
+
+			if(m_started) {
+
+				for(game_iter = m_game_map.begin(); game_iter != m_game_map.end(); ++game_iter) {
+
+					if(game_iter->first == uid) {
+						ptce_uid_base thread_id(game_iter->first);
+						thread_id.decrement_reference();
+						m_game_map.erase(game_iter);
+						break;
+					}
+				}
+			}
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
+		}
+
 		uint8_t 
 		_ptce_game_manager::connections(void)
 		{
@@ -222,35 +285,62 @@ namespace PTCE_NS {
 			return m_connections;
 		}
 
-		void 
-		_ptce_game_manager::destroy(void)
+		bool 
+		_ptce_game_manager::is_allocated(void)
 		{
-			std::map<ptce_uid, std::thread>::iterator game_iter;
+			bool result;
+
+			TRACE_ENTRY();
+
+			result = (m_instance != NULL);
+
+			TRACE_EXIT("Return Value: 0x%x", result);
+			return result;
+		}
+
+		bool 
+		_ptce_game_manager::is_started(void)
+		{
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+			TRACE_EXIT("Return Value: 0x%x", m_started);
+			return m_started;
+		}
+
+		uint16_t 
+		_ptce_game_manager::port(void)
+		{
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_started) {
+				THROW_PTCE_GAME_EXCEPTION(PTCE_GAME_EXCEPTION_STOPPED);
+			}
+
+			TRACE_EXIT("Return Value: 0x%04x", m_port);
+			return m_port;
+		}
+
+		size_t 
+		_ptce_game_manager::size(void)
+		{
+			size_t result;
 
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			if(!m_initialized) {
-				THROW_PTCE_GAME_EXCEPTION(PTCE_GAME_EXCEPTION_UNINITIALIZED);
+			if(!m_started) {
+				THROW_PTCE_GAME_EXCEPTION(PTCE_GAME_EXCEPTION_STOPPED);
 			}
 
-			for(game_iter = m_game_map.begin(); game_iter != m_game_map.end(); ++game_iter) {
+			result = m_game_map.size();
 
-				if(game_iter->second.joinable()) {
-					game_iter->second.join();
-				}
-			}
-
-			m_game_map.clear();
-			m_port = 0;
-			m_connections = 0;
-			m_initialized = true;
-
-			TRACE_EXIT("Return Value: 0x%x", 0);
+			TRACE_EXIT("Return Value: %lu", result);
+			return result;
 		}
 
 		void 
-		_ptce_game_manager::initialize(
+		_ptce_game_manager::start(
 			__in_opt uint16_t port,
 			__in_opt uint8_t connections,
 			__in_opt bool verbose
@@ -259,20 +349,20 @@ namespace PTCE_NS {
 			socklen_t len_cli;
 			int sock_cli, sock_serv;
 			sockaddr_t addr_cli, addr_serv;
-			char addr_cli_host_buf[NI_MAXHOST], addr_cli_port_buf[NI_MAXSERV];
 
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			if(m_initialized) {
-				THROW_PTCE_GAME_EXCEPTION(PTCE_GAME_EXCEPTION_INITIALIZED);
+			if(m_started) {
+				THROW_PTCE_GAME_EXCEPTION(PTCE_GAME_EXCEPTION_STARTED);
 			}
 
 			m_port = port;
 			m_connections = connections;
 
 			if(verbose) {
-				std::cout << "[" << time_stamp() << "] Opening socket" << "... ";
+				std::cout << "[" << time_stamp() << "] ***SERVER STARTING***" << std::endl << "[" << time_stamp() 
+						<< "] Opening socket... ";
 			}
 
 			sock_serv = socket(AF_INET, SOCK_STREAM, 0);
@@ -281,7 +371,7 @@ namespace PTCE_NS {
 			}
 
 			if(verbose) {
-				std::cout << "Done.";
+				std::cout << "Done." << std::endl;
 			}
 
 			memset(&addr_serv, 0, sizeof(sockaddr_t));
@@ -299,14 +389,14 @@ namespace PTCE_NS {
 			}
 
 			if(verbose) {
-				std::cout << "Done.";
+				std::cout << "Done." << std::endl << "[" << time_stamp() << "] ***SERVER STARTED***" << std::endl;
 			}
 
-			m_initialized = true;
+			m_started = true;
 			listen(sock_serv, m_connections);
 
 			if(verbose) {
-				std::cout << "[" << time_stamp() << "] Listening for client connections(" << m_connections 
+				std::cout << "[" << time_stamp() << "] Listening for client connections (Max connections: " << (int) m_connections 
 						<< ")..." << std::endl;
 			}
 
@@ -319,84 +409,66 @@ namespace PTCE_NS {
 						<< PTCE_GAME_EXCEPTION_STRING(PTCE_GAME_EXCEPTION_ACCEPT_FAILED) << std::endl;
 				}
 
-				if(verbose) {
-					memset(addr_cli_host_buf, 0, sizeof(char) * NI_MAXHOST);
-					memset(addr_cli_port_buf, 0, sizeof(char) * NI_MAXSERV);
-					std::cout << "[" << time_stamp() << "] Client connected";
+				ptce_uid_base cli_thread_id;
+				cli_thread_id.increment_reference();
+				m_game_map.insert(std::pair<ptce_uid, std::thread>(cli_thread_id.id(), 
+						std::thread(&ptce_game_manager::client_game_handler, 
+						this, cli_thread_id.id(), addr_cli, len_cli, sock_cli, verbose)));
+				m_game_map.find(cli_thread_id.id())->second.detach();
+			}
 
-					if(!getnameinfo((struct sockaddr *) &addr_cli, len_cli, 
-							addr_cli_host_buf, sizeof(char) * NI_MAXHOST, 
-							addr_cli_port_buf, sizeof(char) * NI_MAXSERV, 
-							NI_NUMERICHOST | NI_NUMERICSERV)) {
-						std::cout << " (Host: " << addr_cli_host_buf << ", Port: " 
-							<< addr_cli_port_buf << ")";
-					}
-
-					std::cout << std::endl;
-				}
-
-				// TODO: invoke new thread to handle sock_cli
-				close(sock_cli);
-				// ---
+			if(verbose) {
+				std::cout << "[" << time_stamp() << "] Closing socket... ";
 			}
 
 			close(sock_serv);
 
+			if(verbose) {
+				std::cout << "Done." << std::endl;
+			}
+
 			TRACE_EXIT("Return Value: 0x%x", 0);
 		}
 
-		bool 
-		_ptce_game_manager::is_allocated(void)
+		void 
+		_ptce_game_manager::stop(
+			__in_opt bool verbose
+			)
 		{
-			bool result;
+			std::map<ptce_uid, std::thread>::iterator game_iter;
 
-			TRACE_ENTRY();
-
-			result = (m_instance != NULL);
-
-			TRACE_EXIT("Return Value: 0x%x", result);
-			return result;
-		}
-
-		bool 
-		_ptce_game_manager::is_initialized(void)
-		{
-			TRACE_ENTRY();
-			SERIALIZE_CALL_RECUR(m_lock);
-			TRACE_EXIT("Return Value: 0x%x", m_initialized);
-			return m_initialized;
-		}
-
-		uint16_t 
-		_ptce_game_manager::port(void)
-		{
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			if(!m_initialized) {
-				THROW_PTCE_GAME_EXCEPTION(PTCE_GAME_EXCEPTION_UNINITIALIZED);
+			if(!m_started) {
+				THROW_PTCE_GAME_EXCEPTION(PTCE_GAME_EXCEPTION_STOPPED);
 			}
 
-			TRACE_EXIT("Return Value: 0x%04x", m_port);
-			return m_port;
-		}
-
-		size_t 
-		_ptce_game_manager::size(void)
-		{
-			size_t result;
-
-			TRACE_ENTRY();
-			SERIALIZE_CALL_RECUR(m_lock);
-
-			if(!m_initialized) {
-				THROW_PTCE_GAME_EXCEPTION(PTCE_GAME_EXCEPTION_UNINITIALIZED);
+			if(verbose) {
+				std::cout << "[" << time_stamp() << "] ***SERVER STOPPING***" << std::endl;
 			}
 
-			result = m_game_map.size();
+			m_started = false;
 
-			TRACE_EXIT("Return Value: %lu", result);
-			return result;
+			for(game_iter = m_game_map.begin(); game_iter != m_game_map.end(); ++game_iter) {
+
+				if(game_iter->second.joinable()) {
+					game_iter->second.join();
+				}
+
+				ptce_uid_base thread_id(game_iter->first);
+				thread_id.decrement_reference();
+			}
+
+			m_game_map.clear();
+			m_port = 0;
+			m_connections = 0;
+
+			if(verbose) {
+				std::cout << "[" << time_stamp() << "] ***SERVER STOPPED***" << std::endl;
+			}
+
+			TRACE_EXIT("Return Value: 0x%x", 0);
 		}
 
 		std::string 
@@ -411,13 +483,13 @@ namespace PTCE_NS {
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			result << PTCE_GAME_TRACE_HEADER << " Instance=0x" << VALUE_AS_HEX(uintptr_t, m_instance) 
-					<< ", Initialized=" << m_initialized << ", Count=" << m_game_map.size();
+					<< ", Started=" << m_started << ", Count=" << m_game_map.size();
 
 			if(verbose) {
 
 				for(game_iter = m_game_map.begin(); game_iter != m_game_map.end(); ++game_iter) {
-					result << std::endl << " --- (" << ptce_uid::id_as_string(game_iter->first) << ") Thread=" 
-							<< game_iter->second.get_id();
+					result << std::endl << " --- (" << ptce_uid::id_as_string(game_iter->first)
+							<< ") Thread=" << game_iter->second.get_id();
 				}
 			}
 

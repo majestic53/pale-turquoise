@@ -180,8 +180,8 @@ namespace PTCE_NS {
 			THROW_PTCE_EXCEPTION(PTCE_EXCEPTION_UNINITIALIZED);
 		}
 		
-		if(m_manager_game && m_manager_game->is_initialized()) {
-			m_manager_game->destroy();
+		if(m_manager_game && m_manager_game->is_started()) {
+			m_manager_game->stop();
 		}
 
 		if(m_factory_board && m_factory_board->is_initialized()) {

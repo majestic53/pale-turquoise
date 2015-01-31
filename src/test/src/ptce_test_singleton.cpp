@@ -127,7 +127,7 @@ exit:
 					goto exit;
 				}
 
-				if(inst->is_initialized()) {
+				if(inst->is_started()) {
 					std::cerr << "----!ptce_test_singleton_acquire_game_manager failure(1)" << std::endl;
 					result = PTCE_TEST_FAILURE;
 					goto exit;
@@ -135,7 +135,7 @@ exit:
 
 				parent->destroy();
 
-				if(inst->is_initialized()) {
+				if(inst->is_started()) {
 					std::cerr << "----!ptce_test_singleton_acquire_game_manager failure(2)" << std::endl;
 					result = PTCE_TEST_FAILURE;
 					goto exit;

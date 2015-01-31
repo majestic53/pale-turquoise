@@ -34,12 +34,12 @@ namespace PTCE_NS {
 			PTCE_TEST_GAME_INFORMATION,
 			PTCE_TEST_GAME_MANAGER_ACQUIRE,
 			PTCE_TEST_GAME_MANAGER_CONNECTIONS,
-			PTCE_TEST_GAME_MANAGER_DESTROY,
-			PTCE_TEST_GAME_MANAGER_INITIALIZE,
 			PTCE_TEST_GAME_MANAGER_IS_ALLOCATED,
-			PTCE_TEST_GAME_MANAGER_IS_INITIALIZED,
+			PTCE_TEST_GAME_MANAGER_IS_STARTED,
 			PTCE_TEST_GAME_MANAGER_PORT,
 			PTCE_TEST_GAME_MANAGER_SIZE,
+			PTCE_TEST_GAME_MANAGER_START,
+			PTCE_TEST_GAME_MANAGER_STOP,
 			PTCE_TEST_GAME_SOCKET,
 		};
 
@@ -53,12 +53,12 @@ namespace PTCE_NS {
 			"PTCE_TEST_GAME_INFORMATION",
 			"PTCE_TEST_GAME_MANAGER_ACQUIRE",
 			"PTCE_TEST_GAME_MANAGER_CONNECTIONS",
-			"PTCE_TEST_GAME_MANAGER_DESTROY",
-			"PTCE_TEST_GAME_MANAGER_INITIALIZE",
 			"PTCE_TEST_GAME_MANAGER_IS_ALLOCATED",
-			"PTCE_TEST_GAME_MANAGER_IS_INITIALIZED",
+			"PTCE_TEST_GAME_MANAGER_IS_STARTED",
 			"PTCE_TEST_GAME_MANAGER_PORT",
 			"PTCE_TEST_GAME_MANAGER_SIZE",
+			"PTCE_TEST_GAME_MANAGER_START",
+			"PTCE_TEST_GAME_MANAGER_STOP",
 			"PTCE_TEST_GAME_SOCKET",
 			};
 
@@ -80,17 +80,17 @@ namespace PTCE_NS {
 
 		extern ptce_test_t ptce_test_game_manager_connections(void);
 
-		extern ptce_test_t ptce_test_game_manager_destroy(void);
-
-		extern ptce_test_t ptce_test_game_manager_initialize(void);
-
 		extern ptce_test_t ptce_test_game_manager_is_allocated(void);
 
-		extern ptce_test_t ptce_test_game_manager_is_initialized(void);
+		extern ptce_test_t ptce_test_game_manager_is_started(void);
 
 		extern ptce_test_t ptce_test_game_manager_port(void);
 
 		extern ptce_test_t ptce_test_game_manager_size(void);
+
+		extern ptce_test_t ptce_test_game_manager_start(void);
+
+		extern ptce_test_t ptce_test_game_manager_stop(void);
 
 		extern ptce_test_t ptce_test_game_socket(void);
 
@@ -102,12 +102,12 @@ namespace PTCE_NS {
 			ptce_test_game_information,
 			ptce_test_game_manager_acquire,
 			ptce_test_game_manager_connections,
-			ptce_test_game_manager_destroy,
-			ptce_test_game_manager_initialize,
 			ptce_test_game_manager_is_allocated,
-			ptce_test_game_manager_is_initialized,
+			ptce_test_game_manager_is_started,
 			ptce_test_game_manager_port,
 			ptce_test_game_manager_size,
+			ptce_test_game_manager_start,
+			ptce_test_game_manager_stop,
 			ptce_test_game_socket,
 			};
 

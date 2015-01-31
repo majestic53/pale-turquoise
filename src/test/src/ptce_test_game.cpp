@@ -270,76 +270,6 @@ exit:
 		}
 
 		ptce_test_t 
-		ptce_test_game_manager_destroy(void)
-		{
-			ptce_ptr inst = NULL;
-			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
-
-			TRACE_ENTRY();
-
-			try {
-				inst = ptce::acquire();
-				inst->initialize();
-
-				try {
-
-					// TODO
-
-				} catch(std::runtime_error &exc) {
-					std::cerr << "----!ptce_test_game_manager_destroy exception(0): " << exc.what() << std::endl;
-					result = PTCE_TEST_FAILURE;
-					goto exit;
-				}
-
-				inst->destroy();
-			} catch(...) {
-				result = PTCE_TEST_INCONCLUSIVE;
-				goto exit;
-			}
-
-			result = PTCE_TEST_SUCCESS;
-
-exit:
-			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
-			return result;
-		}
-
-		ptce_test_t 
-		ptce_test_game_manager_initialize(void)
-		{
-			ptce_ptr inst = NULL;
-			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
-
-			TRACE_ENTRY();
-
-			try {
-				inst = ptce::acquire();
-				inst->initialize();
-
-				try {
-
-					// TODO
-
-				} catch(std::runtime_error &exc) {
-					std::cerr << "----!ptce_test_game_manager_initialize exception(0): " << exc.what() << std::endl;
-					result = PTCE_TEST_FAILURE;
-					goto exit;
-				}
-
-				inst->destroy();
-			} catch(...) {
-				result = PTCE_TEST_INCONCLUSIVE;
-				goto exit;
-			}
-
-			result = PTCE_TEST_SUCCESS;
-
-exit:
-			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
-			return result;
-		}
-
-		ptce_test_t 
 		ptce_test_game_manager_is_allocated(void)
 		{
 			ptce_ptr inst = NULL;
@@ -375,7 +305,7 @@ exit:
 		}
 
 		ptce_test_t 
-		ptce_test_game_manager_is_initialized(void)
+		ptce_test_game_manager_is_started(void)
 		{
 			ptce_ptr inst = NULL;
 			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
@@ -391,7 +321,7 @@ exit:
 					// TODO
 
 				} catch(std::runtime_error &exc) {
-					std::cerr << "----!ptce_test_game_manager_is_initialized exception(0): " << exc.what() << std::endl;
+					std::cerr << "----!ptce_test_game_manager_is_started exception(0): " << exc.what() << std::endl;
 					result = PTCE_TEST_FAILURE;
 					goto exit;
 				}
@@ -462,6 +392,76 @@ exit:
 
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_game_manager_size exception(0): " << exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_game_manager_start(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+
+				try {
+
+					// TODO
+
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_game_manager_start exception(0): " << exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_game_manager_stop(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+
+				try {
+
+					// TODO
+
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_game_manager_stop exception(0): " << exc.what() << std::endl;
 					result = PTCE_TEST_FAILURE;
 					goto exit;
 				}

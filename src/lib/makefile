@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 CC=clang++
-FLAGS=-march=native -std=gnu++11 -O3 -Wall
+FLAGS=-march=native -pthread -std=gnu++11 -O3 -Wall
 INC=./include/
 LIB=libptce.a
 OUT_BIN=./../../bin/

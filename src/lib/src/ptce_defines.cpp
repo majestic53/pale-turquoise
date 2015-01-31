@@ -74,6 +74,7 @@ exit:
 
 		time(&tm);
 		result = ctime(&tm);
+		result = result.substr(0, result.size() - 1);
 
 		TRACE_EXIT("Return Value: 0x%x", 0);
 		return result;

@@ -17,7 +17,7 @@
 
 CC=clang++
 EXE=ptce_test
-FLAGS=-march=native -std=gnu++11 -O3 -Wall
+FLAGS=-march=native -pthread -std=gnu++11 -O3 -Wall
 INC=./include/
 LIB=libptce.a
 LIB_TEST=libptcetest.a

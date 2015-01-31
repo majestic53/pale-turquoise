@@ -36,20 +36,20 @@ namespace PTCE_NS {
 			PTCE_GAME_EXCEPTION_ACCEPT_FAILED = 0,
 			PTCE_GAME_EXCEPTION_ACQUIRE_FAILED,
 			PTCE_GAME_EXCEPTION_BIND_FAILED,
-			PTCE_GAME_EXCEPTION_INITIALIZED,
 			PTCE_GAME_EXCEPTION_SOCKET_FAILED,
-			PTCE_GAME_EXCEPTION_UNINITIALIZED,
+			PTCE_GAME_EXCEPTION_STARTED,
+			PTCE_GAME_EXCEPTION_STOPPED,
 		};
 
-		#define PTCE_GAME_EXCEPTION_MAX PTCE_GAME_EXCEPTION_UNINITIALIZED
+		#define PTCE_GAME_EXCEPTION_MAX PTCE_GAME_EXCEPTION_STOPPED
 
 		static const std::string PTCE_GAME_EXCEPTION_STR[] = {
 			PTCE_GAME_HEADER " Failed to accept client connection",
 			PTCE_GAME_HEADER " Failed to acquire game manager",
 			PTCE_GAME_HEADER " Failed to bind to port",
-			PTCE_GAME_HEADER " Game manager is already initialized",
 			PTCE_GAME_HEADER " Failed to create socket",
-			PTCE_GAME_HEADER " Game manager is uninitialized",
+			PTCE_GAME_HEADER " Game manager is already started",
+			PTCE_GAME_HEADER " Game manager is stopped",
 			};
 
 		#define PTCE_GAME_EXCEPTION_STRING(_EXCEPT_) \
