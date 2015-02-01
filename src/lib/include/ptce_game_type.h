@@ -40,9 +40,10 @@ namespace PTCE_NS {
 			PTCE_GAME_EXCEPTION_SOCKET_FAILED,
 			PTCE_GAME_EXCEPTION_STARTED,
 			PTCE_GAME_EXCEPTION_STOPPED,
+			PTCE_GAME_EXCEPTION_UNKNOWN_MOVE_TYPE,
 		};
 
-		#define PTCE_GAME_EXCEPTION_MAX PTCE_GAME_EXCEPTION_STOPPED
+		#define PTCE_GAME_EXCEPTION_MAX PTCE_GAME_EXCEPTION_UNKNOWN_MOVE_TYPE
 
 		static const std::string PTCE_GAME_EXCEPTION_STR[] = {
 			PTCE_GAME_HEADER " Failed to accept client connection",
@@ -52,6 +53,7 @@ namespace PTCE_NS {
 			PTCE_GAME_HEADER " Failed to create socket",
 			PTCE_GAME_HEADER " Game manager is already started",
 			PTCE_GAME_HEADER " Game manager is stopped",
+			PTCE_GAME_HEADER " Unknown move type",
 			};
 
 		#define PTCE_GAME_EXCEPTION_STRING(_EXCEPT_) \

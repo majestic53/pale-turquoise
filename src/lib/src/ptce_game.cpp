@@ -228,10 +228,11 @@ namespace PTCE_NS {
 			)
 		{
 			ptce_board board;
-			//size_t cli_data_len;
+			int cli_data_len;
 			std::stringstream message;
-			bool addr_cli_known = false;
-			//uint8_t cli_data[CLIENT_DATA_LEN_MAX];
+			uint8_t cli_data[CLIENT_DATA_LEN_MAX];
+			ptce_board_mv_t move = BOARD_CONTINUE;
+			bool active_cli = true, addr_cli_known = false;
 			std::map<ptce_uid, std::thread>::iterator game_iter;
 			char addr_cli_host_buf[NI_MAXHOST], addr_cli_port_buf[NI_MAXSERV];
 
@@ -240,7 +241,7 @@ namespace PTCE_NS {
 			if(verbose) {
 				memset(addr_cli_host_buf, 0, sizeof(char) * NI_MAXHOST);
 				memset(addr_cli_port_buf, 0, sizeof(char) * NI_MAXSERV);
-				std::cout << "[" << time_stamp() << "] Client connected";
+				std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) << " Client connected";
 
 				if(!getnameinfo((struct sockaddr *) &info_cli, length, 
 						addr_cli_host_buf, sizeof(char) * NI_MAXHOST, 
@@ -254,26 +255,75 @@ namespace PTCE_NS {
 				std::cout << std::endl;
 			}
 
-			message << CLIENT_MESSAGE << " (Host: " << addr_cli_host_buf << ", Port: " << addr_cli_port_buf 
-					<< ")" ;
-			client_write((uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
+			message << CLIENT_MESSAGE << " (Id: " << ptce_uid::id_as_string(uid) << ", Host: " << addr_cli_host_buf 
+					<< ", Port: " << addr_cli_port_buf << ")" ;
+			client_write(uid, (uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
 					socket, verbose, debug);
 
 			message.clear();
 			message.str(std::string());
-			message << board.serialize(BOARD_CONTINUE);
-			client_write((uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
+			message << board.serialize(move);
+			client_write(uid, (uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
 					socket, verbose, debug);
 
-			/*cli_data_len = client_read(cli_data, CLIENT_DATA_LEN_MAX, addr_cli_host_buf, addr_cli_port_buf, 
-					socket, verbose, debug);*/
+			while(active_cli) {
+				
+				// TODO: checkmate and draw check (set move to either checkmate, draw or continue)
 
-			// TODO
+				switch(move) {
+					case BOARD_CHECKMATE:
+						
+						// TODO: generate move
+
+					case BOARD_CONTINUE:
+					case BOARD_DRAW:
+
+						if(verbose) {
+							std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
+									<< " Sending " << BOARD_MOVE_STRING(move) << " to client (Host: " 
+									<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")";
+						}
+						break;
+					default:
+						THROW_PTCE_GAME_EXCEPTION_MESSAGE(PTCE_GAME_EXCEPTION_UNKNOWN_MOVE_TYPE,
+							"id=%s, type=%lu", ptce_uid::id_as_string(uid).c_str(), move);
+				}
+
+				message.clear();
+				message.str(std::string());
+				message << board.serialize(move);
+				client_write(uid, (uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
+						socket, verbose, debug);
+				memset(cli_data, 0, sizeof(uint8_t) * CLIENT_DATA_LEN_MAX);
+				cli_data_len = client_read(uid, cli_data, sizeof(uint8_t) * CLIENT_DATA_LEN_MAX, addr_cli_host_buf,
+						addr_cli_port_buf, socket, verbose, debug);
+
+				move = board.unserialize((char *) cli_data);
+				switch(move) {
+					case BOARD_CHECKMATE:
+					case BOARD_DRAW:
+					case BOARD_RESIGN:
+					case BOARD_SAVE:
+						active_cli = false;
+						break;
+					case BOARD_CONTINUE:
+						break;
+					default:
+						THROW_PTCE_GAME_EXCEPTION_MESSAGE(PTCE_GAME_EXCEPTION_UNKNOWN_MOVE_TYPE,
+							"id=%s, type=%lu", ptce_uid::id_as_string(uid).c_str(), move);
+				}
+
+				if(verbose) {
+					std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
+							<< " Received " << BOARD_MOVE_STRING(move) << " from client (Host: " 
+							<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")";
+				}
+			}
 
 			close(socket);
 
 			if(verbose) {
-				std::cout << "[" << time_stamp() << "] Client disconnected";
+				std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) << " Client disconnected";
 
 				if(addr_cli_known) {
 					std::cout << " (Host: " << addr_cli_host_buf << ", Port: " << addr_cli_port_buf 
@@ -301,6 +351,7 @@ namespace PTCE_NS {
 
 		int 
 		_ptce_game_manager::client_read(
+			__in const ptce_uid &uid,
 			__in uint8_t *data,
 			__in size_t length,
 			__in char *addr_host,
@@ -322,15 +373,20 @@ namespace PTCE_NS {
 			}
 
 			memset(&data, 0, length);
-			std::cout << "[" << time_stamp() << "] Server attepmpting to read data from client (Host: " 
-					<< addr_host << ", Port: " << addr_port << ")... ";
+
+			if(verbose) {
+				std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
+						<< " Server attepmpting to read data from client (Host: " 
+						<< addr_host << ", Port: " << addr_port << ")... ";
+			}
 
 			result = read(socket, data, length);
 			if(result < 0) {
 
 				if(verbose) {
-					std::cout << "Failure!" << std::endl << "[" << time_stamp() << "] Client read failed (Host: " 
-						<< addr_host << ", Port: " << addr_port << "): " << strerror(errno) << std::endl;
+					std::cout << "Failure!" << std::endl << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
+						<< " Client read failed (Host: " << addr_host << ", Port: " << addr_port << "): " 
+						<< strerror(errno) << std::endl;
 				}
 			} else if(verbose){
 				std::cout << "Success." << std::endl;
@@ -358,6 +414,7 @@ namespace PTCE_NS {
 
 		bool 
 		_ptce_game_manager::client_write(
+			__in const ptce_uid &uid,
 			__in uint8_t *data,
 			__in size_t length,
 			__in char *addr_host,
@@ -379,8 +436,11 @@ namespace PTCE_NS {
 					data, length, addr_host, addr_port);
 			}
 
-			std::cout << "[" << time_stamp() << "] Server attepmpting to write data to client (Host: " 
-					<< addr_host << ", Port: " << addr_port << ")";
+			if(verbose) {
+				std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
+						<< " Server attepmpting to write data to client (Host: " 
+						<< addr_host << ", Port: " << addr_port << ")";
+			}
 
 			if(debug) {
 				std::cout << std::endl << "\tPayload: " << (char *) data << std::endl << "\tData length: " 
@@ -398,14 +458,17 @@ namespace PTCE_NS {
 				std::cout << std::endl;
 			}
 
-			std::cout << "... ";
+			if(verbose) {
+				std::cout << "... ";
+			}
 
 			data_len = write(socket, data, length);
 			if(data_len < 0) {
 
 				if(verbose) {
-					std::cout << "Failure!" << std::endl << "[" << time_stamp() << "] Client write failed (Host: " 
-						<< addr_host << ", Port: " << addr_port << "): " << strerror(errno) << std::endl;
+					std::cout << "Failure!" << std::endl << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
+						<< " Client write failed (Host: " << addr_host << ", Port: " << addr_port << "): " 
+						<< strerror(errno) << std::endl;
 				}
 
 				result = false;

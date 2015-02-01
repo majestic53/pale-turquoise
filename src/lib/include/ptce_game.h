@@ -144,6 +144,7 @@ namespace PTCE_NS {
 					);
 
 				int client_read(
+					__in const ptce_uid &uid,
 					__in uint8_t *data,
 					__in size_t length,
 					__in char *addr_host,
@@ -154,6 +155,7 @@ namespace PTCE_NS {
 					);
 
 				bool client_write(
+					__in const ptce_uid &uid,
 					__in uint8_t *data,
 					__in size_t length,
 					__in char *addr_host,
