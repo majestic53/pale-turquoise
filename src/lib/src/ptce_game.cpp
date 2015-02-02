@@ -271,11 +271,11 @@ namespace PTCE_NS {
 				// TODO: checkmate and draw check (set move to either checkmate, draw or continue)
 
 				switch(move) {
-					case BOARD_CHECKMATE:
-						
+					case BOARD_CONTINUE:
+
 						// TODO: generate move
 
-					case BOARD_CONTINUE:
+					case BOARD_CHECKMATE:
 					case BOARD_DRAW:
 
 						if(verbose) {
@@ -294,6 +294,11 @@ namespace PTCE_NS {
 				message << board.serialize(move);
 				client_write(uid, (uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
 						socket, verbose, debug);
+
+				if(move != BOARD_CONTINUE) {
+					break;
+				}
+
 				memset(cli_data, 0, sizeof(uint8_t) * CLIENT_DATA_LEN_MAX);
 				cli_data_len = client_read(uid, cli_data, sizeof(uint8_t) * CLIENT_DATA_LEN_MAX, addr_cli_host_buf,
 						addr_cli_port_buf, socket, verbose, debug);
