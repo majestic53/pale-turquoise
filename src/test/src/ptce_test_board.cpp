@@ -2279,7 +2279,7 @@ exit:
 					board.generate_piece(ptce_pos_t(3, 3), PIECE_BISHOP, PIECE_BLACK, true);
 
 					if(!board.contains(ptce_pos_t(3, 3))) {
-						std::cerr << "----!ptce_test_board_generate_piece exception(0)" << std::endl;
+						std::cerr << "----!ptce_test_board_generate_piece failure(0)" << std::endl;
 						result = PTCE_TEST_FAILURE;
 						goto exit;
 					}
@@ -2288,19 +2288,122 @@ exit:
 					if((board_piece.type() != PIECE_BISHOP)
 							|| (board_piece.color() != PIECE_BLACK)
 							|| !board_piece.moved()) {
-						std::cerr << "----!ptce_test_board_generate_piece exception(1)" << std::endl;
+						std::cerr << "----!ptce_test_board_generate_piece failure(1)" << std::endl;
 						result = PTCE_TEST_FAILURE;
 						goto exit;
 					}
 
 					try {
 						board.generate_piece(ptce_pos_t(3, 3), PIECE_KING, PIECE_WHITE);
-						std::cerr << "----!ptce_test_board_generate_piece exception(2)" << std::endl;
+						std::cerr << "----!ptce_test_board_generate_piece failure(2)" << std::endl;
 						result = PTCE_TEST_FAILURE;
 						goto exit;
 					} catch(...) { }
 				} catch(std::runtime_error &exc) {
 					std::cerr << "----!ptce_test_board_generate_piece exception(0): " 
+							<< exc.what() << std::endl;
+					result = PTCE_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->destroy();
+			} catch(...) {
+				result = PTCE_TEST_INCONCLUSIVE;
+				goto exit;
+			}
+
+			result = PTCE_TEST_SUCCESS;
+
+exit:
+			TRACE_EXIT("Return Value: %s (0x%x)", PTCE_TEST_STRING(result), result);
+			return result;
+		}
+
+		ptce_test_t 
+		ptce_test_board_is_checkmated(void)
+		{
+			ptce_ptr inst = NULL;
+			ptce_test_t result = PTCE_TEST_INCONCLUSIVE;
+
+			TRACE_ENTRY();
+
+			try {
+				inst = ptce::acquire();
+				inst->initialize();
+				ptce_board board(true);
+
+				try {
+					board.generate_piece(ptce_pos_t(3, 3), PIECE_KING, PIECE_WHITE, true);
+
+					if(board.is_checkmated(PIECE_WHITE)) {
+						std::cerr << "----!ptce_test_board_is_checkmated failure(0)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					board.generate_piece(ptce_pos_t(3, 0), PIECE_KING, PIECE_WHITE, true);
+					board.generate_piece(ptce_pos_t(2, 0), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(2, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(4, 0), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(4, 1), PIECE_PAWN, PIECE_WHITE);
+
+					if(board.is_checkmated(PIECE_WHITE)) {
+						std::cerr << "----!ptce_test_board_is_checkmated failure(1)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					board.generate_piece(ptce_pos_t(3, 0), PIECE_KING, PIECE_WHITE, true);
+					board.generate_piece(ptce_pos_t(2, 0), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(2, 1), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(4, 0), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(4, 1), PIECE_PAWN, PIECE_BLACK);
+
+					if(board.is_checkmated(PIECE_WHITE)) {
+						std::cerr << "----!ptce_test_board_is_checkmated failure(2)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					board.generate_piece(ptce_pos_t(3, 0), PIECE_KING, PIECE_WHITE, true);
+					board.generate_piece(ptce_pos_t(1, 2), PIECE_BISHOP, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(2, 0), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(2, 1), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(3, 3), PIECE_QUEEN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(4, 0), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(4, 1), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(5, 2), PIECE_BISHOP, PIECE_BLACK);
+
+					if(!board.is_checkmated(PIECE_WHITE)) {
+						std::cerr << "----!ptce_test_board_is_checkmated failure(3)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+
+					board.clear();
+					board.generate_piece(ptce_pos_t(3, 0), PIECE_KING, PIECE_WHITE, true);
+					board.generate_piece(ptce_pos_t(1, 2), PIECE_BISHOP, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(2, 0), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(2, 1), PIECE_PAWN, PIECE_WHITE);
+					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(3, 3), PIECE_QUEEN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(4, 0), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(4, 1), PIECE_PAWN, PIECE_BLACK);
+					board.generate_piece(ptce_pos_t(5, 2), PIECE_BISHOP, PIECE_BLACK);
+
+					if(!board.is_checkmated(PIECE_WHITE)) {
+						std::cerr << "----!ptce_test_board_is_checkmated failure(3)" << std::endl;
+						result = PTCE_TEST_FAILURE;
+						goto exit;
+					}
+				} catch(std::runtime_error &exc) {
+					std::cerr << "----!ptce_test_board_is_checkmated exception(0): " 
 							<< exc.what() << std::endl;
 					result = PTCE_TEST_FAILURE;
 					goto exit;

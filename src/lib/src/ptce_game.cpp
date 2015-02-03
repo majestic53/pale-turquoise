@@ -29,136 +29,10 @@ namespace PTCE_NS {
 
 	namespace PTCE_NET_NS {
 
-		#define CLIENT_DATA_LEN_MAX 0x400
+		#define CLIENT_DATA_LEN_MAX 0x200
 		#define CLIENT_MESSAGE "You are now playing against Pale Turquoise ver." VERSION_STR
 
 		typedef struct sockaddr_in sockaddr_t;
-
-		_ptce_game::_ptce_game(
-			__in const sockaddr_t &information,
-			__in int socket
-			) :
-				m_information(information),
-				m_socket(socket)
-		{
-			TRACE_ENTRY();
-
-			m_board.clear();
-
-			TRACE_EXIT("Return Value: 0x%x", 0);
-		}
-
-		_ptce_game::_ptce_game(
-			__in const _ptce_game &other
-			) :
-				ptce_uid_base(other),
-				m_board(other.m_board),
-				m_information(other.m_information),
-				m_socket(other.m_socket)
-		{
-			TRACE_ENTRY();
-			TRACE_EXIT("Return Value: 0x%x", 0);
-		}
-
-		_ptce_game::~_ptce_game(void)
-		{
-			TRACE_ENTRY();
-
-			m_board.clear();
-
-			TRACE_EXIT("Return Value: 0x%x", 0);
-		}
-
-		_ptce_game &
-		_ptce_game::operator=(
-			__in const _ptce_game &other
-			)
-		{
-			TRACE_ENTRY();
-			SERIALIZE_CALL_RECUR(m_lock);
-
-			if(this != &other) {
-				ptce_uid_base::operator=(other);
-				m_board = other.m_board;
-				m_information = other.m_information;
-				m_socket = other.m_socket;
-			}
-
-			TRACE_EXIT("Return Value: 0x%p", this);
-			return *this;
-		}
-
-		ptce_board &
-		_ptce_game::board(void)
-		{
-			TRACE_ENTRY();
-			SERIALIZE_CALL_RECUR(m_lock);
-			TRACE_EXIT("Return Value: 0x%x", 0);
-			return m_board;
-		}
-
-		std::string 
-		_ptce_game::game_as_string(
-			__in const _ptce_game &game,
-			__in_opt bool verbose
-			)
-		{
-			std::stringstream result;
-			char addr[INET_ADDRSTRLEN];
-
-			TRACE_ENTRY();
-			
-			memset(addr, 0, sizeof(char) * INET_ADDRSTRLEN);
-			inet_ntop(AF_INET, &(game.m_information.sin_addr), addr, INET_ADDRSTRLEN);
-			result << ptce_uid::id_as_string(game.m_uid) << ": Client: " << addr << ", Socket: " 
-					<< game.m_socket << std::endl << ptce_board::board_as_string(game.m_board, verbose);
-
-			TRACE_EXIT("Return Value: 0x%x", 0);
-			return result.str();
-		}
-
-		ptce_board_mv_t 
-		_ptce_game::generate_move(void)
-		{
-			ptce_board_mv_t result = BOARD_CONTINUE;
-
-			TRACE_ENTRY();
-			SERIALIZE_CALL_RECUR(m_lock);
-
-			// TODO: handle game move
-
-			TRACE_EXIT("Return Value: %s (0x%x)", BOARD_TYPE_STRING(result), result);
-			return result;
-		}
-
-		sockaddr_t 
-		_ptce_game::information(void)
-		{
-			TRACE_ENTRY();
-			SERIALIZE_CALL_RECUR(m_lock);
-			TRACE_EXIT("Return Value: 0x%x", 0);
-			return m_information;
-		}
-
-		int 
-		_ptce_game::socket(void)
-		{
-			TRACE_ENTRY();
-			SERIALIZE_CALL_RECUR(m_lock);
-			TRACE_EXIT("Return Value: 0x%04x", m_socket);
-			return m_socket;
-		}
-
-		std::string 
-		_ptce_game::to_string(
-			__in_opt bool verbose
-			)
-		{
-			TRACE_ENTRY();
-			SERIALIZE_CALL_RECUR(m_lock);
-			TRACE_EXIT("Return Value: 0x%x", 0);
-			return game_as_string(*this, verbose);
-		}
 
 		ptce_game_manager_ptr ptce_game_manager::m_instance = NULL;
 
@@ -256,32 +130,25 @@ namespace PTCE_NS {
 			}
 
 			message << CLIENT_MESSAGE << " (Id: " << ptce_uid::id_as_string(uid) << ", Host: " << addr_cli_host_buf 
-					<< ", Port: " << addr_cli_port_buf << ")" ;
-			client_write(uid, (uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
-					socket, verbose, debug);
-
-			message.clear();
-			message.str(std::string());
-			message << board.serialize(move);
+					<< ", Port: " << addr_cli_port_buf << ")" << std::endl;
 			client_write(uid, (uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
 					socket, verbose, debug);
 
 			while(active_cli) {
-				
-				// TODO: checkmate and draw check (set move to either checkmate, draw or continue)
 
+				// TODO: fix read issue
+
+				move = /*board.is_checkmated(PIECE_BLACK) ? BOARD_CHECKMATE :*/ generate_move(board);
 				switch(move) {
 					case BOARD_CONTINUE:
-
-						// TODO: generate move
-
 					case BOARD_CHECKMATE:
 					case BOARD_DRAW:
 
 						if(verbose) {
 							std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
 									<< " Sending " << BOARD_MOVE_STRING(move) << " to client (Host: " 
-									<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")";
+									<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")"
+									<< std::endl;
 						}
 						break;
 					default:
@@ -291,7 +158,7 @@ namespace PTCE_NS {
 
 				message.clear();
 				message.str(std::string());
-				message << board.serialize(move);
+				message << board.serialize(move) << std::endl;
 				client_write(uid, (uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
 						socket, verbose, debug);
 
@@ -303,32 +170,46 @@ namespace PTCE_NS {
 				cli_data_len = client_read(uid, cli_data, sizeof(uint8_t) * CLIENT_DATA_LEN_MAX, addr_cli_host_buf,
 						addr_cli_port_buf, socket, verbose, debug);
 
-				move = board.unserialize((char *) cli_data);
-				switch(move) {
-					case BOARD_CHECKMATE:
-					case BOARD_DRAW:
-					case BOARD_RESIGN:
-					case BOARD_SAVE:
-						active_cli = false;
-						break;
-					case BOARD_CONTINUE:
-						break;
-					default:
-						THROW_PTCE_GAME_EXCEPTION_MESSAGE(PTCE_GAME_EXCEPTION_UNKNOWN_MOVE_TYPE,
-							"id=%s, type=%lu", ptce_uid::id_as_string(uid).c_str(), move);
-				}
+				if(cli_data_len) {
 
-				if(verbose) {
-					std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
-							<< " Received " << BOARD_MOVE_STRING(move) << " from client (Host: " 
-							<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")";
+					move = board.unserialize((char *) cli_data);
+					switch(move) {
+						case BOARD_CHECKMATE:
+						case BOARD_DRAW:
+						case BOARD_RESIGN:
+						case BOARD_SAVE:
+							active_cli = false;
+							break;
+						case BOARD_CONTINUE:
+							break;
+						default:
+							THROW_PTCE_GAME_EXCEPTION_MESSAGE(PTCE_GAME_EXCEPTION_UNKNOWN_MOVE_TYPE,
+								"id=%s, type=%lu", ptce_uid::id_as_string(uid).c_str(), move);
+					}
+
+					if(verbose) {
+						std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
+								<< " Received " << BOARD_MOVE_STRING(move) << " from client (Host: " 
+								<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")";
+					}
+				} else {
+
+					if(verbose) {
+						std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
+								<< " Received an empty game board from client (Host: " 
+								<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")"
+								<< std::endl;
+					}
+
+					break;
 				}
 			}
 
 			close(socket);
 
 			if(verbose) {
-				std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) << " Client disconnected";
+				std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
+						<< " Client disconnected";
 
 				if(addr_cli_known) {
 					std::cout << " (Host: " << addr_cli_host_buf << ", Port: " << addr_cli_port_buf 
@@ -377,11 +258,11 @@ namespace PTCE_NS {
 					data, length, addr_host, addr_port);
 			}
 
-			memset(&data, 0, length);
+			memset(data, 0, length);
 
 			if(verbose) {
 				std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
-						<< " Server attepmpting to read data from client (Host: " 
+						<< " Server attempting to read data from client (Host: " 
 						<< addr_host << ", Port: " << addr_port << ")... ";
 			}
 
@@ -443,7 +324,7 @@ namespace PTCE_NS {
 
 			if(verbose) {
 				std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
-						<< " Server attepmpting to write data to client (Host: " 
+						<< " Server attempting to write data to client (Host: " 
 						<< addr_host << ", Port: " << addr_port << ")";
 			}
 
@@ -492,6 +373,21 @@ namespace PTCE_NS {
 			SERIALIZE_CALL_RECUR(m_lock);
 			TRACE_EXIT("Return Value: %lu", m_connections);
 			return m_connections;
+		}
+
+		ptce_board_mv_t 
+		_ptce_game_manager::generate_move(
+			__in ptce_board &board
+			)
+		{
+			ptce_board_mv_t result = BOARD_CONTINUE;
+
+			TRACE_ENTRY();
+
+			// TODO
+
+			TRACE_EXIT("Return Value: %s (0x%x)", BOARD_MOVE_STRING(result), result);
+			return result;
 		}
 
 		bool 
@@ -571,8 +467,8 @@ namespace PTCE_NS {
 			m_connections = connections;
 
 			if(verbose) {
-				std::cout << "[" << time_stamp() << "] ***SERVER STARTING***" << std::endl << "[" << time_stamp() 
-						<< "] Opening socket... ";
+				std::cout << "[" << time_stamp() << "] ***SERVER STARTING***" << std::endl << "[" 
+						<< time_stamp() << "] Opening socket... ";
 			}
 
 			sock_serv = socket(AF_INET, SOCK_STREAM, 0);
@@ -606,8 +502,8 @@ namespace PTCE_NS {
 			listen(sock_serv, m_connections);
 
 			if(verbose) {
-				std::cout << "[" << time_stamp() << "] Listening for client connections (Max connections: " << (int) m_connections 
-						<< ")..." << std::endl;
+				std::cout << "[" << time_stamp() << "] Listening for client connections (Max connections: " 
+						<< (int) m_connections << ")..." << std::endl;
 			}
 
 			for(;;) {

@@ -1177,6 +1177,101 @@ namespace PTCE_NS {
 			return result;
 		}
 
+		bool 
+		_ptce_board::is_checkmated(
+			__in_opt const ptce_piece_col_t &enemy_color
+			)
+		{
+			size_t x, y;			
+			ptce_pos_t pos = INVALID_POS;
+			ptce_piece curr_piece, enemy_piece;
+			bool attacked = false, result = true;
+			std::set<ptce_mv_ent_t> enemy_pos_set, pos_set;
+			std::set<ptce_mv_ent_t>::iterator enemy_pos_set_iter, pos_iter;
+			std::set<std::pair<ptce_pos_t, ptce_pos_t>>::iterator enemy_pos_iter;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			for(y = 0; y < BOARD_WID; ++y) {
+
+				for(x = 0; x < BOARD_WID; ++x) {
+
+					curr_piece = piece(ptce_pos_t(x, y));
+					if((curr_piece.type() == PIECE_KING)
+							&& (curr_piece.color() == enemy_color)) {
+						pos = ptce_pos_t(x, y);
+						break;
+					}
+				}
+
+				if(pos != INVALID_POS) {
+					break;
+				}
+			}
+
+			if(pos == INVALID_POS) {
+				THROW_PTCE_BOARD_EXCEPTION(PTCE_BOARD_EXCEPTION_KING_NOT_FOUND);
+			}
+
+			for(y = 0; y < BOARD_WID; ++y) {
+
+				for(x = 0; x < BOARD_WID; ++x) {
+
+					enemy_piece = piece(ptce_pos_t(x, y));
+					if((enemy_piece.type() != PIECE_EMPTY)
+							&& (enemy_piece.color() == ((enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK))) {
+
+						enemy_pos_set = generate_move_set(ptce_pos_t(x, y), enemy_color);
+						for(enemy_pos_set_iter = enemy_pos_set.begin(); 
+								enemy_pos_set_iter != enemy_pos_set.end();
+								++enemy_pos_set_iter) {
+
+							for(enemy_pos_iter = enemy_pos_set_iter->second.begin();
+									enemy_pos_iter != enemy_pos_set_iter->second.end();
+									++enemy_pos_iter) {
+
+								if((enemy_pos_iter->second.first == pos.first) 
+										&& (enemy_pos_iter->second.second == pos.second)) {
+									attacked = true;
+									break;
+								}
+							}
+
+							if(attacked) {
+								break;
+							}
+						}
+					}
+
+					if(attacked) {
+						break;
+					}
+				}
+
+				if(attacked) {
+					break;
+				}
+			}
+
+			if(attacked) {
+
+				pos_set = generate_move_set(pos, ((enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK));
+				for(pos_iter = pos_set.begin(); pos_iter != pos_set.end(); ++pos_iter) {
+
+					if(pos_iter->first != MOVE_PROTECT) {
+						result = false;
+						break;
+					}
+				}
+			} else {
+				result = false;
+			}
+
+			TRACE_EXIT("Return Value: 0x%x", result);
+			return result;
+		}
+
 		void 
 		_ptce_board::move(
 			__in const ptce_pos_t &old_position,

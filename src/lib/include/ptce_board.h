@@ -164,6 +164,10 @@ namespace PTCE_NS {
 					__in_opt const ptce_piece_col_t &enemy_color = PIECE_BLACK
 					);
 
+				bool is_checkmated(
+					__in_opt const ptce_piece_col_t &enemy_color = PIECE_BLACK
+					);
+
 				void move(
 					__in const ptce_pos_t &old_position,
 					__in const ptce_pos_t &new_position

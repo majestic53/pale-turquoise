@@ -33,57 +33,6 @@ namespace PTCE_NS {
 
 		typedef struct sockaddr_in sockaddr_t;
 
-		typedef class _ptce_game :
-				public ptce_uid_base {
-
-			public:
-
-				_ptce_game(
-					__in const sockaddr_t &information,
-					__in int socket
-					);
-
-				_ptce_game(
-					__in const _ptce_game &other
-					);
-
-				virtual ~_ptce_game(void);
-
-				_ptce_game &operator=(
-					__in const _ptce_game &other
-					);
-
-				ptce_board &board(void);
-
-				static std::string game_as_string(
-					__in const _ptce_game &game,
-					__in_opt bool verbose = false
-					);
-
-				ptce_board_mv_t generate_move(void);
-
-				sockaddr_t information(void);
-
-				int socket(void);
-
-				virtual std::string to_string(
-					__in_opt bool verbose = false
-					);
-
-			protected:
-
-				ptce_board m_board;
-
-				sockaddr_t m_information;
-
-				int m_socket;
-
-			private:
-
-				std::recursive_mutex m_lock;
-
-		} ptce_game, *ptce_game_ptr;
-
 		void ptce_game_manager_destroy(void);
 
 		typedef class _ptce_game_manager {
@@ -131,7 +80,7 @@ namespace PTCE_NS {
 
 				_ptce_game_manager &operator=(
 					__in const _ptce_game_manager &other
-					);
+					);			
 
 				void client_game_handler(
 					__in const ptce_uid uid,
@@ -163,6 +112,10 @@ namespace PTCE_NS {
 					__in int socket,
 					__in_opt bool verbose = false,
 					__in_opt bool debug = false
+					);
+
+				ptce_board_mv_t generate_move(
+					__in ptce_board &board
 					);
 
 				uint8_t m_connections;

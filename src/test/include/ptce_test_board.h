@@ -50,6 +50,7 @@ namespace PTCE_NS {
 			PTCE_TEST_BOARD_GENERATE_MOVES_QUEEN,
 			PTCE_TEST_BOARD_GENERATE_MOVES_ROOK,
 			PTCE_TEST_BOARD_GENERATE_PIECE,
+			PTCE_TEST_BOARD_IS_CHECKMATED,
 			PTCE_TEST_BOARD_MOVE,
 			PTCE_TEST_BOARD_NOT_EQUALS,
 			PTCE_TEST_BOARD_PIECE,
@@ -97,6 +98,7 @@ namespace PTCE_NS {
 			"PTCE_TEST_BOARD_GENERATE_MOVES_QUEEN",
 			"PTCE_TEST_BOARD_GENERATE_MOVES_ROOK",
 			"PTCE_TEST_BOARD_GENERATE_PIECE",
+			"PTCE_TEST_BOARD_IS_CHECKMATED",
 			"PTCE_TEST_BOARD_MOVE",
 			"PTCE_TEST_BOARD_NOT_EQUALS",
 			"PTCE_TEST_BOARD_PIECE",
@@ -168,6 +170,8 @@ namespace PTCE_NS {
 
 		extern ptce_test_t ptce_test_board_generate_piece(void);
 
+		extern ptce_test_t ptce_test_board_is_checkmated(void);
+
 		extern ptce_test_t ptce_test_board_move(void);
 
 		extern ptce_test_t ptce_test_board_not_equals(void);
@@ -230,6 +234,7 @@ namespace PTCE_NS {
 			ptce_test_board_generate_moves_queen,
 			ptce_test_board_generate_moves_rook,
 			ptce_test_board_generate_piece,
+			ptce_test_board_is_checkmated,
 			ptce_test_board_move,
 			ptce_test_board_not_equals,
 			ptce_test_board_piece,

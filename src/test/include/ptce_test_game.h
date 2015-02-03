@@ -27,12 +27,7 @@ namespace PTCE_NS {
 		#define PTCE_TEST_GAME_TRACE_HEADER "(GAME)"
 
 		enum {
-			PTCE_TEST_GAME_ASSIGNMENT = 0,
-			PTCE_TEST_GAME_CONSTRUCTOR,
-			PTCE_TEST_GAME_BOARD,
-			PTCE_TEST_GAME_GENERATE_MOVE,
-			PTCE_TEST_GAME_INFORMATION,
-			PTCE_TEST_GAME_MANAGER_ACQUIRE,
+			PTCE_TEST_GAME_MANAGER_ACQUIRE = 0,
 			PTCE_TEST_GAME_MANAGER_CONNECTIONS,
 			PTCE_TEST_GAME_MANAGER_IS_ALLOCATED,
 			PTCE_TEST_GAME_MANAGER_IS_STARTED,
@@ -40,17 +35,11 @@ namespace PTCE_NS {
 			PTCE_TEST_GAME_MANAGER_SIZE,
 			PTCE_TEST_GAME_MANAGER_START,
 			PTCE_TEST_GAME_MANAGER_STOP,
-			PTCE_TEST_GAME_SOCKET,
 		};
 
-		#define PTCE_TEST_GAME_MAX PTCE_TEST_GAME_SOCKET
+		#define PTCE_TEST_GAME_MAX PTCE_TEST_GAME_MANAGER_STOP
 
 		static const std::string PTCE_TEST_GAME_STR[] = {
-			"PTCE_TEST_GAME_ASSIGNMENT",
-			"PTCE_TEST_GAME_CONSTRUCTOR",
-			"PTCE_TEST_GAME_BOARD",
-			"PTCE_TEST_GAME_GENERATE_MOVE",
-			"PTCE_TEST_GAME_INFORMATION",
 			"PTCE_TEST_GAME_MANAGER_ACQUIRE",
 			"PTCE_TEST_GAME_MANAGER_CONNECTIONS",
 			"PTCE_TEST_GAME_MANAGER_IS_ALLOCATED",
@@ -59,22 +48,11 @@ namespace PTCE_NS {
 			"PTCE_TEST_GAME_MANAGER_SIZE",
 			"PTCE_TEST_GAME_MANAGER_START",
 			"PTCE_TEST_GAME_MANAGER_STOP",
-			"PTCE_TEST_GAME_SOCKET",
 			};
 
 		#define PTCE_TEST_GAME_STRING(_TYPE_) \
 			((_TYPE_) > PTCE_TEST_GAME_MAX ? UNKNOWN : \
 			PTCE_TEST_GAME_STR[_TYPE_].c_str())
-
-		extern ptce_test_t ptce_test_game_assignment(void);
-		
-		extern ptce_test_t ptce_test_game_constructor(void);
-
-		extern ptce_test_t ptce_test_game_board(void);
-
-		extern ptce_test_t ptce_test_game_generate_move(void);
-
-		extern ptce_test_t ptce_test_game_information(void);
 
 		extern ptce_test_t ptce_test_game_manager_acquire(void);
 
@@ -92,14 +70,7 @@ namespace PTCE_NS {
 
 		extern ptce_test_t ptce_test_game_manager_stop(void);
 
-		extern ptce_test_t ptce_test_game_socket(void);
-
 		static const ptce_test_set_cb PTCE_TEST_GAME_CB[] = {
-			ptce_test_game_assignment,
-			ptce_test_game_constructor,
-			ptce_test_game_board,
-			ptce_test_game_generate_move,
-			ptce_test_game_information,
 			ptce_test_game_manager_acquire,
 			ptce_test_game_manager_connections,
 			ptce_test_game_manager_is_allocated,
@@ -108,7 +79,6 @@ namespace PTCE_NS {
 			ptce_test_game_manager_size,
 			ptce_test_game_manager_start,
 			ptce_test_game_manager_stop,
-			ptce_test_game_socket,
 			};
 
 		#define PTCE_TEST_GAME_CALLBACK(_TYPE_) \
