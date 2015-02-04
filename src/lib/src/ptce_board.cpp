@@ -235,15 +235,33 @@ namespace PTCE_NS {
 				for(x = 0; x < BOARD_WID; ++x) {
 
 					if(!x) {
-						result << " ___";
+						result << "     ";
+					}
+
+					result << (char) ('a' + x);
+
+					if(x == (BOARD_WID - 1)) {
+						result << "     ";
 					} else {
-						result << "____";
+						result << "   ";
 					}
 				}
 
-				result << std::endl;
+				for(x = 0; x < BOARD_WID; ++x) {
+
+					if(!x) {
+						result << std::endl << "   ";
+					}
+
+					result << "+---";
+
+					if(x == (BOARD_WID - 1)) {
+						result << "+   ";
+					}
+				}
 
 				for(y = BOARD_POS_MAX; y >= 0; --y) {
+					result << std::endl << " " << (char) ('1' + y) << " ";
 
 					for(x = 0; x < BOARD_WID; ++x) {
 						result << "| " << ptce_piece::piece_as_symbol(
@@ -251,29 +269,50 @@ namespace PTCE_NS {
 								<< " ";
 					}
 
-					result << "|" << std::endl;
+					result << "| " << (char) ('1' + y) << " ";
 
 					if(y) {
 
 						for(x = 0; x < BOARD_WID; ++x) {
 
 							if(!x) {
-								result << " ---";
-							} else {
-								result << "----";
+								result << std::endl << "   ";
+							}
+
+							result << "+---";
+
+							if(x == (BOARD_WID - 1)) {
+								result << "+   ";
 							}
 						}
-
-						result << std::endl;
 					}
 				}
 
 				for(x = 0; x < BOARD_WID; ++x) {
 
 					if(!x) {
-						result << " ‾‾‾";
+						result << std::endl << "   ";
+					}
+
+					result << "+---";
+
+					if(x == (BOARD_WID - 1)) {
+						result << "+   ";
+					}
+				}
+
+				for(x = 0; x < BOARD_WID; ++x) {
+
+					if(!x) {
+						result << std::endl << "     ";
+					}
+
+					result << (char) ('a' + x);
+
+					if(x == (BOARD_WID - 1)) {
+						result << "     ";
 					} else {
-						result << "‾‾‾‾";
+						result << "   ";
 					}
 				}
 			}

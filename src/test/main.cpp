@@ -179,7 +179,7 @@ main(
 		// TODO
 
 		ptce_game_manager_ptr man = inst->acquire_game_manager();
-		man->start(2000, 1, true, true);
+		man->start(2000, 1, true);
 
 		/*ptce_board board(true);
 
