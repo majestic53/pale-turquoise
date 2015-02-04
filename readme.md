@@ -13,6 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1506
+*Updated: 2/3/2015*
+
+* Added game manager client handler
+
 *Updated: 2/2/2015*
 
 * Added game manager client handler (partial)

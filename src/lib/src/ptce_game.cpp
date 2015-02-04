@@ -136,9 +136,12 @@ namespace PTCE_NS {
 
 			while(active_cli) {
 
-				// TODO: fix read issue
+				if(verbose) {
+					std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) << " " 
+							<< board.to_string(true) << std::endl;
+				}
 
-				move = /*board.is_checkmated(PIECE_BLACK) ? BOARD_CHECKMATE :*/ generate_move(board);
+				move = board.is_checkmated(PIECE_BLACK) ? BOARD_CHECKMATE : generate_move(board);
 				switch(move) {
 					case BOARD_CONTINUE:
 					case BOARD_CHECKMATE:
@@ -170,7 +173,7 @@ namespace PTCE_NS {
 				cli_data_len = client_read(uid, cli_data, sizeof(uint8_t) * CLIENT_DATA_LEN_MAX, addr_cli_host_buf,
 						addr_cli_port_buf, socket, verbose, debug);
 
-				if(cli_data_len) {
+				if(cli_data_len > 1) {
 
 					move = board.unserialize((char *) cli_data);
 					switch(move) {
@@ -190,7 +193,8 @@ namespace PTCE_NS {
 					if(verbose) {
 						std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
 								<< " Received " << BOARD_MOVE_STRING(move) << " from client (Host: " 
-								<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")";
+								<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")" 
+								<< std::endl;
 					}
 				} else {
 

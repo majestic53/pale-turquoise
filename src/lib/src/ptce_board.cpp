@@ -1220,8 +1220,8 @@ namespace PTCE_NS {
 
 					enemy_piece = piece(ptce_pos_t(x, y));
 					if((enemy_piece.type() != PIECE_EMPTY)
+							&& (enemy_piece.type() != PIECE_KING)
 							&& (enemy_piece.color() == ((enemy_color == PIECE_BLACK) ? PIECE_WHITE : PIECE_BLACK))) {
-
 						enemy_pos_set = generate_move_set(ptce_pos_t(x, y), enemy_color);
 						for(enemy_pos_set_iter = enemy_pos_set.begin(); 
 								enemy_pos_set_iter != enemy_pos_set.end();
