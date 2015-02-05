@@ -252,6 +252,7 @@ namespace PTCE_NS {
 			)
 		{
 			int result = 0;
+			std::string bin_str;
 			size_t data_iter = 0;
 
 			TRACE_ENTRY();
@@ -283,16 +284,28 @@ namespace PTCE_NS {
 			}
 
 			if(debug && (result >= 0)) {
-				std::cout << std::endl << "\tPayload: " << (char *) data << std::endl << "\tData length: " 
-						<< std::setprecision(4) << (length / BYTES_PER_KBYTE) << " KB (" << length << " bytes)";
+				std::cout << std::endl << "\tData length: " << std::setprecision(4) << (length / BYTES_PER_KBYTE) 
+						<< " KB (" << length << " bytes)";
 
 				for(; data_iter < length; ++data_iter) {
 
 					if(!(data_iter % BLOCK_LEN)) {
+
+						if(data_iter && !bin_str.empty()) {
+							std::cout << " | " << bin_str;
+							bin_str.clear();
+						}
+
 						std::cout << std::endl << "\t0x" << VALUE_AS_HEX(uint16_t, data_iter) << " |";
 					}
 
 					std::cout << " " << VALUE_AS_HEX(uint8_t, data[data_iter]);
+					bin_str += isprint((char) data[data_iter]) ? (char) data[data_iter] : '.';
+				}
+
+				if(!bin_str.empty()) {
+					std::cout << " | " << bin_str;
+					bin_str.clear();
 				}
 
 				std::cout << std::endl;
@@ -316,6 +329,7 @@ namespace PTCE_NS {
 		{
 			int data_len;
 			bool result = true;
+			std::string bin_str;
 			size_t data_iter = 0;
 
 			TRACE_ENTRY();
@@ -333,16 +347,28 @@ namespace PTCE_NS {
 			}
 
 			if(debug) {
-				std::cout << std::endl << "\tPayload: " << (char *) data << std::endl << "\tData length: " 
-						<< std::setprecision(4) << (length / BYTES_PER_KBYTE) << " KB (" << length << " bytes)";
+				std::cout << std::endl << "\tData length: " << std::setprecision(4) << (length / BYTES_PER_KBYTE) 
+						<< " KB (" << length << " bytes)";
 
 				for(; data_iter < length; ++data_iter) {
 
 					if(!(data_iter % BLOCK_LEN)) {
+
+						if(data_iter && !bin_str.empty()) {
+							std::cout << " | " << bin_str;
+							bin_str.clear();
+						}
+
 						std::cout << std::endl << "\t0x" << VALUE_AS_HEX(uint16_t, data_iter) << " |";
 					}
 
 					std::cout << " " << VALUE_AS_HEX(uint8_t, data[data_iter]);
+					bin_str += isprint((char) data[data_iter]) ? (char) data[data_iter] : '.';
+				}
+
+				if(!bin_str.empty()) {
+					std::cout << " | " << bin_str;
+					bin_str.clear();
 				}
 
 				std::cout << std::endl;
