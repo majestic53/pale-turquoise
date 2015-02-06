@@ -57,7 +57,8 @@ namespace PTCE_NS {
 					__in_opt uint16_t port = GAME_PORT_DEF,
 					__in_opt uint8_t connections = GAME_CONNECTION_DEF,
 					__in_opt bool verbose = false,
-					__in_opt bool debug = false
+					__in_opt bool show_board = false,
+					__in_opt bool show_network = false
 					);
 
 				void stop(
@@ -89,7 +90,8 @@ namespace PTCE_NS {
 					__in const socklen_t length,
 					__in int socket,
 					__in_opt bool verbose = false,
-					__in_opt bool debug = false
+					__in_opt bool show_board = false,
+					__in_opt bool show_network = false
 					);
 
 				int client_read(
@@ -100,7 +102,7 @@ namespace PTCE_NS {
 					__in char *addr_port,
 					__in int socket,
 					__in_opt bool verbose = false,
-					__in_opt bool debug = false
+					__in_opt bool show_network = false
 					);
 
 				bool client_write(
@@ -111,7 +113,7 @@ namespace PTCE_NS {
 					__in char *addr_port,
 					__in int socket,
 					__in_opt bool verbose = false,
-					__in_opt bool debug = false
+					__in_opt bool show_network = false
 					);
 
 				ptce_board_mv_t generate_move(

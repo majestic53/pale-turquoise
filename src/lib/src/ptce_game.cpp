@@ -98,7 +98,8 @@ namespace PTCE_NS {
 			__in const socklen_t length,
 			__in int socket,
 			__in_opt bool verbose,
-			__in_opt bool debug
+			__in_opt bool show_board,
+			__in_opt bool show_network
 			)
 		{
 			ptce_board board;
@@ -132,11 +133,11 @@ namespace PTCE_NS {
 			message << CLIENT_MESSAGE << " (Id: " << ptce_uid::id_as_string(uid) << ", Host: " << addr_cli_host_buf 
 					<< ", Port: " << addr_cli_port_buf << ")" << std::endl;
 			client_write(uid, (uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
-					socket, verbose, debug);
+					socket, verbose, show_network);
 
 			while(active_cli) {
 
-				if(verbose) {
+				if(show_board) {
 					std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) << " " 
 							<< board.to_string(true) << std::endl;
 				}
@@ -163,7 +164,7 @@ namespace PTCE_NS {
 				message.str(std::string());
 				message << board.serialize(move) << std::endl;
 				client_write(uid, (uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
-						socket, verbose, debug);
+						socket, verbose, show_network);
 
 				if(move != BOARD_CONTINUE) {
 					break;
@@ -171,7 +172,7 @@ namespace PTCE_NS {
 
 				memset(cli_data, 0, sizeof(uint8_t) * CLIENT_DATA_LEN_MAX);
 				cli_data_len = client_read(uid, cli_data, sizeof(uint8_t) * CLIENT_DATA_LEN_MAX, addr_cli_host_buf,
-						addr_cli_port_buf, socket, verbose, debug);
+						addr_cli_port_buf, socket, verbose, show_network);
 
 				if(cli_data_len > 1) {
 
@@ -248,12 +249,12 @@ namespace PTCE_NS {
 			__in char *addr_port,
 			__in int socket,
 			__in_opt bool verbose,
-			__in_opt bool debug
+			__in_opt bool show_network
 			)
 		{
 			int result = 0;
+			size_t iter = 0;
 			std::string bin_str;
-			size_t data_iter = 0;
 
 			TRACE_ENTRY();
 
@@ -283,27 +284,35 @@ namespace PTCE_NS {
 				std::cout << "Success." << std::endl;
 			}
 
-			if(debug && (result >= 0)) {
+			if(show_network && (result >= 0)) {
 				std::cout << std::endl << "\tData length: " << std::setprecision(4) << (length / BYTES_PER_KBYTE) 
 						<< " KB (" << length << " bytes)";
 
-				for(; data_iter < length; ++data_iter) {
+				for(iter = 0; iter < length; ++iter) {
 
-					if(!(data_iter % BLOCK_LEN)) {
+					if(!(iter % BLOCK_LEN)) {
 
-						if(data_iter && !bin_str.empty()) {
+						if(iter && !bin_str.empty()) {
 							std::cout << " | " << bin_str;
 							bin_str.clear();
 						}
 
-						std::cout << std::endl << "\t0x" << VALUE_AS_HEX(uint16_t, data_iter) << " |";
+						std::cout << std::endl << "\t0x" << VALUE_AS_HEX(uint16_t, iter) << " |";
 					}
 
-					std::cout << " " << VALUE_AS_HEX(uint8_t, data[data_iter]);
-					bin_str += isprint((char) data[data_iter]) ? (char) data[data_iter] : '.';
+					std::cout << " " << VALUE_AS_HEX(uint8_t, data[iter]);
+					bin_str += isprint((char) data[iter]) ? (char) data[iter] : '.';
 				}
 
 				if(!bin_str.empty()) {
+
+					if(length % BLOCK_LEN) {
+
+						for(iter = 0; iter < BLOCK_LEN - (length % BLOCK_LEN); ++iter) {
+							std::cout << "   ";
+						}
+					}
+
 					std::cout << " | " << bin_str;
 					bin_str.clear();
 				}
@@ -324,13 +333,12 @@ namespace PTCE_NS {
 			__in char *addr_port,
 			__in int socket,
 			__in_opt bool verbose,
-			__in_opt bool debug
+			__in_opt bool show_network
 			)
 		{
-			int data_len;
+			size_t iter;
 			bool result = true;
-			std::string bin_str;
-			size_t data_iter = 0;
+			std::string bin_str;			
 
 			TRACE_ENTRY();
 
@@ -346,27 +354,35 @@ namespace PTCE_NS {
 						<< addr_host << ", Port: " << addr_port << ")";
 			}
 
-			if(debug) {
+			if(show_network) {
 				std::cout << std::endl << "\tData length: " << std::setprecision(4) << (length / BYTES_PER_KBYTE) 
 						<< " KB (" << length << " bytes)";
 
-				for(; data_iter < length; ++data_iter) {
+				for(iter = 0; iter < length; ++iter) {
 
-					if(!(data_iter % BLOCK_LEN)) {
+					if(!(iter % BLOCK_LEN)) {
 
-						if(data_iter && !bin_str.empty()) {
+						if(iter && !bin_str.empty()) {
 							std::cout << " | " << bin_str;
 							bin_str.clear();
 						}
 
-						std::cout << std::endl << "\t0x" << VALUE_AS_HEX(uint16_t, data_iter) << " |";
+						std::cout << std::endl << "\t0x" << VALUE_AS_HEX(uint16_t, iter) << " |";
 					}
 
-					std::cout << " " << VALUE_AS_HEX(uint8_t, data[data_iter]);
-					bin_str += isprint((char) data[data_iter]) ? (char) data[data_iter] : '.';
+					std::cout << " " << VALUE_AS_HEX(uint8_t, data[iter]);
+					bin_str += isprint((char) data[iter]) ? (char) data[iter] : '.';
 				}
 
 				if(!bin_str.empty()) {
+
+					if(length % BLOCK_LEN) {
+
+						for(iter = 0; iter < BLOCK_LEN - (length % BLOCK_LEN); ++iter) {
+							std::cout << "   ";
+						}
+					}
+
 					std::cout << " | " << bin_str;
 					bin_str.clear();
 				}
@@ -378,8 +394,7 @@ namespace PTCE_NS {
 				std::cout << "... ";
 			}
 
-			data_len = write(socket, data, length);
-			if(data_len < 0) {
+			if(write(socket, data, length) < 0) {
 
 				if(verbose) {
 					std::cout << "Failure!" << std::endl << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
@@ -479,7 +494,8 @@ namespace PTCE_NS {
 			__in_opt uint16_t port,
 			__in_opt uint8_t connections,
 			__in_opt bool verbose,
-			__in_opt bool debug
+			__in_opt bool show_board,
+			__in_opt bool show_network
 			)
 		{
 			socklen_t len_cli;
@@ -549,7 +565,8 @@ namespace PTCE_NS {
 				cli_thread_id.increment_reference();
 				m_game_map.insert(std::pair<ptce_uid, std::thread>(cli_thread_id.id(), 
 						std::thread(&ptce_game_manager::client_game_handler, 
-						this, cli_thread_id.id(), addr_serv, addr_cli, len_cli, sock_cli, verbose, debug)));
+						this, cli_thread_id.id(), addr_serv, addr_cli, len_cli, sock_cli, verbose, 
+						show_board, show_network)));
 				m_game_map.find(cli_thread_id.id())->second.detach();
 			}
 

@@ -376,22 +376,16 @@ namespace PTCE_NS {
 										if((enemy_pos_iter->second.first == new_position.first)
 												&& (enemy_pos_iter->second.second == new_position.second)) {
 											allow = false;
-											break;
+											goto check_done;
 										}
-									}
-
-									if(!allow) {
-										break;
 									}
 								}
 							}
 						}
-
-						if(!allow) {
-							break;
-						}
 					}
 				}
+
+check_done:
 
 				if(allow) {
 
@@ -823,25 +817,15 @@ namespace PTCE_NS {
 												|| ((enemy_pos_iter->second.first == (ROOK_POS_LEFT_INIT + 3)) 
 												&& (enemy_pos_iter->second.second == y_off))) {
 											castling_allowed = false;
-											break;
+											goto check_left_done;
 										}
-									}
-
-									if(!castling_allowed) {
-										break;
 									}
 								}
 							}
-
-							if(!castling_allowed) {
-								break;
-							}
-						}
-
-						if(!castling_allowed) {
-							break;
 						}
 					}
+
+check_left_done:
 
 					if(castling_allowed) {
 						pos_list.clear();
@@ -886,25 +870,15 @@ namespace PTCE_NS {
 												|| ((enemy_pos_iter->second.first == (ROOK_POS_RIGHT_INIT - 2)) 
 												&& (enemy_pos_iter->second.second == y_off))) {
 											castling_allowed = false;
-											break;
+											goto check_right_done;
 										}
-									}
-
-									if(!castling_allowed) {
-										break;
 									}
 								}
 							}
-
-							if(!castling_allowed) {
-								break;
-							}
-						}
-
-						if(!castling_allowed) {
-							break;
 						}
 					}
+
+check_right_done:
 
 					if(castling_allowed) {
 						pos_list.clear();
@@ -1273,25 +1247,15 @@ namespace PTCE_NS {
 								if((enemy_pos_iter->second.first == pos.first) 
 										&& (enemy_pos_iter->second.second == pos.second)) {
 									attacked = true;
-									break;
+									goto check_done;
 								}
-							}
-
-							if(attacked) {
-								break;
 							}
 						}
 					}
-
-					if(attacked) {
-						break;
-					}
-				}
-
-				if(attacked) {
-					break;
 				}
 			}
+
+check_done:
 
 			if(attacked) {
 
