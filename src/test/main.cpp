@@ -193,7 +193,7 @@ main(
 		std::cout << "Count: " << gen_moves.size();
 
 		std::set<std::pair<ptce_mv_ent_t, size_t>> scores;
-		size_t max_score = ptce_board::score_move_set(PIECE_KING, gen_moves, scores);
+		size_t max_score = ptce_board::score_move_set(board, PIECE_KING, gen_moves, scores);
 
 		std::cout << std::endl << "Max score: " << max_score << ", Count: " << scores.size();
 

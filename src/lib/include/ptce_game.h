@@ -117,7 +117,8 @@ namespace PTCE_NS {
 					);
 
 				ptce_board_mv_t generate_move(
-					__in ptce_board &board
+					__in ptce_board &board,
+					__in_opt ptce_piece_col_t enemy_color = PIECE_BLACK
 					);
 
 				uint8_t m_connections;

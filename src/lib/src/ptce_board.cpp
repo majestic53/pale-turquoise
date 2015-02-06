@@ -355,6 +355,7 @@ namespace PTCE_NS {
 
 							enemy_piece = piece(ptce_pos_t(iter_x, iter_y));
 							if((enemy_piece.type() != PIECE_EMPTY)
+									&& (enemy_piece.type() != PIECE_KING)
 									&& (enemy_piece.color() == enemy_color)) {
 
 								enemy_moves = generate_move_set(ptce_pos_t(iter_x, iter_y), 

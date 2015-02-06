@@ -422,14 +422,63 @@ namespace PTCE_NS {
 
 		ptce_board_mv_t 
 		_ptce_game_manager::generate_move(
-			__in ptce_board &board
+			__in ptce_board &board,
+			__in_opt ptce_piece_col_t enemy_color
 			)
 		{
+			size_t x, y = 0;
+			ptce_piece curr_piece;
+			std::set<ptce_mv_ent_t> move_set;
 			ptce_board_mv_t result = BOARD_CONTINUE;
 
 			TRACE_ENTRY();
 
-			// TODO
+			for(; y < BOARD_WID; ++y) {
+
+				for(x = 0; x < BOARD_WID; ++x) {
+
+					curr_piece = board.piece(ptce_pos_t(x, y));
+					if((curr_piece.type() != PIECE_EMPTY)
+							&& (curr_piece.color() != enemy_color)) {
+
+						// TODO: remove after debug
+						std::cout << std::endl << "{" << x << ", " << y << "} " << curr_piece.to_string(true);
+						// ---
+
+						move_set = board.generate_move_set(ptce_pos_t(x, y), enemy_color);
+
+						// TODO: remove after debug
+						std::set<std::pair<ptce_mv_ent_t, size_t>> scores;
+						size_t max_score = ptce_board::score_move_set(board, curr_piece.type(), move_set, scores);
+
+						std::cout << std::endl << "Max score: " << max_score << ", Count: " << scores.size();
+
+						for(std::set<std::pair<ptce_mv_ent_t, size_t>>::iterator iter = scores.begin();
+								iter != scores.end(); ++iter) {
+							std::cout << std::endl << MOVE_TYPE_STRING(iter->first.first) << "(" << iter->first.second.size() << ")";
+
+							if(!iter->first.second.empty()) {
+								std::cout << ": ";
+
+								for(std::set<std::pair<ptce_pos_t, ptce_pos_t>>::iterator pos_iter = iter->first.second.begin();
+										pos_iter != iter->first.second.end(); ++pos_iter) {
+
+									if(pos_iter != iter->first.second.begin()) {
+										std::cout << ", ";
+									}
+
+									std::cout << "({" << (int) pos_iter->first.first << ", " << (int) pos_iter->first.second << "}, {"
+											<< (int) pos_iter->second.first << ", " << (int) pos_iter->second.second << "})"
+											<< ", Score: " << iter->second;
+								}
+							}
+						}
+
+						std::cout << std::endl;
+						// ---
+					}
+				}
+			}
 
 			TRACE_EXIT("Return Value: %s (0x%x)", BOARD_MOVE_STRING(result), result);
 			return result;
