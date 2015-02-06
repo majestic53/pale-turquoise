@@ -75,17 +75,25 @@ namespace PTCE_NS {
 			// CAPTURE, CASTLE, CHECK, INVALID, NORMAL, PROMOTE, PROTECT,
 			{ 0, 0, 0, 0, 0, 0, 0 }, // EMPTY
 			{ 10, 20, 0, 0, 4, 0, 3 }, // KING
-			{ 10, 0, 100, 0, 4, 0, 3 }, // QUEEN
-			{ 10, 0, 100, 0, 4, 0, 3 }, // ROOK
-			{ 10, 0, 100, 0, 4, 0, 3 }, // BISHOP
-			{ 10, 0, 100, 0, 4, 0, 3 }, // KNIGHT
-			{ 10, 0, 100, 0, 4, 80, 3 }, // PAWN
+			{ 10, 0, 1000, 0, 4, 0, 3 }, // QUEEN
+			{ 10, 0, 1000, 0, 4, 0, 3 }, // ROOK
+			{ 10, 0, 1000, 0, 4, 0, 3 }, // BISHOP
+			{ 10, 0, 1000, 0, 4, 0, 3 }, // KNIGHT
+			{ 10, 0, 1000, 0, 4, 80, 3 }, // PAWN
 			};
 
 		#define MOVE_HEURISTIC_VALUE(_TYPE_, _MOVE_) \
 			((_TYPE_) > PIECE_TYPE_MAX ? 0 : \
 			((_MOVE_) > MOVE_TYPE_MAX ? 0 : \
 			MOVE_HEURISTIC_VAL[_TYPE_][_MOVE_]))
+
+		static const size_t MOVE_HEURISTIC_PROTECT_MUL_VAL[] = {
+			0, 10, 9, 5, 3, 3, 1,
+			};
+
+		#define MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(_TYPE_) \
+			((_TYPE_) > PIECE_TYPE_MAX ? 0 : \
+			MOVE_HEURISTIC_PROTECT_MUL_VAL[_TYPE_])
 
 		static const std::string MOVE_TYPE_STR[] = {
 			"CAPTURE", "CASTLE", "CHECK", "INVALID", "NORMAL", "PROMOTE", "PROTECT",
@@ -195,6 +203,7 @@ namespace PTCE_NS {
 					);
 
 				static size_t score_move_set(
+					__in const _ptce_board &board,
 					__in const ptce_piece_t &type,
 					__in const std::set<ptce_mv_ent_t> &moves,
 					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
@@ -294,31 +303,37 @@ namespace PTCE_NS {
 					);
 
 				static size_t score_move_bishop(
+					__in const _ptce_board &board,
 					__in const ptce_mv_ent_t &move,
 					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 					);
 
 				static size_t score_move_king(
+					__in const _ptce_board &board,
 					__in const ptce_mv_ent_t &move,
 					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 					);
 
 				static size_t score_move_knight(
+					__in const _ptce_board &board,
 					__in const ptce_mv_ent_t &move,
 					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 					);
 
 				static size_t score_move_pawn(
+					__in const _ptce_board &board,
 					__in const ptce_mv_ent_t &move,
 					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 					);
 
 				static size_t score_move_queen(
+					__in const _ptce_board &board,
 					__in const ptce_mv_ent_t &move,
 					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 					);
 
 				static size_t score_move_rook(
+					__in const _ptce_board &board,
 					__in const ptce_mv_ent_t &move,
 					__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 					);

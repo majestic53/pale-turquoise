@@ -2892,14 +2892,17 @@ exit:
 					board.generate_piece(ptce_pos_t(0, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(1, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(2, 1), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT), 
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN), 
 							ptce_pos_t(1, 0), ptce_pos_t(0, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT), 
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN), 
 							ptce_pos_t(1, 0), ptce_pos_t(2, 1));
-					result_score = ptce_board::score_move_set(PIECE_BISHOP, 
+					result_score = ptce_board::score_move_set(board, PIECE_BISHOP, 
 							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
 
-					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT))
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN))
 							|| !compare_test_score_move_sets(move_set, result_move_set)) {
 						std::cerr << "----!ptce_test_board_score_moves_bishop failure(0)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -2914,7 +2917,8 @@ exit:
 					board.generate_piece(ptce_pos_t(2, 0), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(0, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(1, 1), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT), 
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN), 
 							ptce_pos_t(1, 0), ptce_pos_t(0, 1));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL), 
 							ptce_pos_t(1, 0), ptce_pos_t(2, 1));
@@ -2928,7 +2932,7 @@ exit:
 							ptce_pos_t(1, 0), ptce_pos_t(6, 5));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL), 
 							ptce_pos_t(1, 0), ptce_pos_t(7, 6));
-					result_score = ptce_board::score_move_set(PIECE_BISHOP, 
+					result_score = ptce_board::score_move_set(board, PIECE_BISHOP, 
 							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL))
@@ -2947,7 +2951,8 @@ exit:
 					board.generate_piece(ptce_pos_t(0, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(1, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(5, 4), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT), 
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN), 
 							ptce_pos_t(1, 0), ptce_pos_t(0, 1));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL), 
 							ptce_pos_t(1, 0), ptce_pos_t(2, 1));
@@ -2955,9 +2960,10 @@ exit:
 							ptce_pos_t(1, 0), ptce_pos_t(3, 2));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL),
 							ptce_pos_t(1, 0), ptce_pos_t(4, 3));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(5, 4));
-					result_score = ptce_board::score_move_set(PIECE_BISHOP, 
+					result_score = ptce_board::score_move_set(board, PIECE_BISHOP, 
 							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL))
@@ -2976,7 +2982,8 @@ exit:
 					board.generate_piece(ptce_pos_t(0, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(1, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(5, 4), PIECE_PAWN, PIECE_BLACK);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(0, 1));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL),
 							ptce_pos_t(1, 0), ptce_pos_t(2, 1));
@@ -2986,7 +2993,7 @@ exit:
 							ptce_pos_t(1, 0), ptce_pos_t(4, 3));
 					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_CAPTURE),
 							ptce_pos_t(1, 0), ptce_pos_t(5, 4));
-					result_score = ptce_board::score_move_set(PIECE_BISHOP, 
+					result_score = ptce_board::score_move_set(board, PIECE_BISHOP, 
 							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_CAPTURE))
@@ -3026,7 +3033,7 @@ exit:
 							ptce_pos_t(3, 3), ptce_pos_t(5, 1));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(6, 0));
-					result_score = ptce_board::score_move_set(PIECE_BISHOP, 
+					result_score = ptce_board::score_move_set(board, PIECE_BISHOP, 
 							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL))
@@ -3044,23 +3051,27 @@ exit:
 					board.generate_piece(ptce_pos_t(3, 3), PIECE_BISHOP, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(5, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(5, 5), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(1, 1));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(2, 2));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(4, 4));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(5, 5));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(1, 5));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(2, 4));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(4, 2));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(5, 1));
-					result_score = ptce_board::score_move_set(PIECE_BISHOP, 
+					result_score = ptce_board::score_move_set(board, PIECE_BISHOP, 
 							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL))
@@ -3094,7 +3105,7 @@ exit:
 							ptce_pos_t(3, 3), ptce_pos_t(4, 2));
 					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_CAPTURE),
 							ptce_pos_t(3, 3), ptce_pos_t(5, 1));
-					result_score = ptce_board::score_move_set(PIECE_BISHOP, 
+					result_score = ptce_board::score_move_set(board, PIECE_BISHOP, 
 							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_CAPTURE))
@@ -3131,7 +3142,7 @@ exit:
 							ptce_pos_t(3, 5), ptce_pos_t(6, 2));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_NORMAL),
 							ptce_pos_t(3, 5), ptce_pos_t(7, 1));
-					result_score = ptce_board::score_move_set(PIECE_BISHOP, 
+					result_score = ptce_board::score_move_set(board, PIECE_BISHOP, 
 							board.generate_move_set(ptce_pos_t(3, 5), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_BISHOP, MOVE_CHECK))
@@ -3182,20 +3193,26 @@ exit:
 					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(4, 0), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(4, 1), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 0), ptce_pos_t(2, 0));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 0), ptce_pos_t(2, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 0), ptce_pos_t(3, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 0), ptce_pos_t(4, 0));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 0), ptce_pos_t(4, 1));
-					result_score = ptce_board::score_move_set(PIECE_KING, 
+					result_score = ptce_board::score_move_set(board, PIECE_KING, 
 							board.generate_move_set(ptce_pos_t(3, 0), PIECE_BLACK), result_move_set);
 
-					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT))
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN))
 							|| !compare_test_score_move_sets(move_set, result_move_set)) {
 						std::cerr << "----!ptce_test_board_score_moves_king failure(0)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -3211,13 +3228,15 @@ exit:
 					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_BLACK);
 					board.generate_piece(ptce_pos_t(4, 0), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(4, 1), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							 ptce_pos_t(3, 0), ptce_pos_t(2, 1));
 					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_CAPTURE),
 							ptce_pos_t(3, 0), ptce_pos_t(3, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 0), ptce_pos_t(4, 1));
-					result_score = ptce_board::score_move_set(PIECE_KING, 
+					result_score = ptce_board::score_move_set(board, PIECE_KING, 
 							board.generate_move_set(ptce_pos_t(3, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_CAPTURE))
@@ -3247,7 +3266,7 @@ exit:
 							ptce_pos_t(3, 3), ptce_pos_t(4, 3));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(4, 4));
-					result_score = ptce_board::score_move_set(PIECE_KING, 
+					result_score = ptce_board::score_move_set(board, PIECE_KING, 
 							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_NORMAL))
@@ -3277,7 +3296,7 @@ exit:
 							ptce_pos_t(4, 0), ptce_pos_t(5, 1));
 					append_test_score_move_set(move_set, MOVE_CASTLE, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_CASTLE),
 							ptce_pos_t(4, 0), ptce_pos_t(6, 0), ptce_pos_t(7, 0), ptce_pos_t(5, 0));
-					result_score = ptce_board::score_move_set(PIECE_KING, 
+					result_score = ptce_board::score_move_set(board, PIECE_KING, 
 							board.generate_move_set(ptce_pos_t(4, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_CASTLE))
@@ -3305,7 +3324,7 @@ exit:
 							ptce_pos_t(4, 0), ptce_pos_t(5, 0));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_NORMAL),
 							ptce_pos_t(4, 0), ptce_pos_t(5, 1));
-					result_score = ptce_board::score_move_set(PIECE_KING, 
+					result_score = ptce_board::score_move_set(board, PIECE_KING, 
 							board.generate_move_set(ptce_pos_t(4, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_NORMAL))
@@ -3329,7 +3348,7 @@ exit:
 							ptce_pos_t(3, 0), ptce_pos_t(3, 1));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_NORMAL),
 							ptce_pos_t(3, 0), ptce_pos_t(4, 0));
-					result_score = ptce_board::score_move_set(PIECE_KING, 
+					result_score = ptce_board::score_move_set(board, PIECE_KING, 
 							board.generate_move_set(ptce_pos_t(3, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KING, MOVE_NORMAL))
@@ -3386,9 +3405,10 @@ exit:
 							ptce_pos_t(1, 0), ptce_pos_t(0, 2));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_NORMAL),
 							ptce_pos_t(1, 0), ptce_pos_t(2, 2));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(3, 1));
-					result_score = ptce_board::score_move_set(PIECE_KNIGHT, 
+					result_score = ptce_board::score_move_set(board, PIECE_KNIGHT, 
 							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_NORMAL))
@@ -3415,9 +3435,10 @@ exit:
 							ptce_pos_t(1, 0), ptce_pos_t(0, 2));
 					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_CAPTURE),
 							ptce_pos_t(1, 0), ptce_pos_t(2, 2));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(3, 1));
-					result_score = ptce_board::score_move_set(PIECE_KNIGHT, 
+					result_score = ptce_board::score_move_set(board, PIECE_KNIGHT, 
 							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_CAPTURE))
@@ -3440,16 +3461,20 @@ exit:
 					board.generate_piece(ptce_pos_t(2, 2), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(3, 0), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(0, 2));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(2, 2));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(3, 1));
-					result_score = ptce_board::score_move_set(PIECE_KNIGHT, 
+					result_score = ptce_board::score_move_set(board, PIECE_KNIGHT, 
 							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
 
-					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT))
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN))
 							|| !compare_test_score_move_sets(move_set, result_move_set)) {
 						std::cerr << "----!ptce_test_board_score_moves_knight failure(2)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -3476,7 +3501,7 @@ exit:
 							ptce_pos_t(3, 3), ptce_pos_t(5, 2));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(5, 4));
-					result_score = ptce_board::score_move_set(PIECE_KNIGHT, 
+					result_score = ptce_board::score_move_set(board, PIECE_KNIGHT, 
 							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_NORMAL))
@@ -3514,7 +3539,7 @@ exit:
 							ptce_pos_t(3, 3), ptce_pos_t(5, 2));
 					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_CAPTURE),
 							ptce_pos_t(3, 3), ptce_pos_t(5, 4));
-					result_score = ptce_board::score_move_set(PIECE_KNIGHT, 
+					result_score = ptce_board::score_move_set(board, PIECE_KNIGHT, 
 							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_CAPTURE))
@@ -3536,26 +3561,35 @@ exit:
 					board.generate_piece(ptce_pos_t(4, 5), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(5, 2), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(5, 4), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(1, 2));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(1, 4));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(2, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(2, 5));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(4, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(4, 5));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(5, 2));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(5, 4));
-					result_score = ptce_board::score_move_set(PIECE_KNIGHT, 
+					result_score = ptce_board::score_move_set(board, PIECE_KNIGHT, 
 							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
 
-					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT))
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN))
 							|| !compare_test_score_move_sets(move_set, result_move_set)) {
 						std::cerr << "----!ptce_test_board_score_moves_knight failure(5)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -3582,9 +3616,10 @@ exit:
 							ptce_pos_t(5, 5), ptce_pos_t(6, 7));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_NORMAL),
 							ptce_pos_t(5, 5), ptce_pos_t(7, 4));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(5, 5), ptce_pos_t(7, 6));
-					result_score = ptce_board::score_move_set(PIECE_KNIGHT, 
+					result_score = ptce_board::score_move_set(board, PIECE_KNIGHT, 
 							board.generate_move_set(ptce_pos_t(5, 5), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, MOVE_CHECK))
@@ -3634,11 +3669,13 @@ exit:
 							ptce_pos_t(3, 1), ptce_pos_t(3, 2));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL),
 							ptce_pos_t(3, 1), ptce_pos_t(3, 3));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_EMPTY),
 							ptce_pos_t(3, 1), ptce_pos_t(2, 2));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_EMPTY),
 							ptce_pos_t(3, 1), ptce_pos_t(4, 2));
-					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+					result_score = ptce_board::score_move_set(board, PIECE_PAWN, 
 							board.generate_move_set(ptce_pos_t(3, 1), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL))
@@ -3653,14 +3690,17 @@ exit:
 					result_move_set.clear();
 					board.generate_piece(ptce_pos_t(3, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_BLACK, true);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_EMPTY),
 							ptce_pos_t(3, 1), ptce_pos_t(2, 2));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_EMPTY),
 							ptce_pos_t(3, 1), ptce_pos_t(4, 2));
-					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+					result_score = ptce_board::score_move_set(board, PIECE_PAWN, 
 							board.generate_move_set(ptce_pos_t(3, 1), PIECE_BLACK), result_move_set);
 
-					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT))
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_EMPTY))
 							|| !compare_test_score_move_sets(move_set, result_move_set)) {
 						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(1)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -3674,11 +3714,13 @@ exit:
 					board.generate_piece(ptce_pos_t(3, 3), PIECE_PAWN, PIECE_BLACK, true);
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL),
 							ptce_pos_t(3, 1), ptce_pos_t(3, 2));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_EMPTY),
 							ptce_pos_t(3, 1), ptce_pos_t(2, 2));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_EMPTY),
 							ptce_pos_t(3, 1), ptce_pos_t(4, 2));
-					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+					result_score = ptce_board::score_move_set(board, PIECE_PAWN, 
 							board.generate_move_set(ptce_pos_t(3, 1), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL))
@@ -3699,7 +3741,7 @@ exit:
 							ptce_pos_t(3, 1), ptce_pos_t(2, 2));
 					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_CAPTURE),
 							ptce_pos_t(3, 1), ptce_pos_t(4, 2));
-					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+					result_score = ptce_board::score_move_set(board, PIECE_PAWN, 
 							board.generate_move_set(ptce_pos_t(3, 1), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_CAPTURE))
@@ -3715,11 +3757,13 @@ exit:
 					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_WHITE, true);
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL),
 							ptce_pos_t(3, 2), ptce_pos_t(3, 3));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_EMPTY),
 							ptce_pos_t(3, 2), ptce_pos_t(2, 3));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_EMPTY),
 							ptce_pos_t(3, 2), ptce_pos_t(4, 3));
-					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+					result_score = ptce_board::score_move_set(board, PIECE_PAWN, 
 							board.generate_move_set(ptce_pos_t(3, 2), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_NORMAL))
@@ -3734,14 +3778,17 @@ exit:
 					result_move_set.clear();
 					board.generate_piece(ptce_pos_t(3, 2), PIECE_PAWN, PIECE_WHITE, true);
 					board.generate_piece(ptce_pos_t(3, 3), PIECE_PAWN, PIECE_BLACK, true);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_EMPTY),
 							ptce_pos_t(3, 2), ptce_pos_t(2, 3));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_EMPTY),
 							ptce_pos_t(3, 2), ptce_pos_t(4, 3));
-					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+					result_score = ptce_board::score_move_set(board, PIECE_PAWN, 
 							board.generate_move_set(ptce_pos_t(3, 2), PIECE_BLACK), result_move_set);
 
-					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT))
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_EMPTY))
 							|| !compare_test_score_move_sets(move_set, result_move_set)) {
 						std::cerr << "----!ptce_test_board_generate_moves_pawn failure(5)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -3760,7 +3807,7 @@ exit:
 							ptce_pos_t(3, 2), ptce_pos_t(2, 3));
 					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_CAPTURE),
 							ptce_pos_t(3, 2), ptce_pos_t(4, 3));
-					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+					result_score = ptce_board::score_move_set(board, PIECE_PAWN, 
 							board.generate_move_set(ptce_pos_t(3, 2), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_CAPTURE))
@@ -3781,9 +3828,10 @@ exit:
 							ptce_pos_t(2, 6), ptce_pos_t(2, 7));
 					append_test_score_move_set(move_set, MOVE_PROMOTE, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROMOTE),
 							ptce_pos_t(2, 6), ptce_pos_t(2, 7));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_EMPTY),
 							ptce_pos_t(2, 6), ptce_pos_t(1, 7));
-					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+					result_score = ptce_board::score_move_set(board, PIECE_PAWN, 
 							board.generate_move_set(ptce_pos_t(2, 6), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_PAWN, MOVE_CHECK))
@@ -3797,7 +3845,7 @@ exit:
 					move_set.clear();
 					result_move_set.clear();
 					board.generate_piece(ptce_pos_t(2, 7), PIECE_PAWN, PIECE_WHITE, true);					
-					result_score = ptce_board::score_move_set(PIECE_PAWN, 
+					result_score = ptce_board::score_move_set(board, PIECE_PAWN, 
 							board.generate_move_set(ptce_pos_t(2, 7), PIECE_BLACK), result_move_set);
 
 					if(result_score 
@@ -3848,20 +3896,26 @@ exit:
 					board.generate_piece(ptce_pos_t(1, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(2, 0), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(2, 1), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(0, 0));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(0, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(1, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(2, 0));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(2, 1));
-					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+					result_score = ptce_board::score_move_set(board, PIECE_QUEEN, 
 							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
 
-					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT))
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN))
 							|| !compare_test_score_move_sets(move_set, result_move_set)) {
 						std::cerr << "----!ptce_test_board_generate_moves_queen failure(0)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -3876,13 +3930,17 @@ exit:
 					board.generate_piece(ptce_pos_t(1, 0), PIECE_QUEEN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(1, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(2, 0), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(0, 0));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(0, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(1, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(2, 0));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(1, 0), ptce_pos_t(2, 1));
@@ -3896,7 +3954,7 @@ exit:
 							ptce_pos_t(1, 0), ptce_pos_t(6, 5));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(1, 0), ptce_pos_t(7, 6));
-					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+					result_score = ptce_board::score_move_set(board, PIECE_QUEEN, 
 							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL))
@@ -3915,13 +3973,17 @@ exit:
 					board.generate_piece(ptce_pos_t(1, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(2, 0), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(4, 3), PIECE_PAWN, PIECE_BLACK);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(0, 0));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(0, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(1, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(2, 0));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(1, 0), ptce_pos_t(2, 1));
@@ -3929,7 +3991,7 @@ exit:
 							ptce_pos_t(1, 0), ptce_pos_t(3, 2));
 					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE),
 							ptce_pos_t(1, 0), ptce_pos_t(4, 3));
-					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+					result_score = ptce_board::score_move_set(board, PIECE_QUEEN, 
 							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE))
@@ -3948,21 +4010,26 @@ exit:
 					board.generate_piece(ptce_pos_t(1, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(2, 0), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(4, 3), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(0, 0));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(0, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(1, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(2, 0));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(1, 0), ptce_pos_t(2, 1));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(1, 0), ptce_pos_t(3, 2));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(1, 0), ptce_pos_t(4, 3));
-					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+					result_score = ptce_board::score_move_set(board, PIECE_QUEEN, 
 							board.generate_move_set(ptce_pos_t(1, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL))
@@ -4030,7 +4097,7 @@ exit:
 							ptce_pos_t(3, 3), ptce_pos_t(7, 3));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(7, 7));
-					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+					result_score = ptce_board::score_move_set(board, PIECE_QUEEN, 
 							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL))
@@ -4106,7 +4173,7 @@ exit:
 							ptce_pos_t(3, 3), ptce_pos_t(7, 3));
 					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE),
 							ptce_pos_t(3, 3), ptce_pos_t(7, 7));
-					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+					result_score = ptce_board::score_move_set(board, PIECE_QUEEN, 
 							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CAPTURE))
@@ -4128,11 +4195,14 @@ exit:
 					board.generate_piece(ptce_pos_t(6, 0), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(7, 3), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(7, 7), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(0, 0));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(0, 3));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(0, 6));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(1, 1));
@@ -4146,7 +4216,8 @@ exit:
 							ptce_pos_t(3, 3), ptce_pos_t(2, 3));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(2, 4));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(3, 0));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(3, 1));
@@ -4158,7 +4229,8 @@ exit:
 							ptce_pos_t(3, 3), ptce_pos_t(3, 5));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(3, 6));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(3, 7));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(4, 2));
@@ -4172,17 +4244,20 @@ exit:
 							ptce_pos_t(3, 3), ptce_pos_t(5, 3));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(5, 5));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(6, 0));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(6, 3));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(6, 6));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(7, 3));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(3, 3), ptce_pos_t(7, 7));
-					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+					result_score = ptce_board::score_move_set(board, PIECE_QUEEN, 
 							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL))
@@ -4251,7 +4326,7 @@ exit:
 							ptce_pos_t(3, 3), ptce_pos_t(7, 3));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_NORMAL),
 							ptce_pos_t(3, 3), ptce_pos_t(7, 7));
-					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+					result_score = ptce_board::score_move_set(board, PIECE_QUEEN, 
 							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CHECK))
@@ -4320,7 +4395,7 @@ exit:
 							ptce_pos_t(3, 3), ptce_pos_t(7, 3));
 					append_test_score_move_set(move_set, MOVE_CHECK, MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CHECK),
 							ptce_pos_t(3, 3), ptce_pos_t(7, 7));
-					result_score = ptce_board::score_move_set(PIECE_QUEEN, 
+					result_score = ptce_board::score_move_set(board, PIECE_QUEEN, 
 							board.generate_move_set(ptce_pos_t(3, 3), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_QUEEN, MOVE_CHECK))
@@ -4368,14 +4443,17 @@ exit:
 					board.generate_piece(ptce_pos_t(0, 0), PIECE_ROOK, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(0, 1), PIECE_PAWN, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(1, 0), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(0, 0), ptce_pos_t(0, 1));
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(0, 0), ptce_pos_t(1, 0));
-					result_score = ptce_board::score_move_set(PIECE_ROOK, 
+					result_score = ptce_board::score_move_set(board, PIECE_ROOK, 
 							board.generate_move_set(ptce_pos_t(0, 0), PIECE_BLACK), result_move_set);
 
-					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_PROTECT))
+					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN))
 							|| !compare_test_score_move_sets(move_set, result_move_set)) {
 						std::cerr << "----!ptce_test_board_generate_moves_rook failure(0)" << std::endl;
 						result = PTCE_TEST_FAILURE;
@@ -4392,7 +4470,7 @@ exit:
 							ptce_pos_t(0, 0), ptce_pos_t(0, 1));
 					append_test_score_move_set(move_set, MOVE_CAPTURE, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_CAPTURE),
 							ptce_pos_t(0, 0), ptce_pos_t(1, 0));
-					result_score = ptce_board::score_move_set(PIECE_ROOK, 
+					result_score = ptce_board::score_move_set(board, PIECE_ROOK, 
 							board.generate_move_set(ptce_pos_t(0, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_CAPTURE))
@@ -4407,7 +4485,8 @@ exit:
 					result_move_set.clear();
 					board.generate_piece(ptce_pos_t(0, 0), PIECE_ROOK, PIECE_WHITE);
 					board.generate_piece(ptce_pos_t(0, 1), PIECE_PAWN, PIECE_WHITE);
-					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_PROTECT),
+					append_test_score_move_set(move_set, MOVE_PROTECT, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_PROTECT) 
+							* MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(PIECE_PAWN),
 							ptce_pos_t(0, 0), ptce_pos_t(0, 1));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
 							ptce_pos_t(0, 0), ptce_pos_t(1, 0));
@@ -4423,7 +4502,7 @@ exit:
 							ptce_pos_t(0, 0), ptce_pos_t(6, 0));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
 							ptce_pos_t(0, 0), ptce_pos_t(7, 0));
-					result_score = ptce_board::score_move_set(PIECE_ROOK, 
+					result_score = ptce_board::score_move_set(board, PIECE_ROOK, 
 							board.generate_move_set(ptce_pos_t(0, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL))
@@ -4465,7 +4544,7 @@ exit:
 							ptce_pos_t(0, 0), ptce_pos_t(6, 0));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
 							ptce_pos_t(0, 0), ptce_pos_t(7, 0));
-					result_score = ptce_board::score_move_set(PIECE_ROOK, 
+					result_score = ptce_board::score_move_set(board, PIECE_ROOK, 
 							board.generate_move_set(ptce_pos_t(0, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL))
@@ -4508,7 +4587,7 @@ exit:
 							ptce_pos_t(3, 0), ptce_pos_t(6, 0));
 					append_test_score_move_set(move_set, MOVE_NORMAL, MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_NORMAL),
 							ptce_pos_t(3, 0), ptce_pos_t(7, 0));
-					result_score = ptce_board::score_move_set(PIECE_ROOK, 
+					result_score = ptce_board::score_move_set(board, PIECE_ROOK, 
 							board.generate_move_set(ptce_pos_t(3, 0), PIECE_BLACK), result_move_set);
 
 					if((result_score != MOVE_HEURISTIC_VALUE(PIECE_ROOK, MOVE_CHECK))

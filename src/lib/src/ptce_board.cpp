@@ -385,7 +385,7 @@ namespace PTCE_NS {
 					}
 				}
 
-check_done:
+		check_done:
 
 				if(allow) {
 
@@ -825,7 +825,7 @@ check_done:
 						}
 					}
 
-check_left_done:
+		check_left_done:
 
 					if(castling_allowed) {
 						pos_list.clear();
@@ -878,7 +878,7 @@ check_left_done:
 						}
 					}
 
-check_right_done:
+		check_right_done:
 
 					if(castling_allowed) {
 						pos_list.clear();
@@ -1255,7 +1255,7 @@ check_right_done:
 				}
 			}
 
-check_done:
+		check_done:
 
 			if(attacked) {
 
@@ -1439,6 +1439,7 @@ check_done:
 
 		size_t 
 		_ptce_board::score_move_bishop(
+			__in const _ptce_board &board,
 			__in const ptce_mv_ent_t &move,
 			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 			)
@@ -1453,6 +1454,12 @@ check_done:
 				case MOVE_NORMAL:
 				case MOVE_PROTECT:
 					result = MOVE_HEURISTIC_VALUE(PIECE_BISHOP, move.first);
+
+					if(move.first == MOVE_PROTECT) {
+						result *= MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(
+								board.m_piece_list.at(BOARD_COORD(
+								(*move.second.begin()).second)).m_type);
+					}
 					break;
 				default:
 					THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_TYPE,
@@ -1467,6 +1474,7 @@ check_done:
 
 		size_t 
 		_ptce_board::score_move_king(
+			__in const _ptce_board &board,
 			__in const ptce_mv_ent_t &move,
 			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 			)
@@ -1481,6 +1489,12 @@ check_done:
 				case MOVE_NORMAL:
 				case MOVE_PROTECT:
 					result = MOVE_HEURISTIC_VALUE(PIECE_KING, move.first);
+
+					if(move.first == MOVE_PROTECT) {
+						result *= MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(
+								board.m_piece_list.at(BOARD_COORD(
+								(*move.second.begin()).second)).m_type);
+					}
 					break;
 				default:
 					THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_TYPE,
@@ -1495,6 +1509,7 @@ check_done:
 
 		size_t 
 		_ptce_board::score_move_knight(
+			__in const _ptce_board &board,
 			__in const ptce_mv_ent_t &move,
 			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 			)
@@ -1509,6 +1524,12 @@ check_done:
 				case MOVE_NORMAL:
 				case MOVE_PROTECT:
 					result = MOVE_HEURISTIC_VALUE(PIECE_KNIGHT, move.first);
+
+					if(move.first == MOVE_PROTECT) {
+						result *= MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(
+								board.m_piece_list.at(BOARD_COORD(
+								(*move.second.begin()).second)).m_type);
+					}
 					break;
 				default:
 					THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_TYPE,
@@ -1523,6 +1544,7 @@ check_done:
 
 		size_t 
 		_ptce_board::score_move_pawn(
+			__in const _ptce_board &board,
 			__in const ptce_mv_ent_t &move,
 			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 			)
@@ -1538,6 +1560,12 @@ check_done:
 				case MOVE_PROMOTE:
 				case MOVE_PROTECT:
 					result = MOVE_HEURISTIC_VALUE(PIECE_PAWN, move.first);
+
+					if(move.first == MOVE_PROTECT) {
+						result *= MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(
+								board.m_piece_list.at(BOARD_COORD(
+								(*move.second.begin()).second)).m_type);
+					}
 					break;
 				default:
 					THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_TYPE,
@@ -1552,6 +1580,7 @@ check_done:
 
 		size_t 
 		_ptce_board::score_move_queen(
+			__in const _ptce_board &board,
 			__in const ptce_mv_ent_t &move,
 			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 			)
@@ -1566,6 +1595,12 @@ check_done:
 				case MOVE_NORMAL:
 				case MOVE_PROTECT:
 					result = MOVE_HEURISTIC_VALUE(PIECE_QUEEN, move.first);
+
+					if(move.first == MOVE_PROTECT) {
+						result *= MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(
+								board.m_piece_list.at(BOARD_COORD(
+								(*move.second.begin()).second)).m_type);
+					}
 					break;
 				default:
 					THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_TYPE,
@@ -1580,6 +1615,7 @@ check_done:
 
 		size_t 
 		_ptce_board::score_move_rook(
+			__in const _ptce_board &board,
 			__in const ptce_mv_ent_t &move,
 			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
 			)
@@ -1594,6 +1630,12 @@ check_done:
 				case MOVE_NORMAL:
 				case MOVE_PROTECT:
 					result = MOVE_HEURISTIC_VALUE(PIECE_ROOK, move.first);
+
+					if(move.first == MOVE_PROTECT) {
+						result *= MOVE_HEURISTIC_PROTECT_MULTIPLE_VALUE(
+								board.m_piece_list.at(BOARD_COORD(
+								(*move.second.begin()).second)).m_type);
+					}
 					break;
 				default:
 					THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_TYPE,
@@ -1608,6 +1650,7 @@ check_done:
 
 		size_t 
 		_ptce_board::score_move_set(
+			__in const _ptce_board &board,
 			__in const ptce_piece_t &type,
 			__in const std::set<ptce_mv_ent_t> &moves,
 			__out std::set<std::pair<ptce_mv_ent_t, size_t>> &scores
@@ -1629,22 +1672,22 @@ check_done:
 
 				switch(type) {
 					case PIECE_KING:
-						score = score_move_king(*move_iter, scores);
+						score = score_move_king(board, *move_iter, scores);
 						break;
 					case PIECE_QUEEN:
-						score = score_move_queen(*move_iter, scores);
+						score = score_move_queen(board, *move_iter, scores);
 						break;
 					case PIECE_ROOK:
-						score = score_move_rook(*move_iter, scores);
+						score = score_move_rook(board, *move_iter, scores);
 						break;
 					case PIECE_BISHOP:
-						score = score_move_bishop(*move_iter, scores);
+						score = score_move_bishop(board, *move_iter, scores);
 						break;
 					case PIECE_KNIGHT:
-						score = score_move_knight(*move_iter, scores);
+						score = score_move_knight(board, *move_iter, scores);
 						break;
 					case PIECE_PAWN:
-						score = score_move_pawn(*move_iter, scores);
+						score = score_move_pawn(board, *move_iter, scores);
 						break;
 					default:
 						THROW_PTCE_BOARD_EXCEPTION_MESSAGE(PTCE_BOARD_EXCEPTION_INVALID_PIECE_TYPE,
