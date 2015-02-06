@@ -13,6 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1506
+*Updated: 2/5/2015*
+
+* Added generate move routine (partial)
+
 *Updated: 2/3/2015*
 
 * Added game manager client handler
