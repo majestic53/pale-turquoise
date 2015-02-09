@@ -18,6 +18,7 @@
  */
 
 #include <cstring>
+#include <ctime>
 #include <netdb.h>
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -102,11 +103,11 @@ namespace PTCE_NS {
 			__in_opt bool show_network
 			)
 		{
-			ptce_board board;
 			int cli_data_len;
 			std::stringstream message;
 			uint8_t cli_data[CLIENT_DATA_LEN_MAX];
 			ptce_board_mv_t move = BOARD_CONTINUE;
+			ptce_board_factory_ptr board_fact = NULL;
 			bool active_cli = true, addr_cli_known = false;
 			std::map<ptce_uid, std::thread>::iterator game_iter;
 			char addr_cli_host_buf[NI_MAXHOST], addr_cli_port_buf[NI_MAXSERV];
@@ -130,83 +131,101 @@ namespace PTCE_NS {
 				std::cout << std::endl;
 			}
 
-			message << CLIENT_MESSAGE << " (Id: " << ptce_uid::id_as_string(uid) << ", Host: " << addr_cli_host_buf 
-					<< ", Port: " << addr_cli_port_buf << ")" << std::endl;
-			client_write(uid, (uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
-					socket, verbose, show_network);
-
-			while(active_cli) {
-
-				if(show_board) {
-					std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) << " " 
-							<< board.to_string(true) << std::endl;
-				}
-
-				move = board.is_checkmated(PIECE_BLACK) ? BOARD_CHECKMATE : generate_move(board);
-				switch(move) {
-					case BOARD_CONTINUE:
-					case BOARD_CHECKMATE:
-					case BOARD_DRAW:
-
-						if(verbose) {
-							std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
-									<< " Sending " << BOARD_MOVE_STRING(move) << " to client (Host: " 
-									<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")"
-									<< std::endl;
-						}
-						break;
-					default:
-						THROW_PTCE_GAME_EXCEPTION_MESSAGE(PTCE_GAME_EXCEPTION_UNKNOWN_MOVE_TYPE,
-							"id=%s, type=%lu", ptce_uid::id_as_string(uid).c_str(), move);
-				}
-
-				message.clear();
-				message.str(std::string());
-				message << board.serialize(move) << std::endl;
+			try {
+				board_fact = ptce::acquire()->acquire_board_factory();
+				ptce_board &board = board_fact->generate();
+				message << CLIENT_MESSAGE << " (Id: " << ptce_uid::id_as_string(uid) << ", Host: " << addr_cli_host_buf 
+						<< ", Port: " << addr_cli_port_buf << ")" << std::endl;
 				client_write(uid, (uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
 						socket, verbose, show_network);
 
-				if(move != BOARD_CONTINUE) {
-					break;
-				}
+				while(active_cli) {
 
-				memset(cli_data, 0, sizeof(uint8_t) * CLIENT_DATA_LEN_MAX);
-				cli_data_len = client_read(uid, cli_data, sizeof(uint8_t) * CLIENT_DATA_LEN_MAX, addr_cli_host_buf,
-						addr_cli_port_buf, socket, verbose, show_network);
+					if(show_board) {
+						std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) << " " 
+								<< board.to_string(true) << std::endl;
+					}
 
-				if(cli_data_len > 1) {
+					move = board.is_checkmated(PIECE_BLACK) ? BOARD_CHECKMATE : generate_move(board);
 
-					move = board.unserialize((char *) cli_data);
+					if(show_board) {
+						std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) << " " 
+								<< board.to_string(true) << std::endl;
+					}
+
 					switch(move) {
+						case BOARD_CONTINUE:
 						case BOARD_CHECKMATE:
 						case BOARD_DRAW:
-						case BOARD_RESIGN:
-						case BOARD_SAVE:
-							active_cli = false;
-							break;
-						case BOARD_CONTINUE:
+
+							if(verbose) {
+								std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
+										<< " Sending " << BOARD_MOVE_STRING(move) << " to client (Host: " 
+										<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")"
+										<< std::endl;
+							}
 							break;
 						default:
 							THROW_PTCE_GAME_EXCEPTION_MESSAGE(PTCE_GAME_EXCEPTION_UNKNOWN_MOVE_TYPE,
 								"id=%s, type=%lu", ptce_uid::id_as_string(uid).c_str(), move);
 					}
 
-					if(verbose) {
-						std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
-								<< " Received " << BOARD_MOVE_STRING(move) << " from client (Host: " 
-								<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")" 
-								<< std::endl;
-					}
-				} else {
+					message.clear();
+					message.str(std::string());
+					message << board.serialize(move) << std::endl;
+					client_write(uid, (uint8_t *) message.str().c_str(), message.str().size(), addr_cli_host_buf, addr_cli_port_buf, 
+							socket, verbose, show_network);
 
-					if(verbose) {
-						std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
-								<< " Received an empty game board from client (Host: " 
-								<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")"
-								<< std::endl;
+					if(move != BOARD_CONTINUE) {
+						break;
 					}
 
-					break;
+					memset(cli_data, 0, sizeof(uint8_t) * CLIENT_DATA_LEN_MAX);
+					cli_data_len = client_read(uid, cli_data, sizeof(uint8_t) * CLIENT_DATA_LEN_MAX, addr_cli_host_buf,
+							addr_cli_port_buf, socket, verbose, show_network);
+
+					if(cli_data_len > 1) {
+
+						move = board.unserialize((char *) cli_data);
+						switch(move) {
+							case BOARD_CHECKMATE:
+							case BOARD_DRAW:
+							case BOARD_RESIGN:
+							case BOARD_SAVE:
+								active_cli = false;
+								break;
+							case BOARD_CONTINUE:
+								break;
+							default:
+								THROW_PTCE_GAME_EXCEPTION_MESSAGE(PTCE_GAME_EXCEPTION_UNKNOWN_MOVE_TYPE,
+									"id=%s, type=%lu", ptce_uid::id_as_string(uid).c_str(), move);
+						}
+
+						if(verbose) {
+							std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
+									<< " Received " << BOARD_MOVE_STRING(move) << " from client (Host: " 
+									<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")" 
+									<< std::endl;
+						}
+					} else {
+
+						if(verbose) {
+							std::cout << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
+									<< " Received an empty game board from client (Host: " 
+									<< addr_cli_host_buf << ", Port: " << addr_cli_port_buf << ")"
+									<< std::endl;
+						}
+
+						break;
+					}
+				}
+
+				board_fact->decrement_reference(board);
+			} catch(std::runtime_error &exc) {
+
+				if(verbose) {
+					std::cerr << "[" << time_stamp() << "] " << ptce_uid::id_as_string(uid) 
+							<< " Client connection loop failure: " << exc.what() << std::endl;
 				}
 			}
 
@@ -425,11 +444,17 @@ namespace PTCE_NS {
 			__in ptce_board &board,
 			__in_opt ptce_piece_col_t enemy_color
 			)
-		{
-			size_t x, y = 0;
+		{	
+			int offset;
 			ptce_piece curr_piece;
-			std::set<ptce_mv_ent_t> move_set;
+			bool enemy_checked = false;
+			size_t max_score, x, y = 0;
 			ptce_board_mv_t result = BOARD_CONTINUE;
+			std::set<ptce_mv_ent_t>::iterator move_iter;
+			std::set<ptce_mv_ent_t> final_move_set, move_set;
+			std::set<std::pair<ptce_pos_t, ptce_pos_t>>::iterator pos_iter;			
+			std::set<std::pair<ptce_mv_ent_t, size_t>>::iterator score_iter;
+			std::set<std::pair<ptce_mv_ent_t, size_t>> final_score_set, score_set;
 
 			TRACE_ENTRY();
 
@@ -440,43 +465,58 @@ namespace PTCE_NS {
 					curr_piece = board.piece(ptce_pos_t(x, y));
 					if((curr_piece.type() != PIECE_EMPTY)
 							&& (curr_piece.color() != enemy_color)) {
-
-						// TODO: remove after debug
-						std::cout << std::endl << "{" << x << ", " << y << "} " << curr_piece.to_string(true);
-						// ---
-
 						move_set = board.generate_move_set(ptce_pos_t(x, y), enemy_color);
+						max_score = ptce_board::score_move_set(board, curr_piece.type(), move_set, score_set);
 
-						// TODO: remove after debug
-						std::set<std::pair<ptce_mv_ent_t, size_t>> scores;
-						size_t max_score = ptce_board::score_move_set(board, curr_piece.type(), move_set, scores);
+						for(score_iter = score_set.begin(); score_iter != score_set.end(); ++score_iter) {
 
-						std::cout << std::endl << "Max score: " << max_score << ", Count: " << scores.size();
+							if((score_iter->second == max_score)
+									&& (score_iter->first.first != MOVE_INVALID) 
+									&& (score_iter->first.first != MOVE_PROTECT)) {
 
-						for(std::set<std::pair<ptce_mv_ent_t, size_t>>::iterator iter = scores.begin();
-								iter != scores.end(); ++iter) {
-							std::cout << std::endl << MOVE_TYPE_STRING(iter->first.first) << "(" << iter->first.second.size() << ")";
-
-							if(!iter->first.second.empty()) {
-								std::cout << ": ";
-
-								for(std::set<std::pair<ptce_pos_t, ptce_pos_t>>::iterator pos_iter = iter->first.second.begin();
-										pos_iter != iter->first.second.end(); ++pos_iter) {
-
-									if(pos_iter != iter->first.second.begin()) {
-										std::cout << ", ";
-									}
-
-									std::cout << "({" << (int) pos_iter->first.first << ", " << (int) pos_iter->first.second << "}, {"
-											<< (int) pos_iter->second.first << ", " << (int) pos_iter->second.second << "})"
-											<< ", Score: " << iter->second;
+								if(score_iter->first.first == MOVE_CHECK) {
+									enemy_checked = true;
+									goto check_found;
 								}
+
+								final_score_set.insert(std::pair<ptce_mv_ent_t, size_t>
+										(score_iter->first, score_iter->second));
 							}
 						}
-
-						std::cout << std::endl;
-						// ---
 					}
+				}
+			}
+
+		check_found:
+
+			if(final_score_set.empty()) {
+				result = BOARD_DRAW;
+			} else if(enemy_checked) {
+				result = BOARD_CHECKMATE;
+			} else {
+				max_score = 0;
+
+				for(score_iter = final_score_set.begin();
+						score_iter != final_score_set.end(); ++score_iter) {
+
+					if(score_iter->second >= max_score) {
+						final_move_set.insert(score_iter->first);
+						max_score = score_iter->second;
+					}
+				}
+
+				move_iter = final_move_set.begin();
+				offset = m_distribution(m_generator) % final_move_set.size();
+
+				std::cout << final_move_set.size() << ", " << offset << std::endl;
+
+				while(offset--) {
+					++move_iter;
+				}
+
+				for(pos_iter = move_iter->second.begin(); 
+						pos_iter != move_iter->second.end(); ++pos_iter) {
+					board.move(pos_iter->first, pos_iter->second);
 				}
 			}
 
@@ -557,6 +597,8 @@ namespace PTCE_NS {
 			if(m_started) {
 				THROW_PTCE_GAME_EXCEPTION(PTCE_GAME_EXCEPTION_STARTED);
 			}
+
+			m_generator.seed(std::time(NULL));
 
 			m_port = port;
 			m_connections = connections;

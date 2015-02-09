@@ -20,6 +20,7 @@
 #ifndef PTCE_GAME_H_
 #define PTCE_GAME_H_
 
+#include <random>
 #include <netinet/in.h>
 
 namespace PTCE_NS {
@@ -123,7 +124,11 @@ namespace PTCE_NS {
 
 				uint8_t m_connections;
 
+				std::uniform_int_distribution<uint32_t> m_distribution;
+
 				std::map<ptce_uid, std::thread> m_game_map;
+
+				std::default_random_engine m_generator;
 
 				static _ptce_game_manager *m_instance;
 

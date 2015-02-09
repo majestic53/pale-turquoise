@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <ctime>
 #include "../include/ptce.h"
 #include "../include/ptce_uid_type.h"
 
@@ -425,6 +426,7 @@ namespace PTCE_NS {
 
 			m_uid_map.clear();
 			m_initialized = true;
+			m_generator.seed(std::time(NULL));
 			add(UID_NULL);
 
 			TRACE_EXIT("Return Value: 0%x", 0);

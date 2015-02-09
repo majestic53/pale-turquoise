@@ -26,7 +26,7 @@
 #include "./include/ptce_test_singleton.h"
 #include "./include/ptce_test_uid.h"
 
-#define RUN_TESTS
+//#define RUN_TESTS
 
 ptce_test_set 
 create_test_set_ptce_board(void)
@@ -179,7 +179,7 @@ main(
 		// TODO
 
 		ptce_game_manager_ptr man = inst->acquire_game_manager();
-		man->start(2000, 1, true);
+		man->start(2000, 1, true, true);
 
 		/*ptce_board board(true);
 

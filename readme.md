@@ -13,6 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1506
+*Updated: 2/8/2015*
+
+* Added basic (random) gameplay
+
 *Updated: 2/5/2015*
 
 * Added generate move routine (partial)
