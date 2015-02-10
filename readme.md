@@ -12,6 +12,12 @@ Table of Contents
 Changelog
 =========
 
+###Version 0.1.1507
+*Updated: 2/9/2015*
+
+* Added game manager unit tests
+* Truncated changelog (1504 - before)
+
 ###Version 0.1.1506
 *Updated: 2/8/2015*
 
@@ -51,30 +57,6 @@ Changelog
 * Added chess game class (partial)
 * Added chess game class tests (partial)
 * Added static board score move set routine (partial)
-
-###Version 0.1.1504
-*Updated: 1/24/2015*
-
-* Added chess piece move routine tests
-* Minor bug fixes
-
-*Updated: 1/22/2015*
-
-* Added chess piece move routines tests (partial)
-* Added a series of board routines (clear, generate_piece, remove)
-* Added castling error checking
-
-*Updated: 1/21/2015*
-
-* Added chess piece move routines
-
-*Updated: 1/20/2015*
-
-* Added chess piece move routines (partial)
-
-*Updated: 1/19/2015*
-
-* Added chess board serialization/unserialization
 
 License
 ======

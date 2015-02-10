@@ -33,11 +33,9 @@ namespace PTCE_NS {
 			PTCE_TEST_GAME_MANAGER_IS_STARTED,
 			PTCE_TEST_GAME_MANAGER_PORT,
 			PTCE_TEST_GAME_MANAGER_SIZE,
-			PTCE_TEST_GAME_MANAGER_START,
-			PTCE_TEST_GAME_MANAGER_STOP,
 		};
 
-		#define PTCE_TEST_GAME_MAX PTCE_TEST_GAME_MANAGER_STOP
+		#define PTCE_TEST_GAME_MAX PTCE_TEST_GAME_MANAGER_SIZE
 
 		static const std::string PTCE_TEST_GAME_STR[] = {
 			"PTCE_TEST_GAME_MANAGER_ACQUIRE",
@@ -46,8 +44,6 @@ namespace PTCE_NS {
 			"PTCE_TEST_GAME_MANAGER_IS_STARTED",
 			"PTCE_TEST_GAME_MANAGER_PORT",
 			"PTCE_TEST_GAME_MANAGER_SIZE",
-			"PTCE_TEST_GAME_MANAGER_START",
-			"PTCE_TEST_GAME_MANAGER_STOP",
 			};
 
 		#define PTCE_TEST_GAME_STRING(_TYPE_) \
@@ -66,10 +62,6 @@ namespace PTCE_NS {
 
 		extern ptce_test_t ptce_test_game_manager_size(void);
 
-		extern ptce_test_t ptce_test_game_manager_start(void);
-
-		extern ptce_test_t ptce_test_game_manager_stop(void);
-
 		static const ptce_test_set_cb PTCE_TEST_GAME_CB[] = {
 			ptce_test_game_manager_acquire,
 			ptce_test_game_manager_connections,
@@ -77,8 +69,6 @@ namespace PTCE_NS {
 			ptce_test_game_manager_is_started,
 			ptce_test_game_manager_port,
 			ptce_test_game_manager_size,
-			ptce_test_game_manager_start,
-			ptce_test_game_manager_stop,
 			};
 
 		#define PTCE_TEST_GAME_CALLBACK(_TYPE_) \

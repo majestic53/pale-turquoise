@@ -26,8 +26,6 @@
 #include "./include/ptce_test_singleton.h"
 #include "./include/ptce_test_uid.h"
 
-//#define RUN_TESTS
-
 ptce_test_set 
 create_test_set_ptce_board(void)
 {
@@ -155,6 +153,8 @@ main(
 	) 
 {
 	int result = 0;
+	ptce_test_ptr inst = NULL;
+	size_t failure, inconclusive, success;
 
 	TRACE_ENTRY();
 
@@ -162,9 +162,7 @@ main(
 			<< std::endl;
 
 	try {
-#ifdef RUN_TESTS
-		size_t failure, inconclusive, success;
-		ptce_test_ptr inst = ptce_test::acquire();
+		inst = ptce_test::acquire();
 		inst->initialize();
 		initialize_test_suite();
 		inst->run_all(failure, inconclusive, success);
@@ -172,60 +170,9 @@ main(
 			<< failure << ", " << inconclusive << ", " << success << ")"
 			<< std::endl;
 		inst->destroy();
-#else
-		ptce_ptr inst = ptce::acquire();
-		inst->initialize();
-
-		// TODO
-
-		ptce_game_manager_ptr man = inst->acquire_game_manager();
-		man->start(2000, 1, true, true);
-
-		/*ptce_board board(true);
-
-		board.generate_piece(ptce_pos_t(3, 0), PIECE_KING, PIECE_WHITE);
-		board.generate_piece(ptce_pos_t(4, 1), PIECE_PAWN, PIECE_BLACK, true);
-		board.generate_piece(ptce_pos_t(5, 2), PIECE_PAWN, PIECE_BLACK, true);
-
-		std::cout<< board.to_string(true) << std::endl;
-
-		std::set<ptce_mv_ent_t> gen_moves = board.generate_move_set(ptce_pos_t(3, 0), PIECE_BLACK);
-		std::cout << "Count: " << gen_moves.size();
-
-		std::set<std::pair<ptce_mv_ent_t, size_t>> scores;
-		size_t max_score = ptce_board::score_move_set(board, PIECE_KING, gen_moves, scores);
-
-		std::cout << std::endl << "Max score: " << max_score << ", Count: " << scores.size();
-
-		for(std::set<std::pair<ptce_mv_ent_t, size_t>>::iterator iter = scores.begin();
-				iter != scores.end(); ++iter) {
-			std::cout << std::endl << MOVE_TYPE_STRING(iter->first.first) << "(" << iter->first.second.size() << ")";
-
-			if(!iter->first.second.empty()) {
-				std::cout << ": ";
-
-				for(std::set<std::pair<ptce_pos_t, ptce_pos_t>>::iterator pos_iter = iter->first.second.begin();
-						pos_iter != iter->first.second.end(); ++pos_iter) {
-
-					if(pos_iter != iter->first.second.begin()) {
-						std::cout << ", ";
-					}
-
-					std::cout << "({" << (int) pos_iter->first.first << ", " << (int) pos_iter->first.second << "}, {"
-							<< (int) pos_iter->second.first << ", " << (int) pos_iter->second.second << "})"
-							<< ", Score: " << iter->second;
-				}
-			}
-		}
-
-		std::cout << std::endl;*/
-		// ---
-
-		//std::cout << inst->to_string(true) << std::endl;
-		inst->destroy();
-#endif // RUN_TESTS
 	} catch(std::runtime_error &exc) {
 		std::cerr << exc.what() << std::endl;
+		result = 1;
 	}
 
 	TRACE_EXIT("Return Value: 0x%x", result);

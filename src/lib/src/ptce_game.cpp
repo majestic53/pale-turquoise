@@ -435,6 +435,11 @@ namespace PTCE_NS {
 		{
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_started) {
+				THROW_PTCE_GAME_EXCEPTION(PTCE_GAME_EXCEPTION_STOPPED);
+			}
+
 			TRACE_EXIT("Return Value: %lu", m_connections);
 			return m_connections;
 		}

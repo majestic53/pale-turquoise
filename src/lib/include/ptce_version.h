@@ -30,8 +30,8 @@ namespace PTCE_NS {
 
 	#define VERSION_MAJ 0
 	#define VERSION_MIN 1
-	#define VERSION_REV 5
-	#define VERSION_WEEK 1506
+	#define VERSION_REV 1
+	#define VERSION_WEEK 1507
 	
 	#define VERSION_STR \
 		"" CONCAT(VERSION_MAJ) "." CONCAT(VERSION_MIN) "." CONCAT(VERSION_WEEK) \
