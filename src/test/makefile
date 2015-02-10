@@ -37,7 +37,7 @@ archive:
 
 exe:
 	@echo ""
-	@echo "--- BUILDING PTCE --------------------------" 
+	@echo "--- BUILDING PTCE TEST ---------------------" 
 	$(CC) $(FLAGS) $(TOP)main.cpp $(OUT_BUILD)$(LIB) $(OUT_BUILD)$(LIB_TEST) -o $(OUT_BIN)$(EXE)
 	@echo "--- DONE -----------------------------------"
 	@echo ""

@@ -22,7 +22,7 @@
 
 namespace PTCE_NS {
 
-	#define BUILD_TITLE "libptce"
+	#define BUILD_TITLE "Pale Turquoise Chess Engine"
 	#define BUILD_COPYRIGHT "Copyright (C) 2015 David Jolly"
 
 	#define BUILD_DATE __DATE__

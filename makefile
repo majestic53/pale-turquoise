@@ -15,14 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-EXE=ptce_test
-EXE_DIR=./src/test/
 JOB_SLOTS=4
 LIB_DIR=./src/lib/
 OUT_BIN=./bin/
 OUT_BUILD=./build/
 OUT_LOG=./log/
 SRC_DIR=./src/
+TEST_EXE=ptce_test
+TEST_DIR=./src/test/
+TOOL_EXE=ptce
+TOOL_DIR=./src/tool/
 
 MEM_LOG=val_err.log
 STAT_LOG=stat_err.log
@@ -42,7 +44,8 @@ exe:
 	@echo "============================================"
 	@echo "BUILDING EXECUTABLES"
 	@echo "============================================"
-	cd $(EXE_DIR) && make exe
+	cd $(TEST_DIR) && make exe
+	cd $(TOOL_DIR) && make exe
 
 init:
 	mkdir $(OUT_BIN)
@@ -56,8 +59,10 @@ lib:
 	@echo "============================================"
 	cd $(LIB_DIR) && make build -j $(JOB_SLOTS)
 	cd $(LIB_DIR) && make archive
-	cd $(EXE_DIR) && make build -j $(JOB_SLOTS)
-	cd $(EXE_DIR) && make archive
+	cd $(TEST_DIR) && make build -j $(JOB_SLOTS)
+	cd $(TEST_DIR) && make archive
+	cd $(TOOL_DIR) && make build -j $(JOB_SLOTS)
+	cd $(TOOL_DIR) && make archive
 
 ### TESTING ###
 
@@ -68,7 +73,7 @@ mem:
 	@echo "============================================"
 	@echo "RUNNING MEMORY TEST"
 	@echo "============================================"
-	valgrind $(OUT_BIN)$(EXE) ==leak-check=full --verbose 2> $(OUT_LOG)$(MEM_LOG)
+	valgrind $(OUT_BIN)$(TEST) ==leak-check=full --verbose 2> $(OUT_LOG)$(MEM_LOG)
 
 static:
 	@echo ""

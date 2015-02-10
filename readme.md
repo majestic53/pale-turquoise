@@ -15,6 +15,7 @@ Changelog
 ###Version 0.1.1507
 *Updated: 2/9/2015*
 
+* Added cli interface (partial)
 * Added game manager unit tests
 * Truncated changelog (1504 - before)
 
