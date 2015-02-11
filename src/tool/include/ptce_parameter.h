@@ -30,13 +30,27 @@ namespace PTCE_NS {
 
 	namespace PTCE_TOOL_NS {
 
+		typedef enum _ptce_param_t {
+			PARAMETER_CONNECTIONS = 0,
+			PARAMETER_HELP,
+			PARAMETER_PORT,
+			PARAMETER_QUIET,
+			PARAMETER_SHOW_BOARD,
+			PARAMETER_SHOW_NETWORK,
+			PARAMETER_VERSION,
+		} ptce_param_t;
+
+		#define PARAMETER_MAX PARAMETER_VERSION
+
+		typedef std::map<ptce_param_t, std::pair<size_t, bool>> ptce_param_info_t;
+
 		typedef class _ptce_parameter {
 
 			public:
 
 				_ptce_parameter(
-					__in_opt size_t argc = 0,
-					__in_opt const char **argv = NULL
+					__in_opt size_t parameter_count = 0,
+					__in_opt const char **parameters = NULL
 					);
 
 				_ptce_parameter(
@@ -77,9 +91,15 @@ namespace PTCE_NS {
 
 			protected:
 
+				bool determine_parameter_type(
+					__out ptce_param_info_t &information,
+					__in const char *parameter,
+					__in_opt bool long_type = false
+					);
+
 				void parse(
-					__in_opt size_t argc = 0,
-					__in_opt const char **argv = NULL
+					__in_opt size_t parameter_count = 0,
+					__in_opt const char **parameters = NULL
 					);
 
 				uint8_t m_connections;

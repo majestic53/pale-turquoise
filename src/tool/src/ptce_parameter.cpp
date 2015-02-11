@@ -28,18 +28,6 @@ namespace PTCE_NS {
 		#define TOOL_TITLE_STR "ptce"
 		#define TOOL_USAGE_STR "[-h | -v | -q | -b | -n] [-p PORT] [-c MAX CONN]"
 
-		enum {
-			PARAMATER_CONNECTIONS = 0,
-			PARAMETER_HELP,
-			PARAMETER_PORT,
-			PARAMETER_QUIET,
-			PARAMETER_SHOW_BOARD,
-			PARAMETER_SHOW_NETWORK,
-			PARAMETER_VERSION,
-		};
-
-		#define PARAMETER_MAX PARAMETER_VERSION
-
 		static const std::string PARAMETER_DESC_STR[] = {
 			"Maximum client connections",
 			"Display help",
@@ -70,9 +58,19 @@ namespace PTCE_NS {
 			((_TYPE_) > PARAMETER_MAX ? UNKNOWN : \
 			PARAMETER_LONG_STR[_TYPE_].c_str())
 
+		static const ptce_param_info_t PARAMETER_INFO = {
+			std::pair<ptce_param_t, std::pair<size_t, bool>>(PARAMETER_CONNECTIONS, std::pair<size_t, bool>(1, true)),
+			std::pair<ptce_param_t, std::pair<size_t, bool>>(PARAMETER_HELP, std::pair<size_t, bool>(0, false)),
+			std::pair<ptce_param_t, std::pair<size_t, bool>>(PARAMETER_PORT, std::pair<size_t, bool>(1, true)),
+			std::pair<ptce_param_t, std::pair<size_t, bool>>(PARAMETER_QUIET, std::pair<size_t, bool>(0, false)),
+			std::pair<ptce_param_t, std::pair<size_t, bool>>(PARAMETER_SHOW_BOARD, std::pair<size_t, bool>(0, false)),
+			std::pair<ptce_param_t, std::pair<size_t, bool>>(PARAMETER_SHOW_NETWORK, std::pair<size_t, bool>(0, false)),
+			std::pair<ptce_param_t, std::pair<size_t, bool>>(PARAMETER_VERSION, std::pair<size_t, bool>(0, false)),
+			};
+
 		_ptce_parameter::_ptce_parameter(
-			__in_opt size_t argc,
-			__in_opt const char **argv
+			__in_opt size_t parameter_count,
+			__in_opt const char **parameters
 			) :
 				m_connections(GAME_CONNECTION_DEF),
 				m_port(GAME_PORT_DEF),
@@ -84,7 +82,7 @@ namespace PTCE_NS {
 		{
 			TRACE_ENTRY();
 
-			parse(argc, argv);
+			parse(parameter_count, parameters);
 
 			TRACE_EXIT("Return Value: 0x%x", 0);
 		}
@@ -141,6 +139,32 @@ namespace PTCE_NS {
 			return m_connections;
 		}
 
+		bool 
+		_ptce_parameter::determine_parameter_type(
+			__out ptce_param_info_t &information,
+			__in const char *parameter,
+			__in_opt bool long_type
+			)
+		{
+			bool result = false;
+
+			TRACE_ENTRY();
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(long_type) {
+
+				// TODO: SEARCH FOR LONG PARAM
+
+			} else {
+
+				// TODO: SEARCH FOR SHORT PARAM
+
+			}
+
+			TRACE_EXIT("Return Value: 0x%x", result);
+			return result;
+		}
+
 		std::string 
 		_ptce_parameter::display_help(
 			__in_opt bool verbose
@@ -192,14 +216,43 @@ namespace PTCE_NS {
 
 		void 
 		_ptce_parameter::parse(
-			__in_opt size_t argc,
-			__in_opt const char **argv
+			__in_opt size_t parameter_count,
+			__in_opt const char **parameters
 			)
 		{
+			size_t iter = 0;
+			bool long_param;
+			char *parameter = NULL;
+			ptce_param_info_t information;
+
 			TRACE_ENTRY();
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			// TODO: parse user parameters
+			for(; iter < parameter_count; ++iter) {
+				long_param = false;
+
+				parameter = (char *) parameters[iter];
+				if(!parameter) {
+					THROW_PTCE_PARAMETER_EXCEPTION_MESSAGE(PTCE_PARMAETER_EXCEPTION_EMPTY_PARAMETER,
+						"pos=%lu", iter);
+				} else if(*parameter != PARAMETER_DELIM) {
+					THROW_PTCE_PARAMETER_EXCEPTION_MESSAGE(PTCE_PARAMETER_EXCEPTION_INVALID_PARAMETER,
+						"%s", parameter);
+				}
+
+				if(*++parameter == PARAMETER_DELIM) {
+					++parameter;
+					long_param = true;
+				}
+
+				if(!determine_parameter_type(information, parameter, long_param)) {
+
+					// TODO: EXCEPTION --> UNKNOWN PARAMETER
+
+				}
+
+				// TODO: PROCESS PARAM
+			}
 
 			TRACE_EXIT("Return Value: 0x%x", 0);
 		}
