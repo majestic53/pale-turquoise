@@ -24,34 +24,58 @@ enum {
 	PTCE_ERR_EXCEPTION,
 };
 
+void 
+start_server(
+	__in ptce_parameter &parameters
+	)
+{
+	ptce_ptr inst = NULL;
+
+	TRACE_ENTRY();
+
+	inst = ptce::acquire();
+	inst->initialize();
+	inst->acquire_game_manager()->start(parameters.port(), parameters.connections(), 
+			!parameters.quiet(), parameters.show_board(), parameters.show_network());
+	inst->acquire_game_manager()->stop(!parameters.quiet());
+	inst->destroy();
+
+	TRACE_EXIT("Return Value: 0x%x", 0);
+}
+
 int 
 main(
 	__in int argc, 
 	__in const char **argv
 	)
 {
-	ptce_ptr inst = NULL;
-	int result = PTCE_ERR_NONE;
-	ptce_parameter param(argc, argv);
+	ptce_parameter param;
+	std::vector<std::string> parameters;
+	int iter = 1, result = PTCE_ERR_NONE;
 
-	if(param.show_help()) {
-		std::cout << param.display_help(true) << std::endl;
-	} else if(param.show_version()) {
-		std::cout << param.display_version() << std::endl;
-	} else {
+	try {
 
-		try {
-			inst = ptce::acquire();
-			inst->initialize();
-			inst->acquire_game_manager()->start(param.port(), param.connections(), !param.quiet(),
-					param.show_board(), param.show_network());
-			inst->acquire_game_manager()->stop(!param.quiet());
-			inst->destroy();
-		} catch(std::runtime_error &exc) {
-			std::cerr << exc.what() << std::endl << std::endl
-					<< param.display_help() << std::endl;
-			result = PTCE_ERR_EXCEPTION;
+		if(argc > 1) {
+
+			for(; iter < argc; ++iter) {
+				parameters.push_back(argv[iter]);
+			}
+
+			param = ptce_parameter(parameters);
+			if(param.show_help()) {
+				std::cout << param.display_help(true) << std::endl;
+			} else if(param.show_version()) {
+				std::cout << param.display_version() << std::endl;
+			} else {
+				start_server(param);
+			}
+		} else {
+			start_server(param);
 		}
+	} catch(std::runtime_error &exc) {
+		std::cerr << exc.what() << std::endl << std::endl
+				<< param.display_help() << std::endl;
+		result = PTCE_ERR_EXCEPTION;
 	}
 
 	return result;

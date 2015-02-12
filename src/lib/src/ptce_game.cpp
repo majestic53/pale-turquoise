@@ -31,7 +31,7 @@ namespace PTCE_NS {
 	namespace PTCE_NET_NS {
 
 		#define CLIENT_DATA_LEN_MAX 0x200
-		#define CLIENT_MESSAGE "You are now playing against Pale Turquoise ver." VERSION_STR
+		#define CLIENT_MESSAGE "You are now playing against Pale Turquoise " VERSION_STR
 
 		typedef struct sockaddr_in sockaddr_t;
 

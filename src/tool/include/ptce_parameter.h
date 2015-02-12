@@ -42,15 +42,16 @@ namespace PTCE_NS {
 
 		#define PARAMETER_MAX PARAMETER_VERSION
 
-		typedef std::map<ptce_param_t, std::pair<size_t, bool>> ptce_param_info_t;
+		typedef std::pair<size_t, bool> ptce_param_info_t;
+
+		typedef std::map<ptce_param_t, ptce_param_info_t> ptce_param_info_map;
 
 		typedef class _ptce_parameter {
 
 			public:
 
 				_ptce_parameter(
-					__in_opt size_t parameter_count = 0,
-					__in_opt const char **parameters = NULL
+					__in_opt const std::vector<std::string> &parameters = std::vector<std::string>()
 					);
 
 				_ptce_parameter(
@@ -63,7 +64,7 @@ namespace PTCE_NS {
 					__in const _ptce_parameter &other
 					);
 
-				uint8_t &connections(void);
+				uint16_t &connections(void);
 
 				static std::string display_help(
 					__in_opt bool verbose = false
@@ -92,17 +93,18 @@ namespace PTCE_NS {
 			protected:
 
 				bool determine_parameter_type(
-					__out ptce_param_info_t &information,
-					__in const char *parameter,
+					__out ptce_param_info_map::const_iterator &information,
+					__in const std::string &parameter,
 					__in_opt bool long_type = false
 					);
 
 				void parse(
-					__in_opt size_t parameter_count = 0,
-					__in_opt const char **parameters = NULL
+					__in_opt const std::vector<std::string> &parameters = std::vector<std::string>()
 					);
 
-				uint8_t m_connections;
+				uint16_t m_connections;
+
+				std::vector<bool> m_found;
 
 				uint16_t m_port;
 

@@ -6,13 +6,19 @@ LIBPTCE (Pale Turquoise Chess Engine) is a lightwight chess bot, written in C++.
 Table of Contents
 ===============
 
-1. [Changelog](https://github.com/majestic53/libas65#changelog)
-2. [License](https://github.com/majestic53/libas65#license)
+1. [Changelog](https://github.com/majestic53/pale-turquoise#changelog)
+2. [Usage](https://github.com/majestic53/pale-turquoise#usage)
+2. [License](https://github.com/majestic53/pale-turquoise#license)
 
 Changelog
 =========
 
 ###Version 0.1.1507
+*Updated: 2/11/2015*
+
+* Added cli interface
+* Updated readme
+
 *Updated: 2/9/2015*
 
 * Added cli interface (partial)
@@ -58,6 +64,37 @@ Changelog
 * Added chess game class (partial)
 * Added chess game class tests (partial)
 * Added static board score move set routine (partial)
+
+*Entries below this point can be found in the file history*
+
+Usage
+=====
+
+###Build
+
+__Prereq__: Building this project requires the GNU and/or Clang c++ compilers (g++/clang++).
+
+To build the entire project, simply run the command below in the projects root directory.
+
+```
+make
+```
+
+LIBPTCE is a terminal based server application, which can be invoked using the interface below:
+
+###PTCE
+
+```
+ptce [-h | -v | -q | -b | -n] [-p PORT] [-c MAX CONN]
+```
+
+* _-c | --conn_		--- Maximum client connections (default: 5, max: 255)
+* _-h | --help_		--- Display help
+* _-p | --port_		--- Server port (default: 2000, max: 65536)
+* _-q | --quiet_ 	--- Quiet mode
+* _-b | --board_ 	--- Display game boards
+* _-n | --net_ 		--- Display game network traffic
+* _-v | --version_ 	--- Display version
 
 License
 ======
