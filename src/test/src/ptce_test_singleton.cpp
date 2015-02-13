@@ -717,7 +717,7 @@ exit:
 
 			try {
 				ver_test << VERSION_MAJ << "." << VERSION_MIN << "." << VERSION_WEEK
-						<< "-" << VERSION_REV;
+						<< "." << VERSION_REV;
 
 				if(ptce::version() != ver_test.str()) {
 					std::cerr << "----!ptce_test_singleton_version failure(0)" << std::endl;
